@@ -1,0 +1,1 @@
+// User model schema and validation will be added here in the future

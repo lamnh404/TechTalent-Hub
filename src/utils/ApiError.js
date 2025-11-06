@@ -1,0 +1,1 @@
+// Class ApiError to handle API errors consistently
