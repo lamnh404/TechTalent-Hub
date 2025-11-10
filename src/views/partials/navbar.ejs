@@ -1,0 +1,232 @@
+<%
+    // Default role if not provided
+    const userRole = typeof role !== 'undefined' ? role : 'guest';
+    const userName = typeof user !== 'undefined' ? user.name : 'Guest';
+%>
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="/">
+            <strong>🚀 TechTalent Hub</strong>
+        </a>
+        
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ml-auto">
+                <!-- Common Links -->
+                <li class="nav-item">
+                    <a class="nav-link" href="/">🏠 Home</a>
+                </li>
+                
+                <% if (userRole === 'guest') { %>
+                    <!-- Guest Navigation -->
+                    <li class="nav-item">
+                        <a class="nav-link" href="/jobs">💼 Browse Jobs</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/companies">🏢 Companies</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/about">ℹ️ About</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link btn btn-outline-light ml-2" href="/login">Login</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link btn btn-primary text-white ml-2" href="/register">Sign Up</a>
+                    </li>
+                <% } else if (userRole === 'Admin' || userRole === 'admin') { %>
+                    <!-- Admin Navigation -->
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="adminDropdown" role="button" data-toggle="dropdown">
+                            👥 User Management
+                        </a>
+                        <div class="dropdown-menu">
+                            <a class="dropdown-item" href="/admin/users">👥 All Users</a>
+                            <a class="dropdown-item" href="/admin/users?role=JobSeeker">🔍 Job Seekers</a>
+                            <a class="dropdown-item" href="/admin/users?role=Company">🏢 Companies</a>
+                        </div>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/admin/analytics">📊 Analytics</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="contentDropdown" role="button" data-toggle="dropdown">
+                            📝 Content
+                        </a>
+                        <div class="dropdown-menu">
+                            <a class="dropdown-item" href="/admin/jobs">💼 Manage Jobs</a>
+                            <a class="dropdown-item" href="/admin/applications">📄 Applications</a>
+                            <a class="dropdown-item" href="/admin/reports">📈 Reports</a>
+                        </div>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="profileDropdown" role="button" data-toggle="dropdown">
+                            👤 <%= userName %>
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-right">
+                            <a class="dropdown-item" href="/admin/profile">⚙️ Settings</a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item text-danger" href="/logout">🚪 Logout</a>
+                        </div>
+                    </li>
+                <% } else if (userRole === 'Company' || userRole === 'company') { %>
+                    <!-- Company Navigation -->
+                    <li class="nav-item">
+                        <a class="nav-link" href="/company/dashboard">📊 Dashboard</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="jobsDropdown" role="button" data-toggle="dropdown">
+                            💼 Jobs
+                        </a>
+                        <div class="dropdown-menu">
+                            <a class="dropdown-item" href="/company/jobs">📋 My Job Posts</a>
+                            <a class="dropdown-item" href="/company/jobs/create">➕ Post New Job</a>
+                        </div>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/company/applications">📄 Applications</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/company/candidates">👥 Candidates</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="companyProfileDropdown" role="button" data-toggle="dropdown">
+                            🏢 <%= userName %>
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-right">
+                            <a class="dropdown-item" href="/company/profile">✏️ Company Profile</a>
+                            <a class="dropdown-item" href="/company/settings">⚙️ Settings</a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item text-danger" href="/logout">🚪 Logout</a>
+                        </div>
+                    </li>
+                <% } else if (userRole === 'JobSeeker' || userRole === 'jobseeker') { %>
+                    <!-- Job Seeker Navigation -->
+                    <li class="nav-item">
+                        <a class="nav-link" href="/jobs">🔍 Browse Jobs</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/seeker/applications">📄 My Applications</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/seeker/saved-jobs">⭐ Saved Jobs</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/companies">🏢 Companies</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="seekerProfileDropdown" role="button" data-toggle="dropdown">
+                            👤 <%= userName %>
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-right">
+                            <a class="dropdown-item" href="/seeker/profile">📝 My Profile</a>
+                            <a class="dropdown-item" href="/seeker/resume">📄 Resume</a>
+                            <a class="dropdown-item" href="/seeker/settings">⚙️ Settings</a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item text-danger" href="/logout">🚪 Logout</a>
+                        </div>
+                    </li>
+                <% } %>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<style>
+.navbar {
+    box-shadow: 0 2px 4px rgba(0,0,0,.1);
+    padding: 0.75rem 1rem;
+}
+
+.navbar-brand {
+    font-size: 1.5rem;
+    font-weight: 700;
+    transition: transform 0.3s ease;
+}
+
+.navbar-brand:hover {
+    transform: scale(1.05);
+}
+
+.navbar-nav .nav-link {
+    padding: 0.5rem 1rem;
+    transition: all 0.3s ease;
+    border-radius: 5px;
+    margin: 0 2px;
+}
+
+.navbar-nav .nav-link:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    transform: translateY(-2px);
+}
+
+.navbar .btn {
+    padding: 0.375rem 1.5rem;
+    border-radius: 20px;
+    transition: all 0.3s ease;
+}
+
+.navbar .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,.2);
+}
+
+.dropdown-menu {
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0,0,0,.1);
+    border: none;
+    margin-top: 0.5rem;
+}
+
+.dropdown-item {
+    padding: 0.5rem 1.5rem;
+    transition: all 0.2s ease;
+}
+
+.dropdown-item:hover {
+    background-color: #f8f9fa;
+    padding-left: 2rem;
+}
+
+.dropdown-divider {
+    margin: 0.5rem 0;
+}
+
+/* Add padding to body to prevent content from being hidden under fixed navbar */
+body {
+    padding-top: 70px;
+}
+
+/* Active link styling */
+.navbar-nav .nav-link.active {
+    background-color: rgba(255, 255, 255, 0.2);
+    font-weight: 600;
+}
+
+@media (max-width: 991px) {
+    .navbar-nav {
+        padding: 1rem 0;
+    }
+    
+    .navbar-nav .nav-item {
+        margin: 0.25rem 0;
+    }
+    
+    .dropdown-menu {
+        background-color: rgba(0, 0, 0, 0.9);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .dropdown-item {
+        color: #fff;
+    }
+    
+    .dropdown-item:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+    }
+}
+</style>
