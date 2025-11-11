@@ -16,5 +16,9 @@ export const env = {
 
     MYSQL_PORT: process.env.MYSQL_PORT || 3306,
 
+    SESSION_SECRET_KEY: process.env.SESSION_SECRET_KEY,
+
+    COOKIE_LIFE: process.env.COOKIE_LIFE,
+
     BUILD_MODE: process.env.BUILD_MODE
 }
