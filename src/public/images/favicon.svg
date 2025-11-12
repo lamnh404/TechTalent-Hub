@@ -1,0 +1,41 @@
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#050a30"/>
+      <stop offset="40%" stop-color="#0d2a6e"/>
+      <stop offset="70%" stop-color="#1a5fb8"/>
+      <stop offset="100%" stop-color="#00d9ff"/>
+    </linearGradient>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="512" height="512" rx="90" fill="url(#bg)"/>
+  
+  <!-- Hexagon pieces forming 3D effect -->
+  <!-- Top-right (light cyan) -->
+  <polygon points="256,190 420,285 390,340 310,420 256,260" fill="#2af8ff"/>
+  
+  <!-- Right (medium blue) -->
+  <polygon points="390,340 420,285 430,500 310,420" fill="#1e7fff"/>
+  
+  <!-- Bottom-right (darker blue) -->
+  <polygon points="310,420 430,500 260,530 220,420" fill="#0d5fc9"/>
+  
+  <!-- Bottom-left (bright cyan) -->
+  <polygon points="220,420 260,530 82,500 140,420" fill="#52e5ff"/>
+  
+  <!-- Left (cyan-blue) -->
+  <polygon points="140,420 82,500 92,285 202,420" fill="#00a8d4"/>
+  
+  <!-- Top-left (medium blue) -->
+  <polygon points="256,190 92,285 202,420 256,260" fill="#1e88ff"/>
+  
+  <!-- Center (dark blue for depth) -->
+  <polygon points="256,260 310,420 220,420 202,420" fill="#0d5fd4" opacity="0.7"/>
+  
+  <!-- Letter T -->
+  <g fill="#ffffff">
+    <rect x="200" y="235" width="220" height="52" rx="12"/>
+    <rect x="275" y="235" width="75" height="255" rx="12"/>
+  </g>
+</svg>

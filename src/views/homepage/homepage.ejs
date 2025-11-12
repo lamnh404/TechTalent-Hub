@@ -1,6 +1,103 @@
-<%- include('../partials/header') %>
-<%- include('../partials/navbar') %>
-<h1><%= title %></h1>
-<p>Welcome to the TechTalent Hub home page!</p>
-<a href="/login">Login</a>
-<%- include('../partials/footer') %>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('../partials/header', { title: 'Trang chủ' }) %>
+</head>
+<body>
+    <%- include('../partials/navbar') %>
+
+    <!-- Hero Section -->
+    <section class="home-hero">
+        <div class="container position-relative">
+            <h1>Find Your Dream Tech Job</h1>
+            <p class="lead">The #1 platform to connect talented individuals with top tech companies.</p>
+            <div class="search-bar-wrapper">
+                <input type="text" class="search-input" placeholder="Job title, keyword, or company">
+                <button class="search-button">Search</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Featured Jobs Section -->
+    <section class="section section-alt">
+        <div class="container">
+            <h2 class="section-title">Featured Job Openings</h2>
+            <div class="row">
+                <!-- Job Card 1 -->
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="job-card">
+                        <img src="https://via.placeholder.com/50" alt="Company Logo" class="company-logo">
+                        <h5>Senior Frontend Developer</h5>
+                        <p class="company-name">Stripe</p>
+                        <div class="job-tags">
+                            <span>Remote</span>
+                            <span>Full-time</span>
+                        </div>
+                    </div>
+                </div>
+                <!-- Job Card 2 -->
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="job-card">
+                        <img src="https://via.placeholder.com/50" alt="Company Logo" class="company-logo">
+                        <h5>Product Manager</h5>
+                        <p class="company-name">Google</p>
+                        <div class="job-tags">
+                            <span>New York</span>
+                            <span>Full-time</span>
+                        </div>
+                    </div>
+                </div>
+                <!-- Job Card 3 -->
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="job-card">
+                        <img src="https://via.placeholder.com/50" alt="Company Logo" class="company-logo">
+                        <h5>Data Scientist</h5>
+                        <p class="company-name">Netflix</p>
+                        <div class="job-tags">
+                            <span>California</span>
+                            <span>Contract</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="text-center mt-4">
+                <a href="/jobs" class="btn btn-primary">Browse All Jobs</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works Section -->
+    <section class="section">
+        <div class="container">
+            <h2 class="section-title">How It Works</h2>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="how-it-works-card">
+                        <div class="icon"><i class="fas fa-user-tie"></i></div>
+                        <h4>For Job Seekers</h4>
+                        <p>Create your profile, browse thousands of jobs, and apply with a single click. Let your dream job find you.</p>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="how-it-works-card">
+                        <div class="icon"><i class="fas fa-building"></i></div>
+                        <h4>For Companies</h4>
+                        <p>Post job openings, search our database of talented professionals, and find the perfect candidate for your team.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Call to Action Section -->
+    <section class="cta-section">
+        <div class="container">
+            <h2 class="mb-3">Ready to Get Started?</h2>
+            <p class="mb-4">Join TechTalent Hub today and take the next step in your career.</p>
+            <a href="/register" class="btn btn-light btn-lg">Sign Up for Free</a>
+        </div>
+    </section>
+
+    <%- include('../partials/footer') %>
+</body>
+</html>

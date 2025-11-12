@@ -1,189 +1,142 @@
-<%- include('../partials/header') %>
-<% 
-    const role = 'guest';
-    const user = { name: 'Guest' };
-%>
-<%- include('../partials/navbar') %>
+<%- include('../partials/header', { title: 'Đăng nhập' }) %>
 
-<div class="container mt-5" style="padding-top: 60px;">
-    <div class="row justify-content-center">
-        <div class="col-md-6 col-lg-5">
-            <div class="card shadow-lg border-0">
-                <div class="card-body p-5">
-                    <div class="text-center mb-4">
-                        <h2 class="font-weight-bold">Welcome Back!</h2>
-                        <p class="text-muted">Login to your account</p>
-                    </div>
-
-                    <!-- error Message -->
-                    <% if (typeof error !== 'undefined' && error) { %>
-                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                            <i class="fas fa-exclamation-circle"></i> <%= error %>
-                            <button type="button" class="close" data-dismiss="alert">
-                                <span>&times;</span>
-                            </button>
-                        </div>
-                    <% } %>
-
-                    <!-- Success Message -->
-                    <% if (typeof success !== 'undefined' && success) { %>
-                        <div class="alert alert-success alert-dismissible fade show" role="alert">
-                            <i class="fas fa-check-circle"></i> <%= success %>
-                            <button type="button" class="close" data-dismiss="alert">
-                                <span>&times;</span>
-                            </button>
-                        </div>
-                    <% } %>
-
-                    <form action="/login" method="POST" id="loginForm">
-                        <div class="form-group">
-                            <label for="email">Email Address</label>
-                            <input 
-                                type="email" 
-                                class="form-control form-control-lg" 
-                                id="email" 
-                                name="email" 
-                                placeholder="your.email@example.com"
-                                required
-                            >
-                        </div>
-
-                        <div class="form-group">
-                            <label for="password">Password</label>
-                            <div class="input-group">
-                                <input 
-                                    type="password" 
-                                    class="form-control form-control-lg" 
-                                    id="password" 
-                                    name="password" 
-                                    placeholder="Enter your password"
-                                    required
-                                >
-                                <div class="input-group-append">
-                                    <button class="btn btn-outline-secondary" type="button" id="togglePassword">
-                                        <i class="fas fa-eye" id="eyeIcon"></i>
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="form-group form-check">
-                            <input type="checkbox" class="form-check-input" id="remember" name="remember">
-                            <label class="form-check-label" for="remember">
-                                Remember me
-                            </label>
-                        </div>
-
-                        <button type="submit" class="btn btn-primary btn-lg btn-block mb-3">
-                            Login
-                        </button>
-
-                        <div class="text-center">
-                            <a href="/forgot-password" class="text-muted">Forgot Password?</a>
-                        </div>
-                    </form>
-
-                    <hr class="my-4">
-
-                    <div class="text-center">
-                        <p class="text-muted mb-3">Or login with</p>
-                        <div class="row">
-                            <div class="col-6">
-                                <button class="btn btn-outline-danger btn-block">
-                                    <i class="fab fa-google"></i> Google
-                                </button>
-                            </div>
-                            <div class="col-6">
-                                <button class="btn btn-outline-primary btn-block">
-                                    <i class="fab fa-facebook-f"></i> Facebook
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <hr class="my-4">
-
-                    <div class="text-center">
-                        <p class="text-muted">Don't have an account? 
-                            <a href="/register" class="font-weight-bold">Sign Up Here</a>
-                        </p>
-                    </div>
-                </div>
-            </div>
-        </div>
+<section class="auth-hero sky-hero">
+  <!-- Logo góc trái -->
+  <div class="brand-logo">
+    <!-- Sử dụng favicon làm icon -->
+    <img src="/images/favicon-t.svg" alt="TechTalent Hub Logo" class="brand-logo-icon">
+    <!-- Tách chữ thành 2 phần để style riêng -->
+    <div class="brand-name-container">
+      <span class="brand-name-main">TechTalent</span><span class="brand-name-accent">Hub</span>
     </div>
-</div>
+  </div>
+
+  <!-- Vòng cung nhẹ nền trời -->
+  <div class="sky-arcs"></div>
+  <!-- Mảng mây phía dưới -->
+  <div class="sky-clouds"></div>
+
+  <div class="container">
+    <div class="row justify-content-center align-items-center min-vh-100">
+      <div class="col-sm-10 col-md-8 col-lg-6 col-xl-5">
+        <div class="card auth-card glass-card">
+          <div class="card-body p-4 p-md-5">
+
+            <!-- Badge icon trên đỉnh card -->
+            <div class="sheet-badge mx-auto mb-4">
+              <i class="fas fa-sign-in-alt"></i>
+            </div>
+
+            <div class="text-center mb-4">
+              <h3 class="mb-2 font-weight-bold">Sign in with email</h3>
+              <p class="text-muted small mb-0" style="font-size: 0.9rem; line-height: 1.5;">
+                Make a new doc to bring your words, data,<br>and teams together. For free
+              </p>
+            </div>
+
+            <% if (typeof error !== 'undefined' && error) { %>
+              <div class="alert alert-danger auth-alert" role="alert" aria-live="polite">
+                <i class="fas fa-exclamation-circle mr-2"></i><%= error %>
+              </div>
+            <% } %>
+            <% if (typeof success !== 'undefined' && success) { %>
+              <div class="alert alert-success auth-alert" role="alert" aria-live="polite">
+                <i class="fas fa-check-circle mr-2"></i><%= success %>
+              </div>
+            <% } %>
+
+            <form action="/login" method="POST" id="loginForm" novalidate>
+              
+              <!-- Email Input -->
+              <div class="form-group mb-3">
+                <div class="input-wrapper">
+                  <i class="far fa-envelope input-icon"></i>
+                  <input
+                    type="email"
+                    class="form-control-modern"
+                    id="email"
+                    name="email"
+                    placeholder="Email"
+                    value="<%= typeof email !== 'undefined' ? email : '' %>"
+                    required
+                    autocomplete="email"
+                  >
+                </div>
+              </div>
+
+              <!-- Password Input -->
+              <div class="form-group mb-2">
+                <div class="input-wrapper">
+                  <i class="fas fa-lock input-icon"></i>
+                  <input
+                    type="password"
+                    class="form-control-modern pr-5"
+                    id="password"
+                    name="password"
+                    placeholder="Password"
+                    required
+                    autocomplete="current-password"
+                  >
+                  <button type="button" class="toggle-password" id="togglePassword" aria-label="Toggle password visibility">
+                    <i class="fas fa-eye-slash" id="eyeIcon"></i>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Forgot Password Link -->
+              <div class="text-right mb-4">
+                <a href="/forgot-password" class="forgot-link">Forgot password?</a>
+              </div>
+
+              <!-- Submit Button -->
+              <button type="submit" class="btn btn-cta-dark btn-block">
+                Get Started
+              </button>
+            </form>
+
+            <!-- Divider -->
+            <div class="divider-modern my-4">
+              <span class="divider-text">Or sign in with</span>
+            </div>
+
+            <!-- Social Login -->
+            <div class="social-buttons">
+              <a class="social-btn" href="/auth/google" aria-label="Sign in with Google">
+                <i class="fab fa-google"></i>
+              </a>
+              <a class="social-btn" href="/auth/facebook" aria-label="Sign in with Facebook">
+                <i class="fab fa-facebook-f"></i>
+              </a>
+              <a class="social-btn social-btn-apple" href="/auth/apple" aria-label="Sign in with Apple">
+                <i class="fab fa-apple"></i>
+              </a>
+            </div>
+
+            <!-- Thêm link đăng ký ở đây -->
+            <div class="register-link-container">
+              Don't have an account yet? <a href="/register">Register for free</a>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
 
 <script>
 // Toggle Password Visibility
-document.getElementById('togglePassword').addEventListener('click', function() {
-    const password = document.getElementById('password');
-    const eyeIcon = document.getElementById('eyeIcon');
-    
-    if (password.type === 'password') {
-        password.type = 'text';
-        eyeIcon.classList.remove('fa-eye');
-        eyeIcon.classList.add('fa-eye-slash');
-    } else {
-        password.type = 'password';
-        eyeIcon.classList.remove('fa-eye-slash');
-        eyeIcon.classList.add('fa-eye');
-    }
-});
-
-// Form Validation
-document.getElementById('loginForm').addEventListener('submit', function(e) {
-    const email = document.getElementById('email').value;
-    const password = document.getElementById('password').value;
-    
-    if (!email || !password) {
-        e.preventDefault();
-        alert('Please fill in all fields!');
-        return false;
-    }
-    
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-        e.preventDefault();
-        alert('Please enter a valid email address!');
-        return false;
-    }
+document.getElementById('togglePassword')?.addEventListener('click', function(e) {
+  e.preventDefault();
+  const password = document.getElementById('password');
+  const eyeIcon = document.getElementById('eyeIcon');
+  if (!password || !eyeIcon) return;
+  
+  const isHidden = password.type === 'password';
+  password.type = isHidden ? 'text' : 'password';
+  eyeIcon.classList.toggle('fa-eye-slash', !isHidden);
+  eyeIcon.classList.toggle('fa-eye', isHidden);
 });
 </script>
-
-<style>
-.card {
-    border-radius: 15px;
-    transition: transform 0.3s ease;
-}
-
-.card:hover {
-    transform: translateY(-5px);
-}
-
-.form-control:focus {
-    border-color: #007bff;
-    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
-}
-
-.btn-primary {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    border: none;
-    transition: all 0.3s ease;
-}
-
-.btn-primary:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-}
-
-.input-group-append button {
-    border-left: 0;
-}
-
-.input-group-append button:focus {
-    box-shadow: none;
-}
-</style>
 
 <%- include('../partials/footer') %>

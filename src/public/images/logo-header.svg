@@ -1,0 +1,37 @@
+<svg width="200" height="40" viewBox="0 0 200 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="logoGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0065A9;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#1F7ACC;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#3A99FC;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Icon bên trái (Hexagon với T) -->
+  <g transform="translate(0, 0)">
+    <!-- Hexagon background -->
+    <path d="M20 4 L32 10 L32 22 L20 28 L8 22 L8 10 Z" 
+          fill="url(#logoGradient)"/>
+    <!-- Letter T inside -->
+    <path d="M 13 12 L 27 12 L 27 15 L 22 15 L 22 24 L 18 24 L 18 15 L 13 15 Z" 
+          fill="white"/>
+  </g>
+  
+  <!-- Text "TechTalent" -->
+  <text x="42" y="24" 
+        font-family="'Segoe UI', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif" 
+        font-size="18" 
+        font-weight="600" 
+        fill="#1a1a1a">
+    TechTalent
+  </text>
+  
+  <!-- Text "Hub" với màu gradient -->
+  <text x="135" y="24" 
+        font-family="'Segoe UI', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif" 
+        font-size="18" 
+        font-weight="700" 
+        fill="url(#logoGradient)">
+    Hub
+  </text>
+</svg>
