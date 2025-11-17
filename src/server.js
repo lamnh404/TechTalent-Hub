@@ -35,7 +35,7 @@ const START_SERVER = () => {
 
     // Use the API routes
     app.use('/', API)
-
+    app.use(express.static(path.join(__dirname, 'public')))
 
     // Set EJS as the templating engine
     app.set('view engine', 'ejs')
