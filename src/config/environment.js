@@ -6,15 +6,15 @@ export const env = {
     LOCAL_DEV_APP_HOST: process.env.LOCAL_DEV_APP_HOST || 'localhost',
     LOCAL_DEV_APP_PORT: process.env.LOCAL_DEV_APP_PORT || 8017,
 
-    MYSQL_HOST: process.env.MYSQL_HOST || 'localhost',
+    SQL_SERVER: process.env.SQL_SERVER || 'localhost',
 
-    MYSQL_USER: process.env.MYSQL_USER || 'root',
+    SQL_USER: process.env.SQL_USER || 'root',
 
-    MYSQL_PASSWORD: process.env.MYSQL_PASSWORD,
+    SQL_PASSWORD: process.env.SQL_PASSWORD,
 
-    MYSQL_DATABASE: process.env.MYSQL_DATABASE || 'techtalenthub',
+    SQL_DATABASE: process.env.SQL_DATABASE || 'TechTalentHub',
 
-    MYSQL_PORT: process.env.MYSQL_PORT || 3306,
+    SQL_PORT: process.env.SQL_PORT || 1433,
 
     SESSION_SECRET_KEY: process.env.SESSION_SECRET_KEY,
 

@@ -2,7 +2,7 @@ import express from 'express'
 import { env } from '~/config/environment.js'
 import { API } from '~/routes/router.js'
 import path from 'path'
-import { INIT_MYSQL_POOL, CLOSE_MYSQL_POOL } from '~/config/mysqlDatabase.js'
+import { INIT_SQL_POOL, CLOSE_SQL_POOL} from '~/config/SQLDatabase.js'
 import exitHook from 'async-exit-hook'
 import { errorHandlingMiddlewares } from '~/middlewares/errorHandlingMIddleware'
 import session from 'express-session'
@@ -20,6 +20,7 @@ const START_SERVER = () => {
     // Use error handling middlewares
     app.use(errorHandlingMiddlewares)
 
+
     // Set up session management
     app.use(session({
         secret: env.SESSION_SECRET_KEY,
@@ -35,6 +36,8 @@ const START_SERVER = () => {
 
     // Use the API routes
     app.use('/', API)
+
+    // Serve static files from the "public" directory
     app.use(express.static(path.join(__dirname, 'public')))
 
     // Set EJS as the templating engine
@@ -54,14 +57,14 @@ const START_SERVER = () => {
 
     exitHook(async () => {
         console.log('Shutting down server...')
-        await CLOSE_MYSQL_POOL()
+        await CLOSE_SQL_POOL()
         console.log('Server shut down complete.')
     })
 }
 
 (async () => {
     try {
-        await INIT_MYSQL_POOL()
+        await INIT_SQL_POOL()
         START_SERVER()
     } catch (error) {
         console.error('error starting server:', error)
