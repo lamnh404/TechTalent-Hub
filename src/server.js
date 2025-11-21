@@ -4,7 +4,6 @@ import { API } from '~/routes/router.js'
 import path from 'path'
 import { INIT_SQL_POOL, CLOSE_SQL_POOL} from '~/config/SQLDatabase.js'
 import exitHook from 'async-exit-hook'
-import { errorHandlingMiddlewares } from '~/middlewares/errorHandlingMIddleware'
 import session from 'express-session'
 import ms from 'ms'
 
@@ -16,10 +15,6 @@ const START_SERVER = () => {
 
     //  Parse URL-encoded requests
     app.use(express.urlencoded({ extended: true }))
-
-    // Use error handling middlewares
-    app.use(errorHandlingMiddlewares)
-
 
     // Set up session management
     app.use(session({

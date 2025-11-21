@@ -16,17 +16,16 @@ const login = async (email, password) => {
         const user = result.recordset[0]
 
         if (!user) {
-            throw new ApiError('Invalid email or password', StatusCodes.UNAUTHORIZED)
+            throw new ApiError( StatusCodes.UNAUTHORIZED, 'Invalid email or password')
         }
         const isPasswordValid = await compare(password, user.passwordHash)
 
         if (!isPasswordValid) {
-            throw new ApiError('Invalid email or password', StatusCodes.UNAUTHORIZED)
+            throw new ApiError (StatusCodes.UNAUTHORIZED, 'Invalid email or password')
         }
-        console.log('AuthModel: pickUserFields(user):', pickUserFields(user));
         return pickUserFields(user)
     } catch (error) {
-        throw new Error(error)
+        throw new ApiError(StatusCodes.INTERNAL_SERVER_ERROR, error.message)
     }
 }
 
@@ -87,7 +86,7 @@ const setupCompany = async (userId, data) => {
 
         await pool.request()
             .input('userId', userId)
-            .query("UPDATE [User] SET AccountStatus = 'Active' WHERE UserId = @userId")
+            .query('UPDATE [User] SET AccountStatus = \'Active\' WHERE UserId = @userId')
 
         return { message: 'Company setup successful' }
     } catch (error) {
@@ -123,7 +122,7 @@ const setupSeeker = async (userId, data) => {
 
         await pool.request()
             .input('userId', userId)
-            .query("UPDATE [User] SET AccountStatus = 'Active' WHERE UserId = @userId")
+            .query('UPDATE [User] SET AccountStatus = \'Active\' WHERE UserId = @userId')
 
         return { message: 'JobSeeker setup successful' }
     } catch (error) {

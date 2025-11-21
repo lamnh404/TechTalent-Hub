@@ -8,15 +8,15 @@ const login = async (req, res, next) => {
         const user = await authModel.login(email, password)
         req.session.user = user
 
-        console.log('User logged in:', user);
+        console.log('User logged in:', user)
 
         req.session.save((err) => {
-            if (err) return next(err);
+            if (err) return next(err)
             res.redirect('/')
-        });
+        })
 
     } catch (error) {
-        next(error)
+        res.render('auth/login.ejs', { title: 'Login', error: error.message })
     }
 }
 
