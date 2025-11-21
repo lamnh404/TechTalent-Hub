@@ -1,140 +1,143 @@
-<%- include('../partials/header', { title: 'Company Profile Setup' }) %>
+<%- include('../partials/header', { title: 'Hồ sơ Công ty' }) %>
 
 <body class="auth-layout-page">
-    <section class="auth-hero sky-hero">
+    <section class="auth-hero">
         
-        <a href="/" class="brand-logo text-decoration-none">
-            <img src="/images/favicon-t.svg" alt="Logo" class="brand-logo-icon">
+        <a href="/" class="brand-logo">
+            <img src="/images/logo.svg" alt="Logo" class="brand-logo-icon">
             <div class="brand-name-container">
                 <span class="brand-name-main">TechTalent</span><span class="brand-name-accent">Hub</span>
             </div>
         </a>
 
         <div class="sky-arcs"></div>
-        <div class="sky-clouds"></div>
 
-        <div class="container pt-5">
-            <div class="row justify-content-center mt-4">
-                <div class="col-lg-8 col-md-10">
-                    <div class="card auth-card glass-card animate__animated animate__fadeInUp">
-                        <div class="card-body p-4 p-md-5">
-                            
-                            <div class="text-center mb-4">
-                                <span class="badge badge-pill badge-light text-success mb-2 shadow-sm">Step 2 of 2</span>
-                                <h3 class="mb-1 font-weight-bold">Company Profile</h3>
-                                <p class="text-muted small">Provide details about your organization.</p>
-                            </div>
-
-                            <form action="/auth/register/complete" method="POST" id="companyForm" novalidate>
+        <div class="auth-content-wrapper">
+            <div class="container">
+                <div class="row justify-content-center">
+                    <div class="col-lg-8 col-md-10">
+                        <div class="card auth-card animate__animated animate__fadeInUp">
+                            <div class="card-body p-4 p-md-5">
                                 
-                                <div class="form-group mb-3">
-                                    <label class="font-weight-bold small text-dark">Recruiter Name <span class="text-danger">*</span></label>
-                                    <div class="input-wrapper">
-                                        <i class="far fa-user input-icon"></i>
-                                        <input type="text" class="form-control-modern" name="contactName" placeholder="Your Full Name" required>
-                                    </div>
+                                <div class="text-center mb-4">
+                                    <span class="badge badge-pill badge-light text-success mb-2 shadow-sm px-3 py-1">Step 2 of 2</span>
+                                    <h3 class="mb-1 font-weight-bold text-dark">Company Profile</h3>
+                                    <p class="text-muted small">Provide details about your organization.</p>
                                 </div>
 
-                                <div class="form-group mb-3">
-                                    <label class="font-weight-bold small text-dark">Company Name <span class="text-danger">*</span></label>
-                                    <div class="input-wrapper">
-                                        <i class="far fa-building input-icon"></i>
-                                        <input type="text" class="form-control-modern" name="companyName" placeholder="e.g. TechTalent Inc." required>
-                                    </div>
-                                </div>
-
-                                <div class="row">
-                                    <div class="col-md-6 mb-3">
-                                        <label class="font-weight-bold small text-dark">Industry</label>
+                                <form action="/auth/register/complete" method="POST" id="companyForm" novalidate>
+                                    
+                                    <div class="form-group mb-3">
+                                        <label class="font-weight-bold small text-dark">Recruiter Name <span class="text-danger">*</span></label>
                                         <div class="input-wrapper">
-                                            <i class="fas fa-globe input-icon"></i>
-                                            <select class="form-control-modern" name="industry">
-                                                <option value="Software">IT / Software</option>
-                                                <option value="Fintech">Fintech</option>
-                                                <option value="E-commerce">E-commerce</option>
-                                                <option value="Education">EdTech</option>
-                                                <option value="Consulting">Consulting</option>
-                                            </select>
+                                            <i class="far fa-user input-icon"></i>
+                                            <input type="text" class="form-control-modern" name="contactName" placeholder="Your Full Name" required>
                                         </div>
                                     </div>
-                                    <div class="col-md-6 mb-3">
-                                        <label class="font-weight-bold small text-dark">Size</label>
+
+                                    <div class="form-group mb-3">
+                                        <label class="font-weight-bold small text-dark">Company Name <span class="text-danger">*</span></label>
                                         <div class="input-wrapper">
-                                            <i class="fas fa-users input-icon"></i>
-                                            <select class="form-control-modern" name="size">
-                                                <option value="Small">Startup (1-10)</option>
-                                                <option value="Medium">Growing (11-50)</option>
-                                                <option value="Large">Established (51-200)</option>
-                                                <option value="Enterprise">Enterprise (200+)</option>
-                                            </select>
+                                            <i class="far fa-building input-icon"></i>
+                                            <input type="text" class="form-control-modern" name="companyName" placeholder="e.g. TechTalent Inc." required>
                                         </div>
                                     </div>
-                                </div>
 
-                                <div class="row">
-                                    <div class="col-md-6 mb-3">
-                                        <label class="font-weight-bold small text-dark">Website <span class="text-danger">*</span></label>
-                                        <div class="input-wrapper">
-                                            <i class="fas fa-link input-icon"></i>
-                                            <input type="url" class="form-control-modern https-input" name="website" placeholder="https://company.com" required pattern="https://.*">
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label class="font-weight-bold small text-dark">Industry</label>
+                                            <div class="input-wrapper">
+                                                <i class="fas fa-globe input-icon"></i>
+                                                <select class="form-control-modern" name="industry">
+                                                    <option value="Software">IT / Software</option>
+                                                    <option value="Fintech">Fintech</option>
+                                                    <option value="E-commerce">E-commerce</option>
+                                                    <option value="Education">EdTech</option>
+                                                    <option value="Consulting">Consulting</option>
+                                                </select>
+                                            </div>
                                         </div>
-                                        <small class="text-danger error-msg d-none">Must start with https://</small>
-                                    </div>
-                                    <div class="col-md-6 mb-3">
-                                        <label class="font-weight-bold small text-dark">Founded Year</label>
-                                        <div class="input-wrapper">
-                                            <i class="far fa-calendar-alt input-icon"></i>
-                                            <input type="number" class="form-control-modern" name="foundedYear" placeholder="2015">
+                                        <div class="col-md-6 mb-3">
+                                            <label class="font-weight-bold small text-dark">Size</label>
+                                            <div class="input-wrapper">
+                                                <i class="fas fa-users input-icon"></i>
+                                                <select class="form-control-modern" name="size">
+                                                    <option value="Small">Startup (1-10)</option>
+                                                    <option value="Medium">Growing (11-50)</option>
+                                                    <option value="Large">Established (51-200)</option>
+                                                    <option value="Enterprise">Enterprise (200+)</option>
+                                                </select>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
 
-                                <div class="form-group mb-3">
-                                    <label class="font-weight-bold small text-dark">Headquarters Location</label>
-                                    <div class="input-wrapper">
-                                        <i class="fas fa-map-marked-alt input-icon"></i>
-                                        <input type="text" class="form-control-modern" name="location" placeholder="e.g. District 1, Ho Chi Minh City" required>
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label class="font-weight-bold small text-dark">Website <span class="text-danger">*</span></label>
+                                            <div class="input-wrapper">
+                                                <i class="fas fa-link input-icon"></i>
+                                                <input type="url" class="form-control-modern https-input" name="website" placeholder="https://company.com" required>
+                                            </div>
+                                            <small class="text-danger error-msg d-none mt-1">Must start with https://</small>
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label class="font-weight-bold small text-dark">Founded Year</label>
+                                            <div class="input-wrapper">
+                                                <i class="far fa-calendar-alt input-icon"></i>
+                                                <input type="number" class="form-control-modern" name="foundedYear" placeholder="2015">
+                                            </div>
+                                        </div>
                                     </div>
-                                </div>
 
-                                <div class="form-group mb-4">
-                                    <label class="font-weight-bold small text-dark">Company Logo URL <span class="text-danger">*</span></label>
-                                    <div class="input-wrapper">
-                                        <i class="far fa-image input-icon"></i>
-                                        <input type="url" class="form-control-modern https-input" name="logoUrl" placeholder="https://example.com/logo.png" required pattern="https://.*">
+                                    <div class="form-group mb-3">
+                                        <label class="font-weight-bold small text-dark">Headquarters Location</label>
+                                        <div class="input-wrapper">
+                                            <i class="fas fa-map-marked-alt input-icon"></i>
+                                            <input type="text" class="form-control-modern" name="location" placeholder="e.g. District 1, Ho Chi Minh City" required>
+                                        </div>
                                     </div>
-                                    <small class="text-muted">Provide a direct link to your company logo (https required).</small>
-                                    <small class="text-danger error-msg d-none d-block">Must start with https://</small>
-                                </div>
 
-                                <button type="submit" class="btn btn-success btn-block shadow-lg py-3 font-weight-bold">
-                                    Finish Registration <i class="fas fa-check ml-2"></i>
-                                </button>
-                            </form>
+                                    <div class="form-group mb-4">
+                                        <label class="font-weight-bold small text-dark">Company Logo URL <span class="text-danger">*</span></label>
+                                        <div class="input-wrapper">
+                                            <i class="far fa-image input-icon"></i>
+                                            <input type="url" class="form-control-modern https-input" name="logoUrl" placeholder="https://example.com/logo.png" required>
+                                        </div>
+                                        <small class="text-muted">Direct link to logo image (https required).</small>
+                                        <small class="text-danger error-msg d-none d-block mt-1">Must start with https://</small>
+                                    </div>
+
+                                    <button type="submit" class="btn btn-success btn-block shadow-lg py-3 font-weight-bold">
+                                        Finish Registration <i class="fas fa-check ml-2"></i>
+                                    </button>
+                                </form>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+
+        <%- include('../partials/footer') %>
     </section>
 
     <script>
-        // Script kiểm tra HTTPS cho TẤT CẢ các ô input có class 'https-input'
         const form = document.getElementById('companyForm');
-        const inputs = document.querySelectorAll('.https-input');
+        const httpsInputs = document.querySelectorAll('.https-input');
 
-        inputs.forEach(input => {
+        httpsInputs.forEach(input => {
             input.addEventListener('input', function() {
                 const value = this.value.trim();
-                const errorMsg = this.parentElement.nextElementSibling.tagName === 'SMALL' 
+                // Tìm thẻ báo lỗi (thường là thẻ small nằm ngay sau div input-wrapper)
+                const errorDisplay = this.parentElement.nextElementSibling.tagName === 'SMALL' && this.parentElement.nextElementSibling.classList.contains('error-msg')
                     ? this.parentElement.nextElementSibling 
-                    : this.parentElement.nextElementSibling.nextElementSibling; // Tìm thẻ small báo lỗi
+                    : this.parentElement.nextElementSibling.nextElementSibling; // Bỏ qua text muted nếu có
 
                 if (value && !value.startsWith('https://')) {
-                    if(errorMsg) errorMsg.classList.remove('d-none');
+                    if(errorDisplay) errorDisplay.classList.remove('d-none');
                     this.classList.add('is-invalid');
                 } else {
-                    if(errorMsg) errorMsg.classList.add('d-none');
+                    if(errorDisplay) errorDisplay.classList.add('d-none');
                     this.classList.remove('is-invalid');
                 }
             });
@@ -142,26 +145,22 @@
 
         form.addEventListener('submit', function(e) {
             let isValid = true;
-            inputs.forEach(input => {
+            httpsInputs.forEach(input => {
                 const value = input.value.trim();
                 if (value && !value.startsWith('https://')) {
                     isValid = false;
                     input.classList.add('is-invalid');
-                    // Hiển thị lỗi
-                    const errorMsg = input.parentElement.nextElementSibling.tagName === 'SMALL' 
-                        ? input.parentElement.nextElementSibling 
-                        : input.parentElement.nextElementSibling.nextElementSibling;
-                    if(errorMsg) errorMsg.classList.remove('d-none');
+                    // Logic tìm thẻ lỗi tương tự
+                    const errorDisplay = input.parentElement.nextElementSibling.tagName === 'SMALL' && input.parentElement.nextElementSibling.classList.contains('error-msg')
+                    ? input.parentElement.nextElementSibling 
+                    : input.parentElement.nextElementSibling.nextElementSibling;
+                    if(errorDisplay) errorDisplay.classList.remove('d-none');
                 }
             });
 
             if (!isValid) {
                 e.preventDefault();
-                // Scroll tới lỗi đầu tiên
-                document.querySelector('.is-invalid').focus();
             }
         });
     </script>
-    
-    <%- include('../partials/footer') %>
 </body>

@@ -1,436 +1,178 @@
 /* ========================================
-   Modern Auth Page Styles - Ebolt Design
+   Modern Auth Page Styles - TechTalent Hub
    ======================================== */
 
 :root {
-  /* Thay đổi 2 dòng này để nền xanh hơn */
-  --sky-start: #4d89d8; /* Xanh hơn, sáng hơn một chút */
-  --sky-end: #9cb2d0;   /* Xanh đậm nhưng bớt tối hơn trước */
-
-  --logo-gradient: linear-gradient(45deg, #04466f, #140fb7); /* Gradient cho chữ Hub */
-  --glass-bg: rgba(255, 255, 255, 0.75);
+  --sky-start: #4d89d8; 
+  --sky-end: #9cb2d0;   
+  --primary-color: #0063FF;
+  --logo-gradient: linear-gradient(45deg, #04466f, #140fb7);
+  --glass-bg: rgba(255, 255, 255, 0.85);
   --glass-border: rgba(255, 255, 255, 0.9);
   --input-bg: #f4f5f7;
   --input-icon: #6b7280;
   --text-dark: #1f2937;
-  --text-muted: #6b7280;
   --cta-dark: linear-gradient(180deg, #2b2d31 0%, #1a1c1f 100%);
-  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.04);
-  --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.08);
-  --shadow-lg: 0 20px 40px rgba(0, 0, 0, 0.12);
+  --shadow-lg: 0 20px 40px rgba(0, 0, 0, 0.1);
 }
 
-/* ========== Sky Background ========== */
-.sky-hero {
-  min-height: 100vh;
-  background: linear-gradient(180deg, var(--sky-start) 0%, var(--sky-end) 50%, #ffffff 100%);
-  position: relative;
-  overflow: hidden;
-  padding: 0;
+/* --- Layout Fix (Footer không bị lấn) --- */
+.auth-layout-page {
+    margin: 0;
+    overflow-x: hidden;
 }
 
-.sky-hero .sky-arcs {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  background:
-    radial-gradient(100% 50% at 50% -5%, rgba(255,255,255,0.6) 0%, transparent 60%),
-    radial-gradient(80% 40% at 50% 0%, rgba(255,255,255,0.4) 0%, transparent 60%);
-  opacity: 0.8;
+.auth-hero {
+    min-height: 100vh; 
+    width: 100%;
+    position: relative;
+    background: linear-gradient(135deg, var(--sky-start) 0%, var(--sky-end) 100%);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* Đẩy footer xuống đáy */
 }
 
-.sky-hero .sky-clouds {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  height: 40%;
-  pointer-events: none;
-  filter: blur(50px);
-  opacity: 0.7;
-  background:
-    radial-gradient(circle at 10% 90%, rgba(255,255,255,0.9), transparent 50%),
-    radial-gradient(circle at 35% 95%, rgba(255,255,255,0.85), transparent 45%),
-    radial-gradient(circle at 65% 92%, rgba(255,255,255,0.9), transparent 48%),
-    radial-gradient(circle at 85% 88%, rgba(255,255,255,0.8), transparent 50%);
+footer {
+    width: 100%;
+    background-color: #cfd5dd !important; /* Màu tối giống style cũ */
+    position: relative;
+    z-index: 10;
 }
 
-/* ========== Brand Logo ========== */
+/* Wrapper bao quanh Card để căn giữa và đẩy footer */
+.auth-content-wrapper {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem 1rem;
+    z-index: 2;
+}
+
+/* --- Background Effects --- */
+.sky-arcs {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    background-image: url('/images/bg-shapes.svg'); /* Đảm bảo bạn có file này hoặc xóa dòng này */
+    background-size: cover;
+    opacity: 0.4;
+    z-index: 0;
+    pointer-events: none;
+}
+
+/* --- Logo --- */
 .brand-logo {
-  position: absolute;
-  top: 24px;
-  left: 32px;
-  display: flex;
-  align-items: center;
-  gap: 8px; /* Khoảng cách giữa icon và chữ */
-  z-index: 10;
+    position: absolute;
+    top: 20px;
+    left: 30px;
+    display: flex;
+    align-items: center;
+    z-index: 10;
+    text-decoration: none !important;
 }
 
-/* Style cho icon (lấy từ favicon) */
 .brand-logo-icon {
-  width: 45px;
-  height: 45px;
-}
-
-/* Xóa style cũ của .brand-name-full */
-/*
-.brand-name-full {
-  font-family: 'Segoe UI', 'Inter', sans-serif;
-  font-size: 20px;
-  font-weight: 600;
-  color: var(--text-dark);
-  letter-spacing: -0.5px;
-}
-*/
-
-/* Thêm style mới cho tên thương hiệu */
-.brand-name-container {
-  font-family: 'Segoe UI', 'Inter', sans-serif;
-  font-size: 30px;
-  font-weight: 600;
-  letter-spacing: -0.5px;
-  display: flex; /* Giữ các phần trên cùng một hàng */
+    height: 40px;
+    width: 40px;
+    margin-right: 10x;
 }
 
 .brand-name-main {
-  color: var(--text-dark); /* Phần "TechTalent" màu đen */
+    font-family: 'Inter', sans-serif;
+    font-weight: 700;
+    font-size: 1.5rem;
+    color: rgb(19, 19, 19);
 }
 
 .brand-name-accent {
-  font-weight: 700; /* Làm cho chữ "Hub" đậm hơn */
-  background: var(--logo-gradient);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  text-fill-color: transparent;
+    font-family: 'Inter', sans-serif;
+    font-weight: 700;
+    font-size: 1.5rem;
+    color: #2241a7;
 }
 
-
-/* ========== Glass Card ========== */
-.glass-card {
-  border-radius: 24px;
-  background: var(--glass-bg);
-  border: 1px solid var(--glass-border);
-  box-shadow: var(--shadow-lg);
-  backdrop-filter: blur(20px) saturate(150%);
-  -webkit-backdrop-filter: blur(20px) saturate(150%);
-  overflow: visible;
-  position: relative;
+/* --- Auth Card (Glassmorphism) --- */
+.auth-card {
+    border: 1px solid var(--glass-border);
+    background: var(--glass-bg);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-radius: 24px;
+    box-shadow: var(--shadow-lg);
 }
 
-.glass-card::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: 24px;
-  padding: 1px;
-  background: linear-gradient(180deg, rgba(255,255,255,0.8), rgba(255,255,255,0.2));
-  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  -webkit-mask-composite: xor;
-  mask-composite: exclude;
-  pointer-events: none;
-}
-
-/* ========== Badge Icon ========== */
-.sheet-badge {
-  width: 56px;
-  height: 56px;
-  border-radius: 16px;
-  display: grid;
-  place-items: center;
-  color: var(--text-dark);
-  background: linear-gradient(180deg, #ffffff 0%, #f9fafb 100%);
-  border: 1px solid rgba(255, 255, 255, 0.95);
-  box-shadow: 
-    0 8px 20px rgba(0, 0, 0, 0.08),
-    0 2px 6px rgba(0, 0, 0, 0.04);
-}
-
-.sheet-badge i {
-  font-size: 22px;
-}
-
-/* ========== Modern Input ========== */
+/* --- Inputs --- */
 .input-wrapper {
-  position: relative;
-  display: flex;
-  align-items: center;
+    position: relative;
 }
 
 .input-icon {
-  position: absolute;
-  left: 16px;
-  color: var(--input-icon);
-  font-size: 15px;
-  pointer-events: none;
-  z-index: 2;
+    position: absolute;
+    left: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--input-icon);
+    z-index: 2;
 }
 
 .form-control-modern {
-  width: 100%;
-  height: 48px;
-  padding: 0 16px 0 44px;
-  background: var(--input-bg);
-  border: 1px solid transparent;
-  border-radius: 10px;
-  font-size: 15px;
-  color: var(--text-dark);
-  transition: all 0.2s ease;
-}
-
-.form-control-modern::placeholder {
-  color: #9ca3af;
+    height: 50px;
+    padding-left: 45px;
+    border-radius: 12px;
+    border: 1px solid #e5e7eb;
+    background-color: var(--input-bg);
+    font-size: 0.95rem;
+    width: 100%;
+    transition: all 0.3s ease;
 }
 
 .form-control-modern:focus {
-  outline: none;
-  background: #fff;
-  border-color: #d1d5db;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    background-color: #fff;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 4px rgba(0, 99, 255, 0.1);
+    outline: none;
 }
 
-/* Style cho thẻ select để giống input */
-select.form-control-modern {
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  appearance: none;
-  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
-  background-position: right 0.5rem center;
-  background-repeat: no-repeat;
-  background-size: 1.5em 1.5em;
-  padding-right: 2.5rem;
+.form-control-modern.is-invalid {
+    border-color: #dc3545;
+    background-image: none; /* Xóa icon lỗi mặc định của bootstrap để không đè icon của mình */
 }
 
-.form-control-modern.pr-5 {
-  padding-right: 44px;
-}
-
-/* ========== Toggle Password ========== */
-.toggle-password {
-  position: absolute;
-  right: 14px;
-  background: none;
-  border: none;
-  color: var(--input-icon);
-  cursor: pointer;
-  padding: 8px;
-  display: grid;
-  place-items: center;
-  transition: color 0.2s;
-}
-
-.toggle-password:hover {
-  color: var(--text-dark);
-}
-
-.toggle-password i {
-  font-size: 16px;
-}
-
-/* ========== Forgot Link ========== */
-.forgot-link {
-  font-size: 14px;
-  color: var(--text-dark);
-  text-decoration: none;
-  font-weight: 500;
-  transition: color 0.2s;
-}
-
-.forgot-link:hover {
-  color: #111827;
-  text-decoration: none;
-}
-
-/* ========== CTA Button ========== */
+/* --- Buttons --- */
 .btn-cta-dark {
-  height: 48px;
-  border-radius: 10px;
-  background: var(--cta-dark);
-  color: #ffffff;
-  border: none;
-  font-weight: 600;
-  font-size: 15px;
-  box-shadow: 
-    0 4px 12px rgba(0, 0, 0, 0.15),
-    0 1px 3px rgba(0, 0, 0, 0.1);
-  transition: all 0.2s ease;
-  cursor: pointer;
+    background: var(--cta-dark);
+    color: #fff;
+    height: 50px;
+    border-radius: 12px;
+    font-weight: 600;
+    border: none;
+    transition: transform 0.2s;
 }
 
 .btn-cta-dark:hover {
-  transform: translateY(-1px);
-  box-shadow: 
-    0 8px 20px rgba(0, 0, 0, 0.2),
-    0 2px 6px rgba(0, 0, 0, 0.12);
-  color: #ffffff;
+    transform: translateY(-2px);
+    color: #fff;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.2);
 }
 
-.btn-cta-dark:active {
-  transform: translateY(0);
-}
-
-/* ========== Divider ========== */
-.divider-modern {
-  display: flex;
-  align-items: center;
-  text-align: center;
-  color: var(--text-muted);
-  font-size: 13px;
-}
-
-.divider-modern::before,
-.divider-modern::after {
-  content: "";
-  flex: 1;
-  height: 1px;
-  background: #e5e7eb;
-}
-
-.divider-text {
-  padding: 0 16px;
-  white-space: nowrap;
-}
-
-/* ========== Social Buttons ========== */
-.social-buttons {
-  display: flex;
-  justify-content: center;
-  gap: 12px;
-}
-
-.social-btn {
-  width: 48px;
-  height: 48px;
-  border-radius: 10px;
-  border: 1px solid #e5e7eb;
-  background: #ffffff;
-  display: grid;
-  place-items: center;
-  color: #1f2937;
-  font-size: 18px;
-  transition: all 0.2s ease;
-  text-decoration: none;
-  box-shadow: var(--shadow-sm);
-}
-
-.social-btn:hover {
-  background: #f9fafb;
-  border-color: #d1d5db;
-  transform: translateY(-1px);
-  box-shadow: var(--shadow-md);
-}
-
-.social-btn .fa-google {
-  color: #EA4335;
-}
-
-.social-btn .fa-facebook-f {
-  color: #1877F2;
-}
-
-.social-btn-apple {
-  color: #000000;
-}
-
-/* Thêm style cho link đăng ký/đăng nhập */
-.register-link-container {
-  text-align: center;
-  margin-top: 1.5rem;
-  font-size: 14px;
-  color: var(--text-muted);
-}
-
-.register-link-container a {
-  color: var(--text-dark);
-  font-weight: 600;
-  text-decoration: none;
-  transition: color 0.2s;
-}
-
-.register-link-container a:hover {
-  color: #111827;
-  text-decoration: underline;
-}
-
-/* ========== Alerts ========== */
-.auth-alert {
-  border-radius: 12px;
-  border: none;
-  font-size: 14px;
-  padding: 12px 16px;
-  display: flex;
-  align-items: center;
-}
-
-.alert-danger {
-  background: #fef2f2;
-  color: #991b1b;
-}
-
-.alert-success {
-  background: #f0fdf4;
-  color: #166534;
-}
-
-/* ========== Responsive ========== */
-@media (max-width: 576px) {
-  .brand-logo {
-    top: 16px;
-    left: 16px;
-  }
-  
-  .glass-card {
-    border-radius: 20px;
-  }
-  
-  .card-body {
-    padding: 2rem 1.5rem !important;
-  }
-  
-  .sheet-badge {
-    width: 48px;
-    height: 48px;
-    border-radius: 14px;
-  }
-  
-  .sheet-badge i {
-    font-size: 20px;
-  }
-}
-
-/* ========== Accessibility ========== */
-@media (prefers-reduced-motion: reduce) {
-  * {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-  }
-}
-
-/* Focus visible for keyboard navigation */
-.form-control-modern:focus-visible,
-.btn-cta-dark:focus-visible,
-.social-btn:focus-visible,
-.toggle-password:focus-visible {
-  outline: 2px solid #3b82f6;
-  outline-offset: 2px;
-}
-
-/* --- Role Selection (Dùng cho Register) --- */
+/* --- Role Selection (Register) --- */
 .role-option input {
     display: none;
 }
 
 .role-card {
-    border: 2px solid rgba(0, 0, 0, 0.1);
+    border: 2px solid rgba(0, 0, 0, 0.05);
     border-radius: 12px;
     padding: 15px;
     text-align: center;
     cursor: pointer;
     transition: all 0.3s ease;
-    background: rgba(255, 255, 255, 0.5);
+    background: rgba(255, 255, 255, 0.6);
     color: #6c757d;
-    height: 100%; /* Đảm bảo chiều cao bằng nhau */
+    height: 100%;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -438,32 +180,70 @@ select.form-control-modern {
 }
 
 .role-option input:checked + .role-card {
-    border-color: #0063FF;
-    background: rgba(0, 99, 255, 0.1);
-    color: #0063FF;
-    font-weight: bold;
-    box-shadow: 0 4px 10px rgba(0, 99, 255, 0.15);
+    border-color: var(--primary-color);
+    background: rgba(0, 99, 255, 0.08);
+    color: var(--primary-color);
+    font-weight: 700;
+    box-shadow: 0 4px 12px rgba(0, 99, 255, 0.15);
 }
 
 .role-card i {
-    font-size: 1.5rem;
+    font-size: 1.8rem;
     margin-bottom: 0.5rem;
     display: block;
 }
 
-/* --- Upload Box (Dùng cho Setup Profile) --- */
-.upload-box {
-    border: 2px dashed #cbd5e0;
-    border-radius: 12px;
-    padding: 30px;
-    text-align: center;
-    cursor: pointer;
-    display: block;
-    background: rgba(255, 255, 255, 0.6);
-    transition: all 0.3s;
+/* --- Social Buttons --- */
+.social-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-bottom: 20px;
 }
 
-.upload-box:hover {
-    background: rgba(255, 255, 255, 0.9);
-    border-color: #0063FF;
+.social-btn {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    border: 1px solid #e5e7eb;
+    background: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #333;
+    font-size: 1.2rem;
+    transition: all 0.3s;
+    text-decoration: none;
+}
+
+.social-btn:hover {
+    background-color: #f8f9fa;
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    color: var(--primary-color);
+}
+
+.divider-modern {
+    display: flex;
+    align-items: center;
+    text-align: center;
+    color: #9ca3af;
+    font-size: 0.85rem;
+}
+.divider-modern::before, .divider-modern::after {
+    content: '';
+    flex: 1;
+    border-bottom: 1px solid #e5e7eb;
+}
+.divider-text {
+    padding: 0 10px;
+}
+
+/* --- Footer in Auth Page --- */
+.auth-hero footer {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    background: rgba(0, 0, 0, 0.8) !important; /* Footer tối màu cho hợp nền trời */
+    margin-top: 0 !important; /* Xóa margin mặc định của footer cũ */
 }
