@@ -9,7 +9,7 @@ const login = async (req, res, next) => {
         req.session.user = user
 
         console.log('User logged in:', user);
-        
+
         req.session.save((err) => {
             if (err) return next(err);
             res.redirect('/')
@@ -54,6 +54,9 @@ const register = async (req, res, next) => {
 // --- EXPORT ---
 export const authController = {
     register,
+    register,
     login,
-    logout
+    logout,
+    setupCompany,
+    setupSeeker
 }
