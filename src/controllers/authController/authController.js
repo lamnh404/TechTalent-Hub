@@ -1,5 +1,4 @@
 import { authModel } from '~/models/authModel/authModel.js'
-import { regModel } from '~/models/authModel/regModel.js'
 
 // --- LOGIN ---
 const login = async (req, res, next) => {
@@ -54,9 +53,6 @@ const register = async (req, res, next) => {
 // --- EXPORT ---
 export const authController = {
     register,
-    register,
     login,
-    logout,
-    setupCompany,
-    setupSeeker
+    logout
 }
