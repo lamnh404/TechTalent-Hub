@@ -1,10 +1,26 @@
 <%
-    // Default role if not provided
-    const userRole = typeof role !== 'undefined' ? role : 'guest';
-    const userName = typeof user !== 'undefined' ? user.name : 'Guest';
+    // 1. Xử lý logic User & Role
+    let currentUser = null;
+    let currentRole = 'guest';
+    let displayName = 'Guest';
+    let userAvatar = '/images/default-avatar.png';
+
+    if (typeof user !== 'undefined' && user) {
+        currentUser = user;
+        // [QUAN TRỌNG] In ra console của server để kiểm tra xem Backend đang trả về userType là gì
+        // Bạn hãy xem terminal chạy server để biết giá trị chính xác
+        console.log("DEBUG NAVBAR - UserType from DB:", user.userType);
+
+        // Fallback: Nếu userType null hoặc undefined thì gán tạm là 'guest' để không bị lỗi
+        currentRole = user.userType || 'guest'; 
+        
+        displayName = user.name || (user.email ? user.email.split('@')[0] : 'User');
+        if (user.avatarUrl) {
+            userAvatar = user.avatarUrl;
+        }
+    }
 %>
 
-<!-- Thay đổi class ở đây -->
 <nav class="navbar navbar-expand-lg navbar-light fixed-top navbar-glass">
     <div class="container-fluid">
         <a class="navbar-brand" href="/">
@@ -17,156 +33,95 @@
         </button>
         
         <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav ml-auto">
-                <!-- Common Links -->
-                <li class="nav-item">
-                    <a class="nav-link" href="/">Home</a>
-                </li>
+            <ul class="navbar-nav ml-auto align-items-center">
                 
-                <% if (userRole === 'guest') { %>
-                    <!-- Guest Navigation -->
+                <% if (!currentUser) { %>
                     <li class="nav-item">
-                        <a class="nav-link" href="/jobs">Browse Jobs</a>
+                        <a class="nav-link" href="/">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/jobs">Find Jobs</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="/companies">Companies</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/about">About</a>
+                    <li class="nav-item ml-3">
+                        <a class="nav-link font-weight-bold" href="/login">Sign In</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link btn btn-outline-primary ml-lg-2" href="/login">Login</a>
+                    <li class="nav-item ml-2">
+                        <a class="btn btn-primary btn-sm px-4 rounded-pill shadow-sm" href="/register">Sign Up</a>
                     </li>
+                <% } %>
+
+                <% if (currentUser && currentRole === 'JobSeeker') { %>
                     <li class="nav-item">
-                        <a class="nav-link btn btn-primary text-white ml-lg-2" href="/register">Sign Up</a>
-                    </li>
-                <% } else if (userRole === 'Admin' || userRole === 'admin') { %>
-                    <!-- Admin Navigation -->
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="adminDropdown" role="button" data-toggle="dropdown">
-                            User Management
-                        </a>
-                        <div class="dropdown-menu">
-                            <a class="dropdown-item" href="/admin/users">All Users</a>
-                            <a class="dropdown-item" href="/admin/users?role=JobSeeker">Job Seekers</a>
-                            <a class="dropdown-item" href="/admin/users?role=Company">Companies</a>
-                        </div>
+                        <a class="nav-link" href="/jobs"><i class="fas fa-search mr-1"></i> Find Jobs</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/admin/analytics">Analytics</a>
+                        <a class="nav-link" href="/seeker/applications"><i class="fas fa-file-alt mr-1"></i> Applications</a>
                     </li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="profileDropdown" role="button" data-toggle="dropdown">
-                            <%= userName %>
-                        </a>
-                        <div class="dropdown-menu dropdown-menu-right">
-                            <a class="dropdown-item" href="/admin/profile">Settings</a>
-                            <div class="dropdown-divider"></div>
-                            <a class="dropdown-item text-danger" href="/logout">Logout</a>
-                        </div>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/seeker/saved-jobs"><i class="far fa-heart mr-1"></i> Saved</a>
                     </li>
-                <% } else if (userRole === 'Company' || userRole === 'company') { %>
-                    <!-- Company Navigation -->
+                <% } %>
+
+                <% if (currentUser && currentRole === 'Company') { %>
                     <li class="nav-item">
                         <a class="nav-link" href="/company/dashboard">Dashboard</a>
                     </li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="jobsDropdown" role="button" data-toggle="dropdown">
-                            Jobs
-                        </a>
-                        <div class="dropdown-menu">
-                            <a class="dropdown-item" href="/company/jobs">My Job Posts</a>
-                            <a class="dropdown-item" href="/company/jobs/create">Post New Job</a>
-                        </div>
-                    </li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="companyProfileDropdown" role="button" data-toggle="dropdown">
-                            <%= userName %>
-                        </a>
-                        <div class="dropdown-menu dropdown-menu-right">
-                            <a class="dropdown-item" href="/company/profile">Company Profile</a>
-                            <div class="dropdown-divider"></div>
-                            <a class="dropdown-item text-danger" href="/logout">Logout</a>
-                        </div>
-                    </li>
-                <% } else if (userRole === 'JobSeeker' || userRole === 'jobseeker') { %>
-                    <!-- Job Seeker Navigation -->
                     <li class="nav-item">
-                        <a class="nav-link" href="/jobs">Browse Jobs</a>
+                        <a class="nav-link" href="/company/jobs">Manage Jobs</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/seeker/applications">My Applications</a>
+                        <a class="nav-link" href="/company/candidates">Find Candidates</a>
                     </li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="seekerProfileDropdown" role="button" data-toggle="dropdown">
-                            <%= userName %>
+                    <li class="nav-item ml-2">
+                        <a class="btn btn-primary btn-sm px-3 shadow-sm" href="/company/jobs/create">
+                            <i class="fas fa-plus mr-1"></i> Post a Job
                         </a>
-                        <div class="dropdown-menu dropdown-menu-right">
-                            <a class="dropdown-item" href="/seeker/profile">My Profile</a>
+                    </li>
+                <% } %>
+
+                <% if (currentUser && (currentRole === 'Admin' || currentRole === 'admin')) { %>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/admin/dashboard">Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/admin/users">User Management</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/admin/settings">System</a>
+                    </li>
+                <% } %>
+
+                <% if (currentUser) { %>
+                    <li class="nav-item dropdown ml-3">
+                        <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userDropdown" role="button" data-toggle="dropdown">
+                            <img src="<%= userAvatar %>" alt="Avatar" class="rounded-circle mr-2 shadow-sm" width="32" height="32" style="object-fit: cover; border: 2px solid #fff;">
+                            <span class="font-weight-bold text-dark d-none d-lg-inline"><%= displayName %></span>
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-right border-0 shadow-lg mt-2 animate__animated animate__fadeIn">
+                            <div class="px-3 py-3 bg-light border-bottom mb-2 rounded-top">
+                                <p class="mb-0 text-muted small text-uppercase font-weight-bold"><%= currentRole %></p>
+                                <p class="mb-0 font-weight-bold text-truncate" style="max-width: 200px;"><%= currentUser.email %></p>
+                            </div>
+
+                            <% if (currentRole === 'JobSeeker') { %>
+                                <a class="dropdown-item" href="/seeker/profile"><i class="far fa-id-card mr-2 text-muted"></i> My Profile</a>
+                            <% } else if (currentRole === 'Company') { %>
+                                <a class="dropdown-item" href="/company/profile"><i class="far fa-building mr-2 text-muted"></i> Company Profile</a>
+                            <% } %>
+                            
+                            <a class="dropdown-item" href="/settings"><i class="fas fa-cog mr-2 text-muted"></i> Settings</a>
                             <div class="dropdown-divider"></div>
-                            <a class="dropdown-item text-danger" href="/logout">Logout</a>
+                            <a class="dropdown-item text-danger font-weight-bold" href="/auth/logout">
+                                <i class="fas fa-sign-out-alt mr-2"></i> Logout
+                            </a>
                         </div>
                     </li>
                 <% } %>
+
             </ul>
         </div>
     </div>
 </nav>
-
-<style>
-/* Xóa style cũ và thêm style mới */
-.navbar-glass {
-    background: rgba(255, 255, 255, 0.7);
-    backdrop-filter: blur(15px) saturate(150%);
-    -webkit-backdrop-filter: blur(15px) saturate(150%);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.9);
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
-    padding: 0.75rem 1.5rem;
-}
-
-.navbar-glass .navbar-brand {
-    display: flex;
-    align-items: center;
-}
-
-.navbar-glass .brand-name-main {
-    font-family: 'Segoe UI', 'Inter', sans-serif;
-    font-size: 1.5rem;
-    font-weight: 600;
-    color: #1f2937;
-}
-
-.navbar-glass .brand-name-accent {
-    font-family: 'Segoe UI', 'Inter', sans-serif;
-    font-size: 1.5rem;
-    font-weight: 700;
-    background: linear-gradient(45deg, #04466f, #140fb7);
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-    text-fill-color: transparent;
-}
-
-.navbar-glass .nav-link {
-    color: #1f2937 !important;
-    font-weight: 500;
-    transition: color 0.2s;
-}
-
-.navbar-glass .nav-link:hover {
-    color: #0056b3 !important;
-}
-
-.navbar-glass .navbar-toggler {
-    border-color: rgba(0,0,0,0.2);
-}
-
-.navbar-glass .navbar-toggler-icon {
-    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba(31, 41, 55, 0.8)' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
-}
-
-/* Add padding to body to prevent content from being hidden under fixed navbar */
-body {
-    padding-top: 80px; /* Tăng padding để không bị che */
-}
-</style>

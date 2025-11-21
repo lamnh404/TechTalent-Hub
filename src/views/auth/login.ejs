@@ -1,142 +1,107 @@
 <%- include('../partials/header', { title: 'Đăng nhập' }) %>
 
-<section class="auth-hero sky-hero">
-  <!-- Logo góc trái -->
-  <div class="brand-logo">
-    <!-- Sử dụng favicon làm icon -->
-    <img src="/images/favicon-t.svg" alt="TechTalent Hub Logo" class="brand-logo-icon">
-    <!-- Tách chữ thành 2 phần để style riêng -->
-    <div class="brand-name-container">
-      <span class="brand-name-main">TechTalent</span><span class="brand-name-accent">Hub</span>
-    </div>
-  </div>
+<body class="auth-layout-page">
 
-  <!-- Vòng cung nhẹ nền trời -->
-  <div class="sky-arcs"></div>
-  <!-- Mảng mây phía dưới -->
-  <div class="sky-clouds"></div>
-
-  <div class="container">
-    <div class="row justify-content-center align-items-center min-vh-100">
-      <div class="col-sm-10 col-md-8 col-lg-6 col-xl-5">
-        <div class="card auth-card glass-card">
-          <div class="card-body p-4 p-md-5">
-
-            <!-- Badge icon trên đỉnh card -->
-            <div class="sheet-badge mx-auto mb-4">
-              <i class="fas fa-sign-in-alt"></i>
+    <section class="auth-hero sky-hero">
+        
+        <a href="/" class="brand-logo text-decoration-none">
+            <img src="/images/favicon-t.svg" alt="TechTalent Hub Logo" class="brand-logo-icon">
+            <div class="brand-name-container">
+                <span class="brand-name-main">TechTalent</span><span class="brand-name-accent">Hub</span>
             </div>
+        </a>
 
-            <div class="text-center mb-4">
-              <h3 class="mb-2 font-weight-bold">Sign in with email</h3>
-              <p class="text-muted small mb-0" style="font-size: 0.9rem; line-height: 1.5;">
-                Make a new doc to bring your words, data,<br>and teams together. For free
-              </p>
-            </div>
+        <div class="sky-arcs"></div>
+        <div class="sky-clouds"></div>
 
-            <% if (typeof error !== 'undefined' && error) { %>
-              <div class="alert alert-danger auth-alert" role="alert" aria-live="polite">
-                <i class="fas fa-exclamation-circle mr-2"></i><%= error %>
-              </div>
-            <% } %>
-            <% if (typeof success !== 'undefined' && success) { %>
-              <div class="alert alert-success auth-alert" role="alert" aria-live="polite">
-                <i class="fas fa-check-circle mr-2"></i><%= success %>
-              </div>
-            <% } %>
+        <div class="container">
+            <div class="row justify-content-center align-items-center min-vh-100">
+                <div class="col-sm-10 col-md-8 col-lg-6 col-xl-5">
+                    <div class="card auth-card glass-card">
+                        <div class="card-body p-4 p-md-5">
 
-            <form action="/login" method="POST" id="loginForm" novalidate>
-              
-              <!-- Email Input -->
-              <div class="form-group mb-3">
-                <div class="input-wrapper">
-                  <i class="far fa-envelope input-icon"></i>
-                  <input
-                    type="email"
-                    class="form-control-modern"
-                    id="email"
-                    name="email"
-                    placeholder="Email"
-                    value="<%= typeof email !== 'undefined' ? email : '' %>"
-                    required
-                    autocomplete="email"
-                  >
+                            <div class="sheet-badge mx-auto mb-4">
+                                <i class="fas fa-sign-in-alt"></i>
+                            </div>
+
+                            <div class="text-center mb-4">
+                                <h3 class="mb-2 font-weight-bold">Welcome Back!</h3>
+                                <p class="text-muted small mb-0">Login to continue your journey.</p>
+                            </div>
+
+                            <% if (typeof error !== 'undefined' && error) { %>
+                                <div class="alert alert-danger auth-alert" role="alert">
+                                    <i class="fas fa-exclamation-circle mr-2"></i><%= error %>
+                                </div>
+                            <% } %>
+                            <% if (typeof success !== 'undefined' && success) { %>
+                                <div class="alert alert-success auth-alert" role="alert">
+                                    <i class="fas fa-check-circle mr-2"></i><%= success %>
+                                </div>
+                            <% } %>
+
+                            <form action="/auth/login" method="POST" id="loginForm" novalidate>
+                                <div class="form-group mb-3">
+                                    <div class="input-wrapper">
+                                        <i class="far fa-envelope input-icon"></i>
+                                        <input type="email" class="form-control-modern" id="email" name="email" placeholder="Email" value="<%= typeof email !== 'undefined' ? email : '' %>" required autocomplete="email">
+                                    </div>
+                                </div>
+
+                                <div class="form-group mb-2">
+                                    <div class="input-wrapper">
+                                        <i class="fas fa-lock input-icon"></i>
+                                        <input type="password" class="form-control-modern pr-5" id="password" name="password" placeholder="Password" required autocomplete="current-password">
+                                        <button type="button" class="toggle-password" id="togglePassword">
+                                            <i class="fas fa-eye-slash" id="eyeIcon"></i>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div class="text-right mb-4">
+                                    <a href="/auth/forgot-password" class="forgot-link">Forgot password?</a>
+                                </div>
+
+                                <button type="submit" class="btn btn-cta-dark btn-block">
+                                    Sign In
+                                </button>
+                            </form>
+
+                            <div class="divider-modern my-4">
+                                <span class="divider-text">Or sign in with</span>
+                            </div>
+
+                            <div class="social-buttons">
+                                <a class="social-btn" href="/auth/google"><i class="fab fa-google"></i></a>
+                                <a class="social-btn" href="/auth/facebook"><i class="fab fa-facebook-f"></i></a>
+                                <a class="social-btn social-btn-apple" href="/auth/apple"><i class="fab fa-apple"></i></a>
+                            </div>
+
+                            <div class="register-link-container">
+                                Don't have an account yet? <a href="/register" class="font-weight-bold">Register for free</a>
+                            </div>
+
+                        </div>
+                    </div>
                 </div>
-              </div>
-
-              <!-- Password Input -->
-              <div class="form-group mb-2">
-                <div class="input-wrapper">
-                  <i class="fas fa-lock input-icon"></i>
-                  <input
-                    type="password"
-                    class="form-control-modern pr-5"
-                    id="password"
-                    name="password"
-                    placeholder="Password"
-                    required
-                    autocomplete="current-password"
-                  >
-                  <button type="button" class="toggle-password" id="togglePassword" aria-label="Toggle password visibility">
-                    <i class="fas fa-eye-slash" id="eyeIcon"></i>
-                  </button>
-                </div>
-              </div>
-
-              <!-- Forgot Password Link -->
-              <div class="text-right mb-4">
-                <a href="/forgot-password" class="forgot-link">Forgot password?</a>
-              </div>
-
-              <!-- Submit Button -->
-              <button type="submit" class="btn btn-cta-dark btn-block">
-                Get Started
-              </button>
-            </form>
-
-            <!-- Divider -->
-            <div class="divider-modern my-4">
-              <span class="divider-text">Or sign in with</span>
             </div>
-
-            <!-- Social Login -->
-            <div class="social-buttons">
-              <a class="social-btn" href="/auth/google" aria-label="Sign in with Google">
-                <i class="fab fa-google"></i>
-              </a>
-              <a class="social-btn" href="/auth/facebook" aria-label="Sign in with Facebook">
-                <i class="fab fa-facebook-f"></i>
-              </a>
-              <a class="social-btn social-btn-apple" href="/auth/apple" aria-label="Sign in with Apple">
-                <i class="fab fa-apple"></i>
-              </a>
-            </div>
-
-            <!-- Thêm link đăng ký ở đây -->
-            <div class="register-link-container">
-              Don't have an account yet? <a href="/register">Register for free</a>
-            </div>
-
-          </div>
         </div>
-      </div>
-    </div>
-  </div>
-</section>
+    </section>
+
+    <%- include('../partials/footer') %>
+</body>
 
 <script>
 // Toggle Password Visibility
 document.getElementById('togglePassword')?.addEventListener('click', function(e) {
-  e.preventDefault();
-  const password = document.getElementById('password');
-  const eyeIcon = document.getElementById('eyeIcon');
-  if (!password || !eyeIcon) return;
-  
-  const isHidden = password.type === 'password';
-  password.type = isHidden ? 'text' : 'password';
-  eyeIcon.classList.toggle('fa-eye-slash', !isHidden);
-  eyeIcon.classList.toggle('fa-eye', isHidden);
+    e.preventDefault();
+    const password = document.getElementById('password');
+    const eyeIcon = document.getElementById('eyeIcon');
+    if (!password || !eyeIcon) return;
+    
+    const isHidden = password.type === 'password';
+    password.type = isHidden ? 'text' : 'password';
+    eyeIcon.classList.toggle('fa-eye-slash', !isHidden);
+    eyeIcon.classList.toggle('fa-eye', isHidden);
 });
 </script>
-
-<%- include('../partials/footer') %>

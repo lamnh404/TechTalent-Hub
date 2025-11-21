@@ -415,3 +415,55 @@ select.form-control-modern {
   outline: 2px solid #3b82f6;
   outline-offset: 2px;
 }
+
+/* --- Role Selection (Dùng cho Register) --- */
+.role-option input {
+    display: none;
+}
+
+.role-card {
+    border: 2px solid rgba(0, 0, 0, 0.1);
+    border-radius: 12px;
+    padding: 15px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background: rgba(255, 255, 255, 0.5);
+    color: #6c757d;
+    height: 100%; /* Đảm bảo chiều cao bằng nhau */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.role-option input:checked + .role-card {
+    border-color: #0063FF;
+    background: rgba(0, 99, 255, 0.1);
+    color: #0063FF;
+    font-weight: bold;
+    box-shadow: 0 4px 10px rgba(0, 99, 255, 0.15);
+}
+
+.role-card i {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+    display: block;
+}
+
+/* --- Upload Box (Dùng cho Setup Profile) --- */
+.upload-box {
+    border: 2px dashed #cbd5e0;
+    border-radius: 12px;
+    padding: 30px;
+    text-align: center;
+    cursor: pointer;
+    display: block;
+    background: rgba(255, 255, 255, 0.6);
+    transition: all 0.3s;
+}
+
+.upload-box:hover {
+    background: rgba(255, 255, 255, 0.9);
+    border-color: #0063FF;
+}
