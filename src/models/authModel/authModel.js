@@ -23,7 +23,7 @@ const login = async(email, password) => {
         if (!isPasswordValid) {
             throw new ApiError('Invalid email or password', StatusCodes.UNAUTHORIZED)
         }
-
+        console.log('AuthModel: pickUserFields(user):', pickUserFields(user));
         return pickUserFields(user)
     } catch (error) {
         throw new Error(error)

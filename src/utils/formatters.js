@@ -1,9 +1,9 @@
 
 export const pickUserFields = (user) => {
     return {
-        id: user.UserId,
-        email: user.Email,
-        userType: user.UserType,
-        avatarUrl: user.AvatarUrl
+        id: user.userId,
+        email: user.email,
+        userType: user.userType,
+        avatarUrl: user.avatarUrl
     }
 }
