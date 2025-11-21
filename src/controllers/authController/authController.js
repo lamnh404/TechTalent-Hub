@@ -1,6 +1,4 @@
 import { authModel } from '~/models/authModel/authModel.js'
-import { regModel } from '~/models/authModel/regModel.js'
-
 
 const login = async (req, res, next) => {
     try {
@@ -9,7 +7,7 @@ const login = async (req, res, next) => {
         req.session.user = user
 
         console.log('User logged in:', user);
-        
+
         req.session.save((err) => {
             if (err) return next(err);
             res.redirect('/')
@@ -21,34 +19,63 @@ const login = async (req, res, next) => {
 }
 
 const logout = (req, res) => {
-    // 1. Hủy session
     req.session.destroy((err) => {
         if (err) {
             console.error('Error destroying session:', err);
             return res.status(500).send('Could not log out.');
         }
-const register = async (req, res, next) => {
-    try {
-        const { name, email, password, role } = req.body
-        const user = await regModel.register(name, email, password, role)
-        res.redirect('/login')
 
-        // 2. Xóa cookie ở phía client (tên cookie mặc định là 'connect.sid', kiểm tra lại trong server.js nếu bạn đổi tên)
         res.clearCookie('connect.sid');
 
-        // 3. Chuyển hướng về trang chủ hoặc trang login
         res.redirect('/');
     });
-};
+}
 
+const register = async (req, res, next) => {
+    try {
+        const { email, password, role } = req.body
+        const user = await authModel.register(email, password, role)
+
+        req.session.user = user
+        req.session.save((err) => {
+            if (err) return next(err);
+
+            if (role === 'Company') {
+                res.redirect('/setup-company')
+            } else {
+                res.redirect('/setup-seeker')
+            }
+        });
 
     } catch (error) {
         next(error)
     }
 }
 
+const setupCompany = async (req, res, next) => {
+    try {
+        const userId = req.session.user.id
+        await authModel.setupCompany(userId, req.body)
+        res.redirect('/')
+    } catch (error) {
+        next(error)
+    }
+}
+
+const setupSeeker = async (req, res, next) => {
+    try {
+        const userId = req.session.user.id
+        await authModel.setupSeeker(userId, req.body)
+        res.redirect('/')
+    } catch (error) {
+        next(error)
+    }
+}
+
 export const authController = {
-    register
+    register,
     login,
-    logout
+    logout,
+    setupCompany,
+    setupSeeker
 }
