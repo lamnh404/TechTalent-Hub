@@ -38,44 +38,38 @@ const register = async (email, password, role) => {
             .query('SELECT userId FROM [User] WHERE email = @email')
 
         if (existingUser.recordset.length > 0) {
-            throw new ApiError('Email already exists', StatusCodes.CONFLICT)
+            throw new ApiError(StatusCodes.CONFLICT, 'Email already exists')
         }
 
         const passwordHash = await hash(password, 12)
-        await pool.request()
-            .input('email', email)
-            .input('passwordHash', passwordHash)
-            .input('userType', role)
-            .query(`
-        INSERT INTO [User] (Email, PasswordHash, UserType, AccountStatus, RegistrationDate)
-        VALUES (@email, @passwordHash, @userType, 'Disabled', GETDATE())
-      `)
 
-        const userResult = await pool.request()
-            .input('email', email)
-            .query(`
-            SELECT userId, email, passwordHash, userType, avatarUrl 
-            FROM [User] 
-            WHERE email = @email`)
-        const newUser = userResult.recordset[0]
-
-        return pickUserFields(newUser)
+        return { email, passwordHash, role }
     } catch (error) {
         throw new Error(error)
     }
 }
 
-const deleteMail = async (email) => {
-    const pool = GET_SQL_POOL()
-    await pool.request()
-        .input('email', email)
-        .query('DELETE FROM [User] WHERE Email = @email')
-}
-
-const setupCompany = async (userId, data) => {
-    const pool = GET_SQL_POOL()
+const setupCompany = async (userData, profileData) => {
     try {
-        const { companyName, industry, size, website, foundedYear, logoUrl, description } = data
+        const pool = GET_SQL_POOL()
+
+        const { email, passwordHash, role } = userData
+        const { companyName, industry, size, website, foundedYear, logoUrl, description } = profileData
+
+        const userResult = await pool.request()
+            .input('email', email)
+            .input('passwordHash', passwordHash)
+            .input('userType', role)
+            .query(`
+                INSERT INTO [User] (Email, PasswordHash, UserType, AccountStatus, RegistrationDate)
+                VALUES (@email, @passwordHash, @userType, 'Active', GETDATE())
+            `)
+
+        const regUser = await pool.request()
+            .input('email', email)
+            .query('SELECT userId FROM [User] WHERE email = @email')
+
+        const userId = regUser.recordset[0].userId
 
         await pool.request()
             .input('userId', userId)
@@ -91,28 +85,33 @@ const setupCompany = async (userId, data) => {
                 VALUES (@userId, @companyName, @industry, @size, @website, @foundedYear, @logoUrl, @description, 'PENDING')
             `)
 
-        await pool.request()
-            .input('userId', userId)
-            .query('UPDATE [User] SET AccountStatus = \'Active\' WHERE UserId = @userId')
-
-        return { message: 'Company setup successful' }
+        return { userId, ...userData }
     } catch (error) {
-        // Rollback: Delete the user if setup fails
-        try {
-            await pool.request()
-                .input('userId', userId)
-                .query('DELETE FROM [User] WHERE UserId = @userId')
-        } catch (deleteError) {
-            console.error('Failed to rollback user creation:', deleteError)
-        }
         throw new Error(error)
     }
 }
 
-const setupSeeker = async (userId, data) => {
-    const pool = GET_SQL_POOL()
+const setupSeeker = async (userData, profileData) => {
     try {
-        const { firstName, lastName, experienceLevel, location, cvUrl, summary } = data
+        const pool = GET_SQL_POOL()
+
+        const { email, passwordHash, role } = userData
+        const { firstName, lastName, experienceLevel, location, cvUrl, summary } = profileData
+
+        const userResult = await pool.request()
+            .input('email', email)
+            .input('passwordHash', passwordHash)
+            .input('userType', role)
+            .query(`
+                INSERT INTO [User] (Email, PasswordHash, UserType, AccountStatus, RegistrationDate)
+                VALUES (@email, @passwordHash, @userType, 'Active', GETDATE())
+            `)
+
+        const regUser = await pool.request()
+            .input('email', email)
+            .query('SELECT userId FROM [User] WHERE email = @email')
+
+        const userId = regUser.recordset[0].userId
 
         await pool.request()
             .input('userId', userId)
@@ -127,20 +126,8 @@ const setupSeeker = async (userId, data) => {
                 VALUES (@userId, @firstName, @lastName, @experienceLevel, @location, @cvUrl, @summary)
             `)
 
-        await pool.request()
-            .input('userId', userId)
-            .query('UPDATE [User] SET AccountStatus = \'Active\' WHERE UserId = @userId')
-
-        return { message: 'JobSeeker setup successful' }
+        return { userId, ...userData }
     } catch (error) {
-        // Rollback: Delete the user if setup fails
-        try {
-            await pool.request()
-                .input('userId', userId)
-                .query('DELETE FROM [User] WHERE UserId = @userId')
-        } catch (deleteError) {
-            console.error('Failed to rollback user creation:', deleteError)
-        }
         throw new Error(error)
     }
 }
@@ -149,6 +136,5 @@ export const authModel = {
     login,
     register,
     setupCompany,
-    setupSeeker,
-    deleteMail
+    setupSeeker
 }
