@@ -11,19 +11,18 @@ router.get('/register', (req, res) => {
     res.render('auth/register.ejs', { title: 'Register' })
 })
 
-router.get('/setup-company', (req, res) => {
-    res.render('auth/setup-company.ejs', { title: 'Company Setup' })
-})
-
 router.get('/setup-seeker', (req, res) => {
-    res.render('auth/setup-seeker.ejs', { title: 'Seeker Setup' })
+    res.render('auth/setup-seeker.ejs', { title: 'Seeker Profile Setup' })
+})
+router.get('/setup-company', (req, res) => {
+    res.render('auth/setup-company.ejs', { title: 'Company Profile Setup' })
 })
 
 router.get('/auth/logout', authController.logout)
 
 router.post('/auth/login', authController.login)
 router.post('/auth/register', authController.register)
-router.post('/auth/setup-company', authController.setupCompany)
 router.post('/auth/setup-seeker', authController.setupSeeker)
+router.post('/auth/setup-company', authController.setupCompany)
 
 export const authRouter = router

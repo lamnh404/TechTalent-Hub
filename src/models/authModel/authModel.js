@@ -16,17 +16,16 @@ const login = async (email, password) => {
         const user = result.recordset[0]
 
         if (!user) {
-            throw new ApiError('Invalid email or password', StatusCodes.UNAUTHORIZED)
+            throw new ApiError(StatusCodes.UNAUTHORIZED, 'Invalid email or password')
         }
         const isPasswordValid = await compare(password, user.passwordHash)
 
         if (!isPasswordValid) {
-            throw new ApiError('Invalid email or password', StatusCodes.UNAUTHORIZED)
+            throw new ApiError(StatusCodes.UNAUTHORIZED, 'Invalid email or password')
         }
-        console.log('AuthModel: pickUserFields(user):', pickUserFields(user));
         return pickUserFields(user)
     } catch (error) {
-        throw new Error(error)
+        throw new ApiError(StatusCodes.INTERNAL_SERVER_ERROR, error.message)
     }
 }
 
@@ -66,6 +65,13 @@ const register = async (email, password, role) => {
     }
 }
 
+const deleteMail = async (email) => {
+    const pool = GET_SQL_POOL()
+    await pool.request()
+        .input('email', email)
+        .query('DELETE FROM [User] WHERE Email = @email')
+}
+
 const setupCompany = async (userId, data) => {
     const pool = GET_SQL_POOL()
     try {
@@ -87,7 +93,7 @@ const setupCompany = async (userId, data) => {
 
         await pool.request()
             .input('userId', userId)
-            .query("UPDATE [User] SET AccountStatus = 'Active' WHERE UserId = @userId")
+            .query('UPDATE [User] SET AccountStatus = \'Active\' WHERE UserId = @userId')
 
         return { message: 'Company setup successful' }
     } catch (error) {
@@ -123,7 +129,7 @@ const setupSeeker = async (userId, data) => {
 
         await pool.request()
             .input('userId', userId)
-            .query("UPDATE [User] SET AccountStatus = 'Active' WHERE UserId = @userId")
+            .query('UPDATE [User] SET AccountStatus = \'Active\' WHERE UserId = @userId')
 
         return { message: 'JobSeeker setup successful' }
     } catch (error) {
@@ -143,5 +149,6 @@ export const authModel = {
     login,
     register,
     setupCompany,
-    setupSeeker
+    setupSeeker,
+    deleteMail
 }

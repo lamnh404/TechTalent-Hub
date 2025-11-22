@@ -32,13 +32,6 @@
     justify-content: space-between; /* Đẩy footer xuống đáy */
 }
 
-footer {
-    width: 100%;
-    background-color: #cfd5dd !important; /* Màu tối giống style cũ */
-    position: relative;
-    z-index: 10;
-}
-
 /* Wrapper bao quanh Card để căn giữa và đẩy footer */
 .auth-content-wrapper {
     flex: 1;

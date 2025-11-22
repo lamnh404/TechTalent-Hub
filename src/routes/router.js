@@ -11,5 +11,4 @@ router.use('/', authRouter)
 
 router.use('/', pagesRouter)
 
-
 export const API = router
