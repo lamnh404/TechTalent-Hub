@@ -1,5 +1,4 @@
 <%
-    // 1. Xử lý logic User & Role
     let currentUser = null;
     let currentRole = 'guest';
     let displayName = 'Guest';
@@ -7,13 +6,9 @@
 
     if (typeof user !== 'undefined' && user) {
         currentUser = user;
-        // [QUAN TRỌNG] In ra console của server để kiểm tra xem Backend đang trả về userType là gì
-        // Bạn hãy xem terminal chạy server để biết giá trị chính xác
-        console.log("DEBUG NAVBAR - UserType from DB:", user.userType);
 
-        // Fallback: Nếu userType null hoặc undefined thì gán tạm là 'guest' để không bị lỗi
-        currentRole = user.userType || 'guest'; 
-        
+        currentRole = user.userType || 'guest';
+
         displayName = user.name || (user.email ? user.email.split('@')[0] : 'User');
         if (user.avatarUrl) {
             userAvatar = user.avatarUrl;
@@ -27,14 +22,14 @@
             <img src="/images/logo.svg" alt="Logo" width="30" height="30" class="d-inline-block align-top mr-2">
             <span class="brand-name-main">TechTalent</span><span class="brand-name-accent">Hub</span>
         </a>
-        
+
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav">
             <span class="navbar-toggler-icon"></span>
         </button>
-        
+
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ml-auto align-items-center">
-                
+
                 <% if (!currentUser) { %>
                     <li class="nav-item">
                         <a class="nav-link" href="/">Home</a>
@@ -111,7 +106,7 @@
                             <% } else if (currentRole === 'Company') { %>
                                 <a class="dropdown-item" href="/company/profile"><i class="far fa-building mr-2 text-muted"></i> Company Profile</a>
                             <% } %>
-                            
+
                             <a class="dropdown-item" href="/settings"><i class="fas fa-cog mr-2 text-muted"></i> Settings</a>
                             <div class="dropdown-divider"></div>
                             <a class="dropdown-item text-danger font-weight-bold" href="/auth/logout">
