@@ -9,7 +9,7 @@ const searchController = {
             res.render("jobs/jobs", {
                 jobs,
                 keyword,
-                user: req.user
+                user: req.session.user
             });
         } catch (error) {
             console.error("Search error:", error);
