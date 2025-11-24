@@ -1,0 +1,30 @@
+<svg width="100%" height="100%" viewBox="0 0 1440 900" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="shapeGrad1" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#2D7BFF"/>
+      <stop offset="100%" stop-color="#00D4FF"/>
+    </linearGradient>
+    <linearGradient id="shapeGrad2" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#3A99FC"/>
+      <stop offset="100%" stop-color="#5EC8FF"/>
+    </linearGradient>
+    <filter id="blurMe">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="10" />
+    </filter>
+  </defs>
+
+  <!-- Shapes with blur -->
+  <g filter="url(#blurMe)" opacity="0.3">
+    <path d="M1100 150 C 1200 100, 1300 200, 1250 300 S 1100 400, 1150 350" stroke="url(#shapeGrad1)" stroke-width="40" stroke-linecap="round"/>
+    <path d="M200 700 C 300 650, 400 750, 350 850 S 200 900, 250 850" stroke="url(#shapeGrad2)" stroke-width="50" stroke-linecap="round"/>
+    <path d="M1300 750 C 1350 700, 1450 750, 1400 800" stroke="url(#shapeGrad1)" stroke-width="30" stroke-linecap="round"/>
+  </g>
+
+  <!-- Crisper shapes -->
+  <g opacity="0.8">
+    <path d="M150 100 C 50 150, 150 250, 250 200" stroke="url(#shapeGrad1)" stroke-width="35" stroke-linecap="round"/>
+    <path d="M950 400 C 1050 350, 1100 500, 1000 550" stroke="url(#shapeGrad2)" stroke-width="45" stroke-linecap="round"/>
+    <path d="M400 250 C 350 300, 450 350, 500 300" stroke="url(#shapeGrad1)" stroke-width="25" stroke-linecap="round"/>
+    <path d="M800 800 C 850 780, 880 850, 820 870" stroke="url(#shapeGrad2)" stroke-width="20" stroke-linecap="round"/>
+  </g>
+</svg>
