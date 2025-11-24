@@ -54,7 +54,7 @@ const setupCompany = async (userData, profileData) => {
         const pool = GET_SQL_POOL()
 
         const { email, passwordHash, role } = userData
-        const { companyName, industry, size, website, foundedYear, logoUrl, description } = profileData
+        const { CompanyName, Industry, CompanySize, CompanyWebsite, FounderYear, LogoURL, CompanyDescription, CompanyAddress } = profileData
 
         const userResult = await pool.request()
             .input('email', email)
@@ -71,22 +71,41 @@ const setupCompany = async (userData, profileData) => {
 
         const userId = regUser.recordset[0].userId
 
+        // Insert into Company table
         await pool.request()
             .input('userId', userId)
-            .input('companyName', companyName)
-            .input('industry', industry)
-            .input('size', size)
-            .input('website', website)
-            .input('foundedYear', foundedYear)
-            .input('logoUrl', logoUrl)
-            .input('description', description || '')
+            .input('companyName', CompanyName)
+            .input('industry', Industry)
+            .input('size', CompanySize)
+            .input('website', CompanyWebsite)
+            .input('foundedYear', FounderYear)
+            .input('logoUrl', LogoURL)
+            .input('description', CompanyDescription || '')
             .query(`
                 INSERT INTO [Company] (CompanyID, CompanyName, Industry, CompanySize, CompanyWebsite, FounderYear, LogoURL, CompanyDescription, VerificationStatus)
                 VALUES (@userId, @companyName, @industry, @size, @website, @foundedYear, @logoUrl, @description, 'PENDING')
             `)
 
+        // Insert into CompanyLocation table
+        if (CompanyAddress) {
+            await pool.request()
+                .input('companyId', userId)
+                .input('address', CompanyAddress)
+                .query(`
+                    INSERT INTO [CompanyLocation] (CompanyID, Address)
+                    VALUES (@companyId, @address)
+                `)
+        }
+
         return { userId, ...userData }
     } catch (error) {
+        const pool = GET_SQL_POOL()
+        try {
+            await pool.request().query('DELETE FROM [User] WHERE email = @email')
+        }
+        catch (error) {
+            console.log(error)
+        }
         throw new Error(error)
     }
 }
@@ -96,7 +115,9 @@ const setupSeeker = async (userData, profileData) => {
         const pool = GET_SQL_POOL()
 
         const { email, passwordHash, role } = userData
-        const { firstName, lastName, experienceLevel, location, cvUrl, summary } = profileData
+        // Map form fields to DB columns
+        // Note: 'title' in form -> ProfessionalTitle, 'skills' -> Skills
+        const { FirstName, LastName, PhoneNumber, Gender, DateOfBirth, title, ExperienceLevel, CurrentLocation, skills, CVFileURL, summary } = profileData
 
         const userResult = await pool.request()
             .input('email', email)
@@ -115,19 +136,34 @@ const setupSeeker = async (userData, profileData) => {
 
         await pool.request()
             .input('userId', userId)
-            .input('firstName', firstName)
-            .input('lastName', lastName)
-            .input('experienceLevel', experienceLevel)
-            .input('location', location)
-            .input('cvUrl', cvUrl)
-            .input('summary', summary || '')
+            .input('firstName', FirstName)
+            .input('lastName', LastName)
+            .input('phoneNumber', PhoneNumber)
+            .input('gender', Gender)
+            .input('dateOfBirth', DateOfBirth)
+            .input('professionalTitle', title || '')
+            .input('experienceLevel', ExperienceLevel)
+            .input('currentLocation', CurrentLocation)
+            .input('cvUrl', CVFileURL)
             .query(`
-                INSERT INTO [JobSeeker] (JobSeekerID, FirstName, LastName, ExperienceLevel, CurrentLocation, CVFileURL, ProfileSummary)
-                VALUES (@userId, @firstName, @lastName, @experienceLevel, @location, @cvUrl, @summary)
+                INSERT INTO [JobSeeker] (
+                    JobSeekerID, FirstName, LastName, PhoneNumber, Gender, DateOfBirth, 
+                    ExperienceLevel, CurrentLocation, CVFileURL, ProfileSummary
+                )
+                VALUES (
+                    @userId, @firstName, @lastName, @phoneNumber, @gender, @dateOfBirth, 
+                    @experienceLevel, @currentLocation, @cvUrl, @professionalTitle
+                )
             `)
 
         return { userId, ...userData }
     } catch (error) {
+        const pool = GET_SQL_POOL()
+        try {
+            await pool.request().query('DELETE FROM [User] WHERE email = @email')
+        } catch (error) {
+            console.log(error)
+        }
         throw new Error(error)
     }
 }
