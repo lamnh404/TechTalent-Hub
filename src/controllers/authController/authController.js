@@ -6,8 +6,6 @@ const login = async (req, res, next) => {
         const user = await authModel.login(email, password)
         req.session.user = user
 
-        console.log('User logged in:', user)
-
         req.session.save((err) => {
             if (err) return next(err)
             res.redirect('/')
@@ -90,7 +88,6 @@ const setupSeeker = async (req, res, next) => {
             res.redirect('/')
         })
     } catch (error) {
-        console.log(error)
         res.render('auth/setup-seeker.ejs', { title: 'Setup Seeker', error: error.message })
     }
 }
