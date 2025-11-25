@@ -249,6 +249,11 @@
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
 }
 
-body:not(.auth-layout-page) {
-    padding-top: 80px;
+body:not(.auth-layout-page):not(.dashboard-page) {
+    padding-top: 80px; 
+}
+
+body.dashboard-page {
+    padding-top: 0 !important;
+    background-color: #f3f4f6; /* Đảm bảo màu nền xám nhạt cho dashboard */
 }

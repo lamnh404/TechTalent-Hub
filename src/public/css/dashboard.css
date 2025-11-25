@@ -1,0 +1,164 @@
+/* src/public/css/dashboard.css */
+
+:root {
+    --sidebar-width: 240px;
+    --header-height: 70px;
+    --primary-color: #0063FF;
+    --text-dark: #111827;
+    --text-muted: #6b7280;
+    --bg-body: #f3f4f6;
+    --card-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+body {
+    background-color: var(--bg-body);
+    font-family: 'Inter', sans-serif;
+    overflow-x: hidden;
+}
+
+/* --- Layout Wrapper --- */
+.dashboard-wrapper {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* --- Sidebar --- */
+.sidebar {
+    width: var(--sidebar-width);
+    background: white;
+    border-right: 1px solid #e5e7eb;
+    position: fixed;
+    height: 100vh;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+    padding-top: 0;
+    overflow-y: auto;
+}
+
+.sidebar-brand {
+    height: var(--header-height);
+    display: flex;
+    align-items: center;
+    padding: 0 1.5rem;
+    border-bottom: 1px solid #f3f4f6;
+}
+
+.sidebar-menu {
+    padding: 1rem 0.75rem;
+    list-style: none;
+}
+
+.menu-item {
+    margin-bottom: 0.5rem;
+}
+
+.menu-link {
+    display: flex;
+    align-items: center;
+    padding: 0.75rem 1rem;
+    color: var(--text-muted);
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: 500;
+    transition: all 0.2s;
+}
+
+.menu-link:hover, .menu-link.active {
+    background-color: #eff6ff; /* Light Blue */
+    color: var(--primary-color);
+}
+
+.menu-link i {
+    width: 24px;
+    margin-right: 10px;
+}
+
+/* --- Main Content --- */
+.main-content {
+    margin-left: var(--sidebar-width);
+    flex: 1;
+    width: calc(100% - var(--sidebar-width));
+}
+
+/* --- Dashboard Header --- */
+.dashboard-header {
+    height: var(--header-height);
+    background: rgba(255, 255, 255, 0.9); /* Glass effect */
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid #e5e7eb;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 2rem;
+    position: sticky;
+    top: 0;
+    z-index: 900;
+}
+
+/* --- Stats Cards --- */
+.stat-card {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: var(--card-shadow);
+    border: 1px solid #f3f4f6;
+    height: 100%;
+}
+
+.stat-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+.stat-icon.blue { background: #eff6ff; color: #0063FF; }
+.stat-icon.green { background: #dcfce7; color: #10b981; }
+.stat-icon.purple { background: #f3e8ff; color: #7c3aed; }
+
+/* --- Data Tables --- */
+.custom-table-wrapper {
+    background: white;
+    border-radius: 12px;
+    box-shadow: var(--card-shadow);
+    overflow: hidden;
+    border: 1px solid #e5e7eb;
+}
+
+.custom-table {
+    width: 100%;
+    margin-bottom: 0;
+}
+
+.custom-table th {
+    background: #f9fafb;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 0.05em;
+    color: var(--text-muted);
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid #e5e7eb;
+    border-top: none;
+}
+
+.custom-table td {
+    padding: 1rem 1.5rem;
+    vertical-align: middle;
+    color: var(--text-dark);
+    border-bottom: 1px solid #f3f4f6;
+}
+
+.status-badge {
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+.status-open { background: #dcfce7; color: #166534; }
+.status-closed { background: #fee2e2; color: #991b1b; }

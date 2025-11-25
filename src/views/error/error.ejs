@@ -1,15 +1,54 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <title>Error <%= StatusCode %></title>
+    <%- include('../partials/header', { title: `Error ${StatusCode}` }) %>
 </head>
-<body>
-<h1>Status Code: <%= StatusCode %></h1>
-<p><strong>Message:</strong> <%= message %></p>
+<body class="auth-layout-page"> <%- include('../partials/navbar') %>
 
-<% if (encapStack) { %>
-    <pre><%= encapStack %></pre>
-<% } %>
+    <section class="auth-hero" style="min-height: calc(100vh - 80px);">
+        <div class="sky-arcs"></div>
+        
+        <div class="container d-flex align-items-center justify-content-center h-100">
+            <div class="card auth-card glass-card text-center p-5 animate__animated animate__fadeInDown" style="max-width: 600px;">
+                
+                <div class="mb-4">
+                    <% if (StatusCode === 404) { %>
+                        <i class="fas fa-ghost text-primary" style="font-size: 5rem;"></i>
+                    <% } else if (StatusCode === 403) { %>
+                        <i class="fas fa-user-lock text-danger" style="font-size: 5rem;"></i>
+                    <% } else { %>
+                        <i class="fas fa-exclamation-triangle text-warning" style="font-size: 5rem;"></i>
+                    <% } %>
+                </div>
+
+                <h1 class="font-weight-bold mb-3 text-dark"><%= StatusCode %></h1>
+                
+                <h4 class="mb-4 font-weight-normal text-muted">
+                    <%= message || 'Something went wrong.' %>
+                </h4>
+
+                <% if (typeof encapStack !== 'undefined' && encapStack) { %>
+                    <div class="text-left bg-light p-3 rounded mb-4 border" style="font-size: 0.85rem; max-height: 200px; overflow: auto;">
+                        <code><%= encapStack %></code>
+                    </div>
+                <% } %>
+
+                <div class="mt-2">
+                    <a href="/" class="btn btn-primary px-4 rounded-pill shadow-sm">
+                        <i class="fas fa-home mr-2"></i> Back to Home
+                    </a>
+                    
+                    <% if (StatusCode === 403) { %>
+                        <a href="/auth/login" class="btn btn-outline-primary px-4 rounded-pill ml-2 shadow-sm">
+                            <i class="fas fa-sign-in-alt mr-2"></i> Login as Different User
+                        </a>
+                    <% } %>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <%- include('../partials/footer') %>
 </body>
 </html>
