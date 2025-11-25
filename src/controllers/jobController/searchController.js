@@ -1,4 +1,4 @@
-import searchModel from "~/models/searchModel";
+import searchModel from "~/models/jobModel/searchModel";
 
 const searchController = {
     searchJobs: async (req, res) => {
