@@ -43,7 +43,25 @@ const getJobById = async (jobId) => {
     }
 }
 
+const getJobsByCompanyId = async (companyId) => {
+    try {
+        const pool = GET_SQL_POOL()
+        const result = await pool.request()
+            .input('companyId', companyId)
+            .query(`
+                SELECT *
+                FROM [Job]
+                WHERE CompanyID = @companyId
+                ORDER BY PostedDate DESC
+            `)
+        return result.recordset
+    } catch (error) {
+        throw new ApiError(StatusCodes.INTERNAL_SERVER_ERROR, error.message)
+    }
+}
+
 export const jobModel = {
     createJob,
-    getJobById
+    getJobById,
+    getJobsByCompanyId
 }

@@ -47,8 +47,24 @@ const getJobDetails = async (req, res, next) => {
     }
 }
 
+const getCompanyJobs = async (req, res, next) => {
+    try {
+        if (!req.session.user) {
+            return res.status(StatusCodes.UNAUTHORIZED).send('User not authenticated')
+        }
+
+        const companyId = req.session.user.id
+        const jobs = await jobModel.getJobsByCompanyId(companyId)
+
+        res.render('jobs/companyJobs.ejs', { title: 'Manage Jobs', jobs, user: req.session.user })
+    } catch (error) {
+        next(error)
+    }
+}
+
 export const jobController = {
     getCreateJobPage,
     createJob,
-    getJobDetails
+    getJobDetails,
+    getCompanyJobs
 }
