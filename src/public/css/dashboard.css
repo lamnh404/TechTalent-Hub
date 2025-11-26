@@ -1,28 +1,19 @@
-/* src/public/css/dashboard.css */
+/* ========================================
+   Dashboard Styles (Company/Admin)
+   ======================================== */
 
-:root {
-    --sidebar-width: 240px;
-    --header-height: 70px;
-    --primary-color: #0063FF;
-    --text-dark: #111827;
-    --text-muted: #6b7280;
-    --bg-body: #f3f4f6;
-    --card-shadow: 0 1px 3px rgba(0,0,0,0.1);
-}
-
-body {
+/* Override body padding for dashboard */
+body.dashboard-page {
     background-color: var(--bg-body);
-    font-family: 'Inter', sans-serif;
-    overflow-x: hidden;
+    padding-top: 0 !important; /* Dashboard tự lo header, không cần padding global */
 }
 
-/* --- Layout Wrapper --- */
 .dashboard-wrapper {
     display: flex;
     min-height: 100vh;
 }
 
-/* --- Sidebar --- */
+/* --- Sidebar (Fixed Left) --- */
 .sidebar {
     width: var(--sidebar-width);
     background: white;
@@ -32,12 +23,11 @@ body {
     top: 0;
     left: 0;
     z-index: 1000;
-    padding-top: 0;
     overflow-y: auto;
 }
 
 .sidebar-brand {
-    height: var(--header-height);
+    height: var(--header-height); /* 80px bằng với Navbar */
     display: flex;
     align-items: center;
     padding: 0 1.5rem;
@@ -45,46 +35,55 @@ body {
 }
 
 .sidebar-menu {
-    padding: 1rem 0.75rem;
+    padding: 1.5rem 1rem;
     list-style: none;
 }
 
-.menu-item {
-    margin-bottom: 0.5rem;
+.menu-header {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin: 1.5rem 0 0.5rem 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
 }
 
 .menu-link {
     display: flex;
     align-items: center;
     padding: 0.75rem 1rem;
-    color: var(--text-muted);
+    color: #4b5563;
     text-decoration: none;
-    border-radius: 8px;
+    border-radius: 10px;
     font-weight: 500;
+    font-size: 0.95rem;
     transition: all 0.2s;
+    margin-bottom: 4px;
 }
 
 .menu-link:hover, .menu-link.active {
-    background-color: #eff6ff; /* Light Blue */
+    background-color: #eff6ff;
     color: var(--primary-color);
 }
 
 .menu-link i {
     width: 24px;
-    margin-right: 10px;
+    margin-right: 12px;
+    text-align: center;
+    font-size: 1.1rem;
 }
 
-/* --- Main Content --- */
+/* --- Main Content Area --- */
 .main-content {
     margin-left: var(--sidebar-width);
-    flex: 1;
     width: calc(100% - var(--sidebar-width));
+    flex: 1;
 }
 
-/* --- Dashboard Header --- */
+/* --- Dashboard Sticky Header --- */
 .dashboard-header {
     height: var(--header-height);
-    background: rgba(255, 255, 255, 0.9); /* Glass effect */
+    background: rgba(255, 255, 255, 0.95);
     backdrop-filter: blur(10px);
     border-bottom: 1px solid #e5e7eb;
     display: flex;
@@ -99,17 +98,23 @@ body {
 /* --- Stats Cards --- */
 .stat-card {
     background: white;
-    border-radius: 12px;
+    border-radius: 16px;
     padding: 1.5rem;
-    box-shadow: var(--card-shadow);
+    box-shadow: var(--shadow-sm);
     border: 1px solid #f3f4f6;
     height: 100%;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-md);
 }
 
 .stat-icon {
-    width: 48px;
-    height: 48px;
-    border-radius: 10px;
+    width: 50px;
+    height: 50px;
+    border-radius: 12px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -117,22 +122,17 @@ body {
     margin-bottom: 1rem;
 }
 
-.stat-icon.blue { background: #eff6ff; color: #0063FF; }
+.stat-icon.blue { background: #eff6ff; color: var(--primary-color); }
 .stat-icon.green { background: #dcfce7; color: #10b981; }
 .stat-icon.purple { background: #f3e8ff; color: #7c3aed; }
 
-/* --- Data Tables --- */
+/* --- Tables --- */
 .custom-table-wrapper {
     background: white;
-    border-radius: 12px;
-    box-shadow: var(--card-shadow);
-    overflow: hidden;
+    border-radius: 16px;
+    box-shadow: var(--shadow-sm);
     border: 1px solid #e5e7eb;
-}
-
-.custom-table {
-    width: 100%;
-    margin-bottom: 0;
+    overflow: hidden;
 }
 
 .custom-table th {
@@ -140,11 +140,9 @@ body {
     font-weight: 600;
     text-transform: uppercase;
     font-size: 0.75rem;
-    letter-spacing: 0.05em;
     color: var(--text-muted);
     padding: 1rem 1.5rem;
     border-bottom: 1px solid #e5e7eb;
-    border-top: none;
 }
 
 .custom-table td {
@@ -153,12 +151,3 @@ body {
     color: var(--text-dark);
     border-bottom: 1px solid #f3f4f6;
 }
-
-.status-badge {
-    padding: 4px 10px;
-    border-radius: 20px;
-    font-size: 0.75rem;
-    font-weight: 600;
-}
-.status-open { background: #dcfce7; color: #166534; }
-.status-closed { background: #fee2e2; color: #991b1b; }

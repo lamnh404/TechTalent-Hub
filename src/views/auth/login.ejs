@@ -106,39 +106,38 @@
                 </div>
             </div>
 
-            <%- include('../partials/footer') %>
         </section>
+        <%- include('../partials/footer') %>
+            <script>
+                // Toggle Password Visibility
+                document.getElementById('togglePassword')?.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const password = document.getElementById('password');
+                    const eyeIcon = document.getElementById('eyeIcon');
+                    if (!password || !eyeIcon) return;
 
-        <script>
-            // Toggle Password Visibility
-            document.getElementById('togglePassword')?.addEventListener('click', function (e) {
-                e.preventDefault();
-                const password = document.getElementById('password');
-                const eyeIcon = document.getElementById('eyeIcon');
-                if (!password || !eyeIcon) return;
+                    const isHidden = password.type === 'password';
+                    password.type = isHidden ? 'text' : 'password';
 
-                const isHidden = password.type === 'password';
-                password.type = isHidden ? 'text' : 'password';
-
-                if (isHidden) {
-                    eyeIcon.classList.remove('fa-eye-slash');
-                    eyeIcon.classList.add('fa-eye');
-                } else {
-                    eyeIcon.classList.remove('fa-eye');
-                    eyeIcon.classList.add('fa-eye-slash');
-                }
-            });
-
-            const errorMessage = "<%= typeof error !== 'undefined' ? error : '' %>";
-            if (errorMessage) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Login Failed',
-                    text: errorMessage,
-                    confirmButtonColor: '#0063FF',
-                    background: 'rgba(255, 255, 255, 0.95)',
-                    backdrop: `rgba(0,0,123,0.1)`
+                    if (isHidden) {
+                        eyeIcon.classList.remove('fa-eye-slash');
+                        eyeIcon.classList.add('fa-eye');
+                    } else {
+                        eyeIcon.classList.remove('fa-eye');
+                        eyeIcon.classList.add('fa-eye-slash');
+                    }
                 });
-            }
-        </script>
+
+                const errorMessage = "<%= typeof error !== 'undefined' ? error : '' %>";
+                if (errorMessage) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Login Failed',
+                        text: errorMessage,
+                        confirmButtonColor: '#0063FF',
+                        background: 'rgba(255, 255, 255, 0.95)',
+                        backdrop: `rgba(0,0,123,0.1)`
+                    });
+                }
+            </script>
     </body>
