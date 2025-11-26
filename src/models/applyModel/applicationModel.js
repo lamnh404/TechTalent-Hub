@@ -6,8 +6,16 @@ const createApplication = async (applicationData) => {
     try {
         const pool = GET_SQL_POOL()
         const { jobSeekerId, jobId } = applicationData
-
-        const result = await pool.request()
+        let result = await pool.request()
+            .input('jobSeekerId', jobSeekerId)
+            .input('jobId', jobId)
+            .query(`
+                SELECT * FROM [Application] WHERE JobSeekerID = @jobSeekerId AND JobID = @jobId
+            `)
+        if (result.recordset.length > 0) {
+            throw new ApiError(StatusCodes.BAD_REQUEST, 'You have already applied for this job')
+        }
+        result = await pool.request()
             .input('jobSeekerId', jobSeekerId)
             .input('jobId', jobId)
             .query(`
@@ -24,7 +32,7 @@ const createApplication = async (applicationData) => {
 const getApplicationsBySeekerId = async (seekerId) => {
     try {
         const pool = GET_SQL_POOL()
-        const result = await pool.request()
+        let result = await pool.request()
             .input('seekerId', seekerId)
             .query(`
                 SELECT A.*, J.JobTitle, C.CompanyName, C.LogoURL, J.Location, J.EmploymentType
@@ -43,7 +51,7 @@ const getApplicationsBySeekerId = async (seekerId) => {
 const getCandidatesByCompanyId = async (companyId) => {
     try {
         const pool = GET_SQL_POOL()
-        const result = await pool.request()
+        let result = await pool.request()
             .input('companyId', companyId)
             .query(`
                 SELECT A.*, J.JobTitle, (JS.FirstName + ' ' + JS.LastName) as SeekerName, U.Email as SeekerEmail, U.AvatarURL as SeekerAvatar
@@ -63,7 +71,7 @@ const getCandidatesByCompanyId = async (companyId) => {
 const updateApplicationStatus = async (applicationId, status) => {
     try {
         const pool = GET_SQL_POOL()
-        const result = await pool.request()
+        let result = await pool.request()
             .input('applicationId', applicationId)
             .input('status', status)
             .query(`
