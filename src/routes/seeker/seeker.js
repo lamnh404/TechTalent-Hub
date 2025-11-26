@@ -6,7 +6,7 @@ router.get('/dashboard', (req, res) => {
     res.render('company/dashboard.ejs', { title: 'Company Dashboard', user : req.session.user } )
 })
 
-router.get('/my-applications', (req, res) => {
+router.get('/applications', (req, res) => {
     res.render('seeker/my-applications.ejs', { title: 'My Applications', user : req.session.user } )
 })
 
