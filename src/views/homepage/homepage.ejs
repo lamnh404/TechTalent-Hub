@@ -1,134 +1,155 @@
 <%- include('../partials/header', { title: 'Trang chủ' }) %>
-<body>
-    <%- include('../partials/navbar') %>
 
-    <section class="home-hero">
-        <div class="container position-relative" style="z-index: 2;">
-            <div class="text-center">
-                <span class="badge badge-pill badge-primary px-3 py-2 mb-3 animate__animated animate__fadeInDown">🚀 #1 Tech Recruitment Platform</span>
-                <h1 class="hero-title animate__animated animate__fadeInUp">Find Your Dream <span class="text-primary">Tech Job</span></h1>
-                <p class="hero-subtitle animate__animated animate__fadeInUp animate__delay-1s">
-                    Connect with top tech companies and discover opportunities that match your skills.
-                </p>
-                
-                <div class="search-wrapper animate__animated animate__fadeInUp animate__delay-1s">
-                    <form action="/jobs" method="GET" class="d-flex w-100">
-                        <input type="text" name="q" class="search-input" placeholder="Search by title, skill, or company...">
-                        <button type="submit" class="btn-search">
-                            <i class="fas fa-search mr-2"></i>Search
-                        </button>
-                    </form>
-                </div>
-                
-                <div class="mt-4 text-muted small animate__animated animate__fadeIn">
-                    Popular: <span class="badge badge-light border ml-1">ReactJS</span> <span class="badge badge-light border ml-1">Node.js</span> <span class="badge badge-light border ml-1">Python</span>
-                </div>
-            </div>
-        </div>
-    </section>
+    <body>
+        <%- include('../partials/navbar') %>
 
-    <section class="section bg-light">
-        <div class="container">
-            <h2 class="section-title">Featured Opportunities</h2>
-            <div class="row">
-                
-                <div class="col-lg-4 col-md-6 mb-4">
-                    <div class="job-card">
-                        <div class="d-flex justify-content-between align-items-start">
-                            <img src="https://logo.clearbit.com/meta.com" alt="Logo" class="company-logo">
-                            <button class="btn btn-sm btn-link text-muted"><i class="far fa-heart"></i></button>
+            <section class="home-hero">
+                <div class="container position-relative" style="z-index: 2;">
+                    <div class="text-center">
+                        <span
+                            class="badge badge-pill badge-primary px-3 py-2 mb-3 animate__animated animate__fadeInDown">🚀
+                            #1 Tech Recruitment Platform</span>
+                        <h1 class="hero-title animate__animated animate__fadeInUp">Find Your Dream <span
+                                class="text-primary">Tech Job</span></h1>
+                        <p class="hero-subtitle animate__animated animate__fadeInUp animate__delay-1s">
+                            Connect with top tech companies and discover opportunities that match your skills.
+                        </p>
+
+                        <div class="search-wrapper animate__animated animate__fadeInUp animate__delay-1s mx-auto">
+                            <form action="/jobs" method="GET" class="d-flex w-100 align-items-center">
+                                <div class="flex-grow-1 position-relative">
+                                    <i class="fas fa-search position-absolute text-muted"
+                                        style="left: 20px; top: 50%; transform: translateY(-50%); z-index: 5;"></i>
+
+                                    <input type="text" name="q" class="search-input"
+                                        placeholder="Search by title, skill, or company..." style="padding-left: 50px;"
+                                        value="<%= typeof query !== 'undefined' ? query : '' %>">
+                                </div>
+
+                                <button type="submit" class="btn-search ml-2">
+                                    Search
+                                </button>
+                            </form>
                         </div>
-                        <a href="#" class="job-title stretched-link">Senior Frontend Developer</a>
-                        <p class="company-name"><i class="far fa-building mr-1"></i> Meta</p>
-                        <div class="job-tags">
-                            <span class="tag tag-remote">Remote</span>
-                            <span class="tag tag-fulltime">Full-time</span>
+
+                        <div class="mt-4 text-muted small animate__animated animate__fadeIn">
+                            Popular: <span class="badge badge-light border ml-1">ReactJS</span> <span
+                                class="badge badge-light border ml-1">Node.js</span> <span
+                                class="badge badge-light border ml-1">Python</span>
                         </div>
                     </div>
                 </div>
-
-                <div class="col-lg-4 col-md-6 mb-4">
-                    <div class="job-card">
-                        <div class="d-flex justify-content-between align-items-start">
-                            <img src="https://logo.clearbit.com/google.com" alt="Logo" class="company-logo">
-                            <button class="btn btn-sm btn-link text-muted"><i class="far fa-heart"></i></button>
-                        </div>
-                        <a href="#" class="job-title stretched-link">Product Manager</a>
-                        <p class="company-name"><i class="far fa-building mr-1"></i> Google</p>
-                        <div class="job-tags">
-                            <span class="tag tag-fulltime">Full-time</span>
-                            <span class="tag tag-contract" style="background: #f3e8ff; color: #7e22ce">New York</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-lg-4 col-md-6 mb-4">
-                    <div class="job-card">
-                        <div class="d-flex justify-content-between align-items-start">
-                            <img src="https://logo.clearbit.com/netflix.com" alt="Logo" class="company-logo">
-                            <button class="btn btn-sm btn-link text-muted"><i class="far fa-heart"></i></button>
-                        </div>
-                        <a href="#" class="job-title stretched-link">Data Scientist</a>
-                        <p class="company-name"><i class="far fa-building mr-1"></i> Netflix</p>
-                        <div class="job-tags">
-                            <span class="tag tag-contract">Contract</span>
-                            <span class="tag tag-remote">California</span>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-            <div class="text-center mt-5">
-                <a href="/jobs" class="btn btn-outline-primary btn-lg px-5 rounded-pill font-weight-bold">View All Jobs</a>
-            </div>
-        </div>
-    </section>
-
-    <section class="section">
-        <div class="container">
-            <h2 class="section-title">How It Works</h2>
-            <div class="row text-center">
-                <div class="col-md-4 mb-4">
-                    <div class="step-card">
-                        <div class="step-icon-box">
-                            <i class="fas fa-user-plus"></i>
-                        </div>
-                        <h4>1. Create Account</h4>
-                        <p class="text-muted">Sign up and build your professional profile to showcase your skills.</p>
-                    </div>
-                </div>
-                <div class="col-md-4 mb-4">
-                    <div class="step-card">
-                        <div class="step-icon-box">
-                            <i class="fas fa-search"></i>
-                        </div>
-                        <h4>2. Find Jobs</h4>
-                        <p class="text-muted">Browse thousands of job openings from top technology companies.</p>
-                    </div>
-                </div>
-                <div class="col-md-4 mb-4">
-                    <div class="step-card">
-                        <div class="step-icon-box">
-                            <i class="fas fa-paper-plane"></i>
-                        </div>
-                        <h4>3. Apply</h4>
-                        <p class="text-muted">Apply to jobs with a single click and track your application status.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <% if (typeof user === 'undefined' || !user) { %>
-        <div class="container">
-            <section class="cta-section">
-                <h2 class="mb-3 font-weight-bold">Ready to Start Your Career?</h2>
-                <p class="mb-4 opacity-90">Join TechTalent Hub today and take the next step in your career journey.</p>
-                <a href="/register" class="btn-light-cta">Get Started for Free</a>
             </section>
-        </div>
-    <% } %>
 
-    <%- include('../partials/footer') %>
-</body>
-</html>
+            <section class="section bg-light">
+                <div class="container">
+                    <h2 class="section-title">Featured Opportunities</h2>
+                    <div class="row">
+
+                        <div class="col-lg-4 col-md-6 mb-4">
+                            <div class="job-card">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <img src="https://logo.clearbit.com/meta.com" alt="Logo" class="company-logo">
+                                    <button class="btn btn-sm btn-link text-muted"><i class="far fa-heart"></i></button>
+                                </div>
+                                <a href="#" class="job-title stretched-link">Senior Frontend Developer</a>
+                                <p class="company-name"><i class="far fa-building mr-1"></i> Meta</p>
+                                <div class="job-tags">
+                                    <span class="tag tag-remote">Remote</span>
+                                    <span class="tag tag-fulltime">Full-time</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-4 col-md-6 mb-4">
+                            <div class="job-card">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <img src="https://logo.clearbit.com/google.com" alt="Logo" class="company-logo">
+                                    <button class="btn btn-sm btn-link text-muted"><i class="far fa-heart"></i></button>
+                                </div>
+                                <a href="#" class="job-title stretched-link">Product Manager</a>
+                                <p class="company-name"><i class="far fa-building mr-1"></i> Google</p>
+                                <div class="job-tags">
+                                    <span class="tag tag-fulltime">Full-time</span>
+                                    <span class="tag tag-contract" style="background: #f3e8ff; color: #7e22ce">New
+                                        York</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-4 col-md-6 mb-4">
+                            <div class="job-card">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <img src="https://logo.clearbit.com/netflix.com" alt="Logo" class="company-logo">
+                                    <button class="btn btn-sm btn-link text-muted"><i class="far fa-heart"></i></button>
+                                </div>
+                                <a href="#" class="job-title stretched-link">Data Scientist</a>
+                                <p class="company-name"><i class="far fa-building mr-1"></i> Netflix</p>
+                                <div class="job-tags">
+                                    <span class="tag tag-contract">Contract</span>
+                                    <span class="tag tag-remote">California</span>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="text-center mt-5">
+                        <a href="/jobs" class="btn btn-outline-primary btn-lg px-5 rounded-pill font-weight-bold">View
+                            All Jobs</a>
+                    </div>
+                </div>
+            </section>
+
+            <section class="section">
+                <div class="container">
+                    <h2 class="section-title">How It Works</h2>
+                    <div class="row text-center">
+                        <div class="col-md-4 mb-4">
+                            <div class="step-card">
+                                <div class="step-icon-box">
+                                    <i class="fas fa-user-plus"></i>
+                                </div>
+                                <h4>1. Create Account</h4>
+                                <p class="text-muted">Sign up and build your professional profile to showcase your
+                                    skills.</p>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-4">
+                            <div class="step-card">
+                                <div class="step-icon-box">
+                                    <i class="fas fa-search"></i>
+                                </div>
+                                <h4>2. Find Jobs</h4>
+                                <p class="text-muted">Browse thousands of job openings from top technology companies.
+                                </p>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-4">
+                            <div class="step-card">
+                                <div class="step-icon-box">
+                                    <i class="fas fa-paper-plane"></i>
+                                </div>
+                                <h4>3. Apply</h4>
+                                <p class="text-muted">Apply to jobs with a single click and track your application
+                                    status.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <% if (typeof user==='undefined' || !user) { %>
+                <div class="container">
+                    <section class="cta-section">
+                        <h2 class="mb-3 font-weight-bold">Ready to Start Your Career?</h2>
+                        <p class="mb-4 opacity-90">Join TechTalent Hub today and take the next step in your career
+                            journey.</p>
+                        <a href="/register" class="btn-light-cta">Get Started for Free</a>
+                    </section>
+                </div>
+                <% } %>
+
+                    <%- include('../partials/footer') %>
+    </body>
+
+    </html>
