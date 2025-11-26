@@ -32,13 +32,13 @@
 
                 <% if (!currentUser) { %>
                     <li class="nav-item">
-                        <a class="nav-link" href="/">Home</a>
+                        <a class="nav-link <%= (activePage === 'home') ? 'active' : '' %>" href="/">Home</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/jobs">Find Jobs</a>
+                        <a class="nav-link <%= (activePage === 'jobs') ? 'active' : '' %>" href="/jobs">Find Jobs</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/companies">Companies</a>
+                        <a class="nav-link <%= (activePage === 'companies') ? 'active' : '' %>" href="/companies">Companies</a>
                     </li>
                     <li class="nav-item ml-3">
                         <a class="nav-link font-weight-bold" href="/login">Sign In</a>
@@ -50,25 +50,25 @@
 
                 <% if (currentUser && currentRole === 'JobSeeker') { %>
                     <li class="nav-item">
-                        <a class="nav-link" href="/jobs"><i class="fas fa-search mr-1"></i> Find Jobs</a>
+                        <a class="nav-link <%= (activePage === 'jobs') ? 'active' : '' %>" href="/jobs"><i class="fas fa-search mr-1"></i> Find Jobs</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/seeker/applications"><i class="fas fa-file-alt mr-1"></i> Applications</a>
+                        <a class="nav-link <%= (activePage === 'applications') ? 'active' : '' %>" href="/seeker/applications"><i class="fas fa-file-alt mr-1"></i> Applications</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/seeker/saved-jobs"><i class="far fa-heart mr-1"></i> Saved</a>
+                        <a class="nav-link <%= (activePage === 'saved-jobs') ? 'active' : '' %>" href="/seeker/saved-jobs"><i class="far fa-heart mr-1"></i> Saved</a>
                     </li>
                 <% } %>
 
                 <% if (currentUser && currentRole === 'Company') { %>
                     <li class="nav-item">
-                        <a class="nav-link" href="/company/dashboard">Dashboard</a>
+                        <a class="nav-link <%= (activePage === 'dashboard') ? 'active' : '' %>" href="/company/dashboard">Dashboard</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/company/jobs">Manage Jobs</a>
+                        <a class="nav-link <%= (activePage === 'manage-jobs') ? 'active' : '' %>" href="/company/jobs">Manage Jobs</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/company/candidates">Find Candidates</a>
+                        <a class="nav-link <%= (activePage === 'find-candidates') ? 'active' : '' %>" href="/company/candidates">Find Candidates</a>
                     </li>
                     <li class="nav-item ml-2">
                         <a class="btn btn-primary btn-sm px-3 shadow-sm" href="/company/jobs/create">

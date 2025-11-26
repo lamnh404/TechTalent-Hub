@@ -1,6 +1,6 @@
 /* ==========================================================================
    GLOBAL STYLES - TECHTALENT HUB
-   Contains: Variables, Typography, Glassmorphism, Common Components (Buttons, Inputs)
+   Contains: Variables, Typography, Glassmorphism, Common Components, Animations
    ========================================================================== */
 
 :root {
@@ -29,6 +29,10 @@
     --shadow-lg: 0 20px 40px rgba(0, 0, 0, 0.1);
     --shadow-hover: 0 20px 40px rgba(0, 99, 255, 0.15);
 
+    /* --- Transitions --- */
+    --trans-fast: all 0.2s ease;
+    --trans-smooth: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+
     /* --- Dimensions --- */
     --header-height: 80px;
     --sidebar-width: 260px;
@@ -40,9 +44,16 @@ body {
     color: var(--text-dark);
     background-color: var(--bg-body);
     -webkit-font-smoothing: antialiased;
+    line-height: 1.5;
 }
 
-/* --- Utility Class: Glass Effect (Shared for Navbar, Cards) --- */
+/* --- Layout Helpers --- */
+/* Tự động đẩy nội dung xuống để không bị Navbar che (Trừ trang Auth và Dashboard) */
+body:not(.auth-layout-page):not(.dashboard-page) {
+    padding-top: var(--header-height);
+}
+
+/* --- Utility Class: Glass Effect --- */
 .glass-effect {
     background: var(--glass-bg);
     backdrop-filter: blur(var(--blur-amount));
@@ -51,7 +62,7 @@ body {
     box-shadow: var(--glass-shadow);
 }
 
-/* --- Common Components: Modern Input (Taken from Auth.css) --- */
+/* --- Common Components: Modern Input --- */
 .input-wrapper { position: relative; }
 
 .input-icon {
@@ -73,7 +84,7 @@ body {
     background-color: #f9fafb;
     font-size: 0.95rem;
     width: 100%;
-    transition: all 0.3s ease;
+    transition: var(--trans-fast);
     color: var(--text-dark);
 }
 
@@ -82,6 +93,7 @@ body {
     border-color: var(--primary-color);
     box-shadow: 0 0 0 4px rgba(0, 99, 255, 0.1);
     outline: none;
+    transform: translateY(-1px);
 }
 
 .form-control-modern.is-invalid {
@@ -97,8 +109,11 @@ body {
     border-radius: 12px;
     padding: 10px 25px;
     font-weight: 600;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: var(--trans-smooth);
     box-shadow: 0 4px 6px rgba(0, 99, 255, 0.2);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .btn-primary-modern:hover {
@@ -109,13 +124,155 @@ body {
     text-decoration: none;
 }
 
+.btn-primary-modern:active {
+    transform: scale(0.98);
+}
+
 /* --- Common Components: Badges/Tags --- */
-.tag { padding: 5px 12px; border-radius: 8px; font-size: 0.75rem; font-weight: 600; display: inline-block; }
+.tag { 
+    padding: 5px 12px; 
+    border-radius: 8px; 
+    font-size: 0.75rem; 
+    font-weight: 600; 
+    display: inline-block; 
+}
 .tag-remote { background: #e0f2fe; color: #0369a1; }
 .tag-fulltime { background: #dcfce7; color: #15803d; }
 .tag-contract { background: #fef3c7; color: #b45309; }
 
-/* --- Layout Helpers --- */
-body:not(.auth-layout-page):not(.dashboard-page) {
-    padding-top: var(--header-height);
+/* ========================================
+   NAVBAR STYLES (MATCHING SIDEBAR)
+   ======================================== */
+
+/* --- 1. Base Nav Link Style (Giống .menu-link của Sidebar) --- */
+.navbar-glass .nav-link {
+    display: flex;
+    align-items: center;
+    padding: 0.6rem 1rem !important; /* Padding giống sidebar item */
+    color: #4b5563 !important;       /* Màu xám muted chuẩn */
+    text-decoration: none;
+    border-radius: 8px;              /* Bo góc giống sidebar */
+    font-weight: 500;
+    font-size: 0.95rem;
+    transition: all 0.2s ease;
+    margin: 0 2px;                   /* Khoảng cách giữa các item */
+}
+
+/* --- 2. Hover & Active State (Quan trọng nhất) --- */
+/* Khi hover hoặc khi đang active, đổi nền xanh nhạt và chữ xanh đậm */
+.navbar-glass .nav-link:hover, 
+.navbar-glass .nav-link.active {
+    background-color: #eff6ff !important; /* Màu nền xanh nhạt giống sidebar */
+    color: var(--primary-color) !important; /* Chữ màu xanh chủ đạo */
+}
+
+/* --- 3. Icons trong Navbar (Nếu có) --- */
+.navbar-glass .nav-link i {
+    font-size: 1.1rem;
+    margin-right: 8px;
+    color: inherit; /* Icon đổi màu theo chữ */
+}
+
+/* --- 4. Nút Sign In (Đặc biệt hơn chút) --- */
+/* Nút Sign In vẫn giữ style link nhưng đậm hơn */
+.navbar-glass .nav-link.font-weight-bold {
+    font-weight: 600;
+    color: var(--text-dark) !important;
+}
+.navbar-glass .nav-link.font-weight-bold:hover {
+    color: var(--primary-color) !important;
+    background-color: transparent !important; /* Không nền cho nút Sign In */
+}
+
+/* --- 5. Dropdown Menu (User Profile) --- */
+.navbar-glass .dropdown-menu {
+    border: 0;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    border-radius: 12px;
+    overflow: hidden;
+    margin-top: 10px;
+    animation: fadeInUp 0.3s ease;
+}
+
+.navbar-glass .dropdown-item {
+    padding: 0.7rem 1.2rem;
+    font-size: 0.9rem;
+    color: #4b5563;
+    transition: all 0.2s;
+}
+
+.navbar-glass .dropdown-item:hover {
+    background-color: #f3f4f6;
+    color: var(--primary-color);
+}
+
+.navbar-glass .dropdown-item.text-danger:hover {
+    background-color: #fee2e2;
+    color: #dc2626;
+}
+
+/* ==========================================================================
+   ANIMATIONS (Hiệu ứng chuyển động)
+   ========================================================================== */
+
+/* 1. View Transition (Hiệu ứng chuyển trang mượt - Chrome/Edge) */
+@view-transition {
+    navigation: auto;
+}
+
+/* 2. Fade In Up (Load trang) */
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(15px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-in {
+    animation: fadeInUp 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+/* 3. Zoom In (Icon/Badge nảy ra) */
+@keyframes zoomInBounce {
+    0% { opacity: 0; transform: scale(0.3); }
+    50% { opacity: 1; transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+.animate-zoom-in {
+    animation: zoomInBounce 0.6s cubic-bezier(0.215, 0.610, 0.355, 1.000) forwards;
+}
+
+/* 4. Hover Scale (Dùng cho Card Job) */
+.hover-scale {
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    backface-visibility: hidden;
+}
+.hover-scale:hover {
+    transform: scale(1.03) translateY(-5px) !important;
+    z-index: 10;
+    box-shadow: var(--shadow-hover);
+    border-color: rgba(0, 99, 255, 0.3);
+}
+
+/* 5. Stagger List (Hiệu ứng xuất hiện lần lượt) */
+.stagger-list > * {
+    opacity: 0;
+    animation: fadeInUp 0.5s ease-out forwards;
+}
+.stagger-list > *:nth-child(1) { animation-delay: 0.1s; }
+.stagger-list > *:nth-child(2) { animation-delay: 0.2s; }
+.stagger-list > *:nth-child(3) { animation-delay: 0.3s; }
+.stagger-list > *:nth-child(4) { animation-delay: 0.4s; }
+.stagger-list > *:nth-child(5) { animation-delay: 0.5s; }
+
+/* 6. Pulse (Hiệu ứng nhịp đập cho nút quan trọng) */
+@keyframes pulse-soft {
+    0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(0, 99, 255, 0.4); }
+    70% { transform: scale(1.05); box-shadow: 0 0 0 10px rgba(0, 99, 255, 0); }
+    100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(0, 99, 255, 0); }
+}
+.animate-pulse {
+    animation: pulse-soft 2s infinite;
+}
+
+/* Apply transitions to common elements */
+a, button, input, select, textarea, .btn, .card {
+    transition: var(--trans-smooth);
 }
