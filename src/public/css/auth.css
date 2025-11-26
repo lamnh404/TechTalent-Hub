@@ -1,242 +1,204 @@
 /* ========================================
-   Modern Auth Page Styles - TechTalent Hub
-   ======================================== */
+    Auth Page Specific Styles
+    ======================================== */
 
-:root {
-  --sky-start: #4d89d8; 
-  --sky-end: #9cb2d0;   
-  --primary-color: #0063FF;
-  --logo-gradient: linear-gradient(45deg, #04466f, #140fb7);
-  --glass-bg: rgba(255, 255, 255, 0.85);
-  --glass-border: rgba(255, 255, 255, 0.9);
-  --input-bg: #f4f5f7;
-  --input-icon: #6b7280;
-  --text-dark: #1f2937;
-  --cta-dark: linear-gradient(180deg, #2b2d31 0%, #1a1c1f 100%);
-  --shadow-lg: 0 20px 40px rgba(0, 0, 0, 0.1);
-}
-
-/* --- Layout Fix (Footer không bị lấn) --- */
+/* --- Layout (Center form, push footer down) --- */
 .auth-layout-page {
-    margin: 0;
-    overflow-x: hidden;
+     margin: 0;
+     overflow-x: hidden;
+     background: linear-gradient(135deg, #4d89d8 0%, #9cb2d0 100%); /* Distinct auth background color */
 }
 
 .auth-hero {
-    min-height: 100vh; 
-    width: 100%;
-    position: relative;
-    background: linear-gradient(135deg, var(--sky-start) 0%, var(--sky-end) 100%);
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between; /* Đẩy footer xuống đáy */
+     min-height: 100vh;
+     width: 100%;
+     position: relative;
+     display: flex;
+     flex-direction: column;
+     justify-content: center;
+     align-items: center;
+     padding: 2rem 0;
+     /* Inherit background from body or override here */
 }
 
-/* Wrapper bao quanh Card để căn giữa và đẩy footer */
+/* Wrapper around Card */
 .auth-content-wrapper {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 2rem 1rem;
-    z-index: 2;
+     flex: 1;
+     display: flex;
+     align-items: center;
+     justify-content: center;
+     width: 100%;
+     z-index: 2;
+     padding: 20px;
 }
 
 /* --- Background Effects --- */
 .sky-arcs {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    top: 0;
-    left: 0;
-    background-image: url('/images/bg-shapes.svg'); /* Đảm bảo bạn có file này hoặc xóa dòng này */
-    background-size: cover;
-    opacity: 0.4;
-    z-index: 0;
-    pointer-events: none;
+     position: absolute;
+     inset: 0;
+     background-image: url('/images/bg-shapes.svg');
+     background-size: cover;
+     opacity: 0.4;
+     z-index: 0;
+     pointer-events: none;
 }
 
-/* --- Logo --- */
-.brand-logo {
-    position: absolute;
-    top: 20px;
-    left: 30px;
-    display: flex;
-    align-items: center;
-    z-index: 10;
-    text-decoration: none !important;
+.sky-clouds {
+     /* If you have additional cloud effects, set here */
+     position: absolute;
+     bottom: 0;
+     width: 100%;
+     height: 200px;
+     /* background: url(...) */
+     z-index: 1;
 }
 
-.brand-logo-icon {
-    height: 40px;
-    width: 40px;
-    margin-right: 10x;
-}
-
-.brand-name-main {
-    font-family: 'Inter', sans-serif;
-    font-weight: 700;
-    font-size: 1.5rem;
-    color: rgb(19, 19, 19);
-}
-
-.brand-name-accent {
-    font-family: 'Inter', sans-serif;
-    font-weight: 700;
-    font-size: 1.5rem;
-    color: #2241a7;
-}
-
-/* --- Auth Card (Glassmorphism) --- */
+/* --- Auth Card (Inherit Glass but larger radius) --- */
 .auth-card {
-    border: 1px solid var(--glass-border);
-    background: var(--glass-bg);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border-radius: 24px;
-    box-shadow: var(--shadow-lg);
+     border: var(--glass-border);
+     background: rgba(255, 255, 255, 0.85); /* More opaque than global for readability */
+     backdrop-filter: blur(20px);
+     -webkit-backdrop-filter: blur(20px);
+     border-radius: 24px;
+     box-shadow: var(--shadow-lg);
+     width: 100%;
 }
 
-/* --- Inputs --- */
-.input-wrapper {
-    position: relative;
+/* --- Logo (Absolute position on Auth page) --- */
+.brand-logo {
+     position: absolute;
+     top: 20px;
+     left: 30px;
+     display: flex;
+     align-items: center;
+     z-index: 10;
+     text-decoration: none !important;
 }
 
-.input-icon {
-    position: absolute;
-    left: 16px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: var(--input-icon);
-    z-index: 2;
+.brand-logo-icon { height: 40px; width: auto; margin-right: 10px; }
+.brand-name-main { font-weight: 700; font-size: 1.5rem; color: rgb(24, 3, 3); }
+.brand-name-accent { font-weight: 700; font-size: 1.5rem; color: #0a3ee8; }
+
+/* --- Role Selection (Register Specific) --- */
+.role-option input { display: none; }
+
+.role-card {
+     border: 2px solid rgba(0, 0, 0, 0.05);
+     border-radius: 12px;
+     padding: 15px;
+     text-align: center;
+     cursor: pointer;
+     transition: all 0.3s ease;
+     background: rgba(255, 255, 255, 0.6);
+     color: var(--text-muted);
+     height: 100%;
+     display: flex;
+     flex-direction: column;
+     justify-content: center;
+     align-items: center;
 }
 
-.form-control-modern {
-    height: 50px;
-    padding-left: 45px;
-    border-radius: 12px;
-    border: 1px solid #e5e7eb;
-    background-color: var(--input-bg);
-    font-size: 0.95rem;
-    width: 100%;
-    transition: all 0.3s ease;
+.role-option input:checked + .role-card {
+     border-color: var(--primary-color);
+     background: rgba(0, 99, 255, 0.08);
+     color: var(--primary-color);
+     font-weight: 700;
+     box-shadow: var(--shadow-md);
 }
 
-.form-control-modern:focus {
-    background-color: #fff;
-    border-color: var(--primary-color);
-    box-shadow: 0 0 0 4px rgba(0, 99, 255, 0.1);
-    outline: none;
+.role-card i { font-size: 1.8rem; margin-bottom: 0.5rem; display: block; }
+
+/* --- Social Buttons --- */
+.social-buttons {
+     display: flex;
+     justify-content: center;
+     gap: 15px;
+     margin-bottom: 20px;
 }
 
-.form-control-modern.is-invalid {
-    border-color: #dc3545;
-    background-image: none; /* Xóa icon lỗi mặc định của bootstrap để không đè icon của mình */
+.social-btn {
+     width: 50px;
+     height: 50px;
+     border-radius: 50%;
+     border: 1px solid #e5e7eb;
+     background: white;
+     display: flex;
+     align-items: center;
+     justify-content: center;
+     color: #333;
+     font-size: 1.2rem;
+     transition: all 0.3s;
+     text-decoration: none;
 }
 
-/* --- Buttons --- */
+.social-btn:hover {
+     background-color: #f8f9fa;
+     transform: translateY(-3px);
+     box-shadow: var(--shadow-sm);
+     color: var(--primary-color);
+}
+
+/* --- Footer Override for Auth --- */
+.auth-hero footer, footer {
+     background-color: #1a1c1f !important;
+     position: relative;
+     z-index: 10;
+     width: 100%;
+}
+
 .btn-cta-dark {
-    background: var(--cta-dark);
+    background: linear-gradient(180deg, #2b2d31 0%, #1a1c1f 100%);
     color: #fff;
     height: 50px;
     border-radius: 12px;
     font-weight: 600;
     border: none;
-    transition: transform 0.2s;
+    transition: transform 0.2s, box-shadow 0.2s;
 }
-
-.btn-cta-dark:hover {
-    transform: translateY(-2px);
-    color: #fff;
+.btn-cta-dark:hover { 
+    transform: translateY(-2px); 
+    color: #fff; 
     box-shadow: 0 10px 20px rgba(0,0,0,0.2);
 }
 
-/* --- Role Selection (Register) --- */
-.role-option input {
-    display: none;
-}
-
+.role-option input { display: none; }
 .role-card {
-    border: 2px solid rgba(0, 0, 0, 0.05);
+    border: 2px solid transparent;
     border-radius: 12px;
     padding: 15px;
     text-align: center;
     cursor: pointer;
-    transition: all 0.3s ease;
-    background: rgba(255, 255, 255, 0.6);
-    color: #6c757d;
+    background: rgba(255,255,255,0.7);
+    color: #64748b;
     height: 100%;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
+    transition: all 0.2s;
 }
-
 .role-option input:checked + .role-card {
     border-color: var(--primary-color);
-    background: rgba(0, 99, 255, 0.08);
+    background: rgba(255, 255, 255, 0.95);
     color: var(--primary-color);
     font-weight: 700;
-    box-shadow: 0 4px 12px rgba(0, 99, 255, 0.15);
+    box-shadow: 0 4px 15px rgba(0, 99, 255, 0.2);
+    transform: translateY(-2px);
 }
+.role-card i { font-size: 1.8rem; margin-bottom: 0.5rem; display: block; }
 
-.role-card i {
-    font-size: 1.8rem;
-    margin-bottom: 0.5rem;
-    display: block;
-}
-
-/* --- Social Buttons --- */
-.social-buttons {
-    display: flex;
-    justify-content: center;
-    gap: 15px;
-    margin-bottom: 20px;
-}
-
-.social-btn {
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    border: 1px solid #e5e7eb;
-    background: white;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #333;
-    font-size: 1.2rem;
-    transition: all 0.3s;
-    text-decoration: none;
-}
-
-.social-btn:hover {
-    background-color: #f8f9fa;
-    transform: translateY(-3px);
-    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-    color: var(--primary-color);
-}
-
-.divider-modern {
-    display: flex;
-    align-items: center;
+.upload-box {
+    border: 2px dashed #94a3b8;
+    border-radius: 12px;
+    padding: 30px;
     text-align: center;
-    color: #9ca3af;
-    font-size: 0.85rem;
+    cursor: pointer;
+    display: block;
+    background: rgba(255,255,255,0.5);
+    transition: all 0.3s;
 }
-.divider-modern::before, .divider-modern::after {
-    content: '';
-    flex: 1;
-    border-bottom: 1px solid #e5e7eb;
-}
-.divider-text {
-    padding: 0 10px;
-}
+.upload-box:hover { background: rgba(255,255,255,0.8); border-color: var(--primary-color); }
 
-/* --- Footer in Auth Page --- */
-.auth-hero footer {
-    position: relative;
-    z-index: 2;
-    width: 100%;
-    background: rgba(0, 0, 0, 0.8) !important; /* Footer tối màu cho hợp nền trời */
-    margin-top: 0 !important; /* Xóa margin mặc định của footer cũ */
+.social-buttons { display: flex; justify-content: center; gap: 15px; margin-bottom: 20px; }
+.social-btn {
+    width: 50px; height: 50px; border-radius: 50%; border: 1px solid rgba(0,0,0,0.1);
+    background: rgba(255,255,255,0.8); display: flex; align-items: center; justify-content: center;
+    color: #333; font-size: 1.2rem; transition: all 0.3s; text-decoration: none;
 }
+.social-btn:hover { background: white; transform: translateY(-3px); color: var(--primary-color); box-shadow: 0 5px 15px rgba(0,0,0,0.1); }

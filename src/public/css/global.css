@@ -1,0 +1,121 @@
+/* ==========================================================================
+   GLOBAL STYLES - TECHTALENT HUB
+   Contains: Variables, Typography, Glassmorphism, Common Components (Buttons, Inputs)
+   ========================================================================== */
+
+:root {
+    /* --- Color Palette --- */
+    --primary-color: #0063FF;
+    --primary-dark: #004085;
+    --primary-light: #e0f2fe;
+    
+    --text-dark: #1f2937;
+    --text-muted: #6b7280;
+    --text-light: #f9fafb;
+
+    --bg-body: #f3f4f6;
+    --bg-gradient-start: #e0f2fe;
+    --bg-gradient-end: #f0f9ff;
+
+    /* --- Glassmorphism Variables --- */
+    --glass-bg: rgba(255, 255, 255, 0.95);
+    --glass-border: 1px solid rgba(255, 255, 255, 0.5);
+    --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.07);
+    --blur-amount: 20px;
+
+    /* --- Shadows --- */
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    --shadow-lg: 0 20px 40px rgba(0, 0, 0, 0.1);
+    --shadow-hover: 0 20px 40px rgba(0, 99, 255, 0.15);
+
+    /* --- Dimensions --- */
+    --header-height: 80px;
+    --sidebar-width: 260px;
+}
+
+/* --- Base Settings --- */
+body {
+    font-family: 'Inter', sans-serif;
+    color: var(--text-dark);
+    background-color: var(--bg-body);
+    -webkit-font-smoothing: antialiased;
+}
+
+/* --- Utility Class: Glass Effect (Shared for Navbar, Cards) --- */
+.glass-effect {
+    background: var(--glass-bg);
+    backdrop-filter: blur(var(--blur-amount));
+    -webkit-backdrop-filter: blur(var(--blur-amount));
+    border: var(--glass-border);
+    box-shadow: var(--glass-shadow);
+}
+
+/* --- Common Components: Modern Input (Taken from Auth.css) --- */
+.input-wrapper { position: relative; }
+
+.input-icon {
+    position: absolute;
+    left: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-muted);
+    z-index: 2;
+    font-size: 1rem;
+}
+
+.form-control-modern {
+    height: 50px;
+    padding-left: 45px;
+    padding-right: 15px;
+    border-radius: 12px;
+    border: 1px solid #e5e7eb;
+    background-color: #f9fafb;
+    font-size: 0.95rem;
+    width: 100%;
+    transition: all 0.3s ease;
+    color: var(--text-dark);
+}
+
+.form-control-modern:focus {
+    background-color: #fff;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 4px rgba(0, 99, 255, 0.1);
+    outline: none;
+}
+
+.form-control-modern.is-invalid {
+    border-color: #dc3545;
+    background-image: none;
+}
+
+/* --- Common Components: Modern Buttons --- */
+.btn-primary-modern {
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    padding: 10px 25px;
+    font-weight: 600;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 6px rgba(0, 99, 255, 0.2);
+}
+
+.btn-primary-modern:hover {
+    background: var(--primary-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 15px rgba(0, 99, 255, 0.3);
+    color: white;
+    text-decoration: none;
+}
+
+/* --- Common Components: Badges/Tags --- */
+.tag { padding: 5px 12px; border-radius: 8px; font-size: 0.75rem; font-weight: 600; display: inline-block; }
+.tag-remote { background: #e0f2fe; color: #0369a1; }
+.tag-fulltime { background: #dcfce7; color: #15803d; }
+.tag-contract { background: #fef3c7; color: #b45309; }
+
+/* --- Layout Helpers --- */
+body:not(.auth-layout-page):not(.dashboard-page) {
+    padding-top: var(--header-height);
+}

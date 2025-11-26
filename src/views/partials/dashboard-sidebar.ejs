@@ -1,0 +1,107 @@
+<%
+    let currentUser = null;
+    let currentRole = 'Company';
+    let displayName = 'Guest';
+    let userAvatar = '/images/default-avatar.png';
+
+    if (typeof user !== 'undefined' && user) {
+        currentUser = user;
+
+        currentRole = user.userType || 'guest';
+
+        displayName = user.name || (user.email ? user.email.split('@')[0] : 'User');
+        if (user.avatarUrl) {
+            userAvatar = user.avatarUrl;
+        }
+    }
+%>
+
+<aside class="sidebar">
+    <div class="sidebar-brand">
+        <a href="/" class="d-flex align-items-center text-decoration-none">
+            <img src="/images/logo.svg" alt="Logo" width="28" height="28" class="mr-2">
+            <span class="brand-name-main">TechTalent</span><span class="brand-name-accent">Hub</span>
+        </a>
+    </div>
+
+    <ul class="sidebar-menu">
+        
+        <% if (currentRole === 'Company') { %>
+            <li class="menu-header text-uppercase text-muted font-weight-bold">Overview</li>
+            <li>
+                <a href="/company/dashboard" class="menu-link <%= (activePage === 'dashboard') ? 'active' : '' %>">
+                    <i class="fas fa-th-large"></i> Dashboard
+                </a>
+            </li>
+
+            <li class="menu-header text-uppercase text-muted font-weight-bold">Recruitment</li>
+            <li>
+                <a href="/company/jobs/create" class="menu-link <%= (activePage === 'post-job') ? 'active' : '' %>">
+                    <i class="fas fa-plus-circle"></i> Post a Job
+                </a>
+            </li>
+            <li>
+                <a href="/company/jobs" class="menu-link <%= (activePage === 'my-jobs') ? 'active' : '' %>">
+                    <i class="fas fa-briefcase"></i> My Jobs
+                </a>
+            </li>
+            <li>
+                <a href="/company/candidates" class="menu-link <%= (activePage === 'candidates') ? 'active' : '' %>">
+                    <i class="fas fa-users"></i> Candidates
+                </a>
+            </li>
+
+            <li class="menu-header text-uppercase text-muted font-weight-bold">Account</li>
+            <li>
+                <a href="/company/profile" class="menu-link <%= (activePage === 'profile') ? 'active' : '' %>">
+                    <i class="fas fa-building"></i> Company Profile
+                </a>
+            </li>
+        <% } %>
+
+        <% if (currentRole === 'Admin') { %>
+            <li class="menu-header text-uppercase text-muted font-weight-bold">System</li>
+            <li>
+                <a href="/admin/dashboard" class="menu-link <%= (activePage === 'dashboard') ? 'active' : '' %>">
+                    <i class="fas fa-chart-line"></i> Analytics
+                </a>
+            </li>
+            <li>
+                <a href="/admin/users" class="menu-link <%= (activePage === 'users') ? 'active' : '' %>">
+                    <i class="fas fa-user-shield"></i> User Management
+                </a>
+            </li>
+            <li>
+                <a href="/admin/settings" class="menu-link <%= (activePage === 'settings') ? 'active' : '' %>">
+                    <i class="fas fa-cogs"></i> Settings
+                </a>
+            </li>
+        <% } %>
+
+        <% if (currentRole === 'JobSeeker') { %>
+            <li class="menu-header text-uppercase text-muted font-weight-bold">My Career</li>
+            <li>
+                <a href="/seeker/profile" class="menu-link <%= (activePage === 'profile') ? 'active' : '' %>">
+                    <i class="fas fa-id-card"></i> My CV / Profile
+                </a>
+            </li>
+            <li>
+                <a href="/seeker/applications" class="menu-link <%= (activePage === 'applications') ? 'active' : '' %>">
+                    <i class="fas fa-file-alt"></i> My Applications
+                </a>
+            </li>
+            <li>
+                <a href="/seeker/saved-jobs" class="menu-link <%= (activePage === 'saved') ? 'active' : '' %>">
+                    <i class="far fa-heart"></i> Saved Jobs
+                </a>
+            </li>
+        <% } %>
+
+        <li class="mt-4 border-top pt-2">
+            <a href="/auth/logout" class="menu-link text-danger">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </a>
+        </li>
+
+    </ul>
+</aside>

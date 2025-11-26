@@ -81,15 +81,6 @@
                                                 old</small>
                                         </div>
 
-                                        <div class="form-group mb-3">
-                                            <label class="font-weight-bold small text-dark">Professional Title</label>
-                                            <div class="input-wrapper">
-                                                <i class="fas fa-id-card input-icon"></i>
-                                                <input type="text" class="form-control-modern" name="title"
-                                                    placeholder="e.g. Senior Frontend Developer">
-                                            </div>
-                                        </div>
-
                                         <div class="row">
                                             <div class="col-md-6 mb-3">
                                                 <label class="font-weight-bold small text-dark">Experience Level</label>
@@ -157,117 +148,84 @@
 
         <script>
             const form = document.getElementById('seekerForm');
-            const submitBtn = form.querySelector('button[type="submit"]');
 
-            // Inputs needed for validation
-            const phoneInput = document.querySelector('input[name="PhoneNumber"]');
-            const dobInput = document.querySelector('input[name="DateOfBirth"]');
+            // 1. HTTPS Validation
             const httpsInputs = document.querySelectorAll('.https-input');
+            function validateHttps(input) {
+                const value = input.value.trim();
+                const errorDisplay = input.parentElement.parentElement.querySelector('.error-msg');
 
-            // Required inputs
-            const requiredInputs = form.querySelectorAll('[required]');
+                if (value && !value.startsWith('https://')) {
+                    if (errorDisplay) errorDisplay.classList.remove('d-none');
+                    input.classList.add('is-invalid');
+                    return false;
+                } else {
+                    if (errorDisplay) errorDisplay.classList.add('d-none');
+                    input.classList.remove('is-invalid');
+                    return true;
+                }
+            }
+            httpsInputs.forEach(input => input.addEventListener('input', () => validateHttps(input)));
 
-            // Regex for phone number validation
+            // 2. Phone Validation
+            const phoneInput = document.getElementById('phoneNumber');
             const phoneRegex = /^(0|\+84)\d{9,10}$/;
 
-            // 1. Function to check overall form validity
-            function checkFormValidity() {
-                let isValid = true;
-
-                // Check Phone
-                if (!phoneRegex.test(phoneInput.value.trim())) isValid = false;
-
-                // Check DOB
-                if (!isDobValid()) isValid = false;
-
-                // Check HTTPS fields
-                httpsInputs.forEach(input => {
-                    if (!input.value.startsWith('https://')) isValid = false;
-                });
-
-                // Check other required fields (not empty)
-                requiredInputs.forEach(input => {
-                    if (!input.value.trim()) isValid = false;
-                });
-
-                // Toggle Submit button
-                if (isValid) {
-                    submitBtn.removeAttribute('disabled');
-                    submitBtn.style.opacity = '1';
-                    submitBtn.style.cursor = 'pointer';
-                } else {
-                    submitBtn.setAttribute('disabled', 'true');
-                    submitBtn.style.opacity = '0.6';
-                    submitBtn.style.cursor = 'not-allowed';
-                }
-            }
-
-            // 2. Validate Phone (Real-time)
-            phoneInput.addEventListener('input', function () {
-                const errorDisplay = this.parentElement.nextElementSibling;
-                const value = this.value.trim();
-
-                if (value && !phoneRegex.test(value)) {
+            function validatePhone() {
+                const errorDisplay = phoneInput.parentElement.nextElementSibling;
+                if (!phoneRegex.test(phoneInput.value.trim())) {
                     errorDisplay.classList.remove('d-none');
-                    this.classList.add('is-invalid');
+                    phoneInput.classList.add('is-invalid');
+                    return false;
                 } else {
                     errorDisplay.classList.add('d-none');
-                    this.classList.remove('is-invalid');
+                    phoneInput.classList.remove('is-invalid');
+                    return true;
                 }
-                checkFormValidity();
-            });
+            }
+            phoneInput.addEventListener('input', validatePhone);
 
-            // 3. Validate DOB (Real-time)
-            function isDobValid() {
-                if (!dobInput.value) return false;
+            // 3. Date of Birth Validation
+            const dobInput = document.getElementById('dob');
+            function validateDob() {
+                const errorDisplay = dobInput.parentElement.nextElementSibling;
                 const dob = new Date(dobInput.value);
                 const today = new Date();
+
                 let age = today.getFullYear() - dob.getFullYear();
                 const m = today.getMonth() - dob.getMonth();
-                if (m < 0 || (m === 0 && today.getDate() < dob.getDate())) age--;
-                return (dob <= today && age >= 15);
-            }
+                if (m < 0 || (m === 0 && today.getDate() < dob.getDate())) {
+                    age--;
+                }
 
-            dobInput.addEventListener('change', function () {
-                const errorDisplay = this.parentElement.nextElementSibling;
-
-                if (!isDobValid()) {
+                if (dob > today || age < 15) {
                     errorDisplay.classList.remove('d-none');
-                    this.classList.add('is-invalid');
+                    dobInput.classList.add('is-invalid');
+                    return false;
                 } else {
                     errorDisplay.classList.add('d-none');
-                    this.classList.remove('is-invalid');
+                    dobInput.classList.remove('is-invalid');
+                    return true;
                 }
-                checkFormValidity();
-            });
+            }
+            dobInput.addEventListener('change', validateDob);
 
-            // 4. Validate HTTPS (Real-time)
-            httpsInputs.forEach(input => {
-                input.addEventListener('input', function () {
-                    const errorDisplay = this.parentElement.nextElementSibling; // Thẻ small.text-muted
-                    const errorMsg = errorDisplay.nextElementSibling; // Thẻ small.text-danger
+            // 4. Form Submit Handler
+            form.addEventListener('submit', function (e) {
+                let isValid = true;
 
-                    const value = this.value.trim();
-
-                    if (value && !value.startsWith('https://')) {
-                        if (errorMsg) errorMsg.classList.remove('d-none');
-                        this.classList.add('is-invalid');
-                    } else {
-                        if (errorMsg) errorMsg.classList.add('d-none');
-                        this.classList.remove('is-invalid');
-                    }
-                    checkFormValidity();
+                httpsInputs.forEach(input => {
+                    if (!validateHttps(input)) isValid = false;
                 });
+
+                if (!validatePhone()) isValid = false;
+                if (!validateDob()) isValid = false;
+
+                if (!isValid) {
+                    e.preventDefault();
+                    const firstError = document.querySelector('.is-invalid');
+                    if (firstError) firstError.focus();
+                }
             });
-
-            // 5. Listen for input events on all other fields to enable the button
-            requiredInputs.forEach(input => {
-                input.addEventListener('input', checkFormValidity);
-                input.addEventListener('change', checkFormValidity);
-            });
-
-            // Run initial check (to disable the button initially)
-            checkFormValidity();
-
         </script>
     </body>

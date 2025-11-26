@@ -131,22 +131,22 @@
             const httpsInputs = document.querySelectorAll('.https-input');
             const requiredInputs = form.querySelectorAll('[required]');
 
-            // 1. Function to check the entire form
+            // 1. Hàm kiểm tra toàn bộ form
             function checkFormValidity() {
                 let isValid = true;
 
                 // Check HTTPS inputs
                 httpsInputs.forEach(input => {
-                    // If there is input, it must start with https://
+                    // Nếu có nhập thì phải bắt đầu bằng https://
                     if (input.value && !input.value.startsWith('https://')) isValid = false;
                 });
 
-                // Check other required fields (not empty)
+                // Check các trường required khác (không được rỗng)
                 requiredInputs.forEach(input => {
                     if (!input.value.trim()) isValid = false;
                 });
 
-                // Toggle Submit button
+                // Toggle nút Submit
                 if (isValid) {
                     submitBtn.removeAttribute('disabled');
                     submitBtn.style.opacity = '1';
@@ -162,7 +162,7 @@
             httpsInputs.forEach(input => {
                 input.addEventListener('input', function () {
                     const value = this.value.trim();
-                    // Logic to find error element: Skip text-muted if present
+                    // Logic tìm thẻ lỗi: Bỏ qua thẻ text-muted nếu có
                     let errorDisplay = this.parentElement.nextElementSibling;
                     if (errorDisplay && !errorDisplay.classList.contains('error-msg')) {
                         errorDisplay = errorDisplay.nextElementSibling;
@@ -180,13 +180,13 @@
                 });
             });
 
-            // 3. Listen for events on other fields
+            // 3. Lắng nghe sự kiện cho các trường còn lại
             requiredInputs.forEach(input => {
                 input.addEventListener('input', checkFormValidity);
                 input.addEventListener('change', checkFormValidity);
             });
 
-            // Run initial
+            // Chạy lần đầu để khóa nút
             checkFormValidity();
         </script>
     </body>

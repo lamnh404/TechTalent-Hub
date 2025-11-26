@@ -1,219 +1,251 @@
 <%- include('../partials/header', { title: 'Sign up' }) %>
 
-<body class="auth-layout-page">
-    <section class="auth-hero">
-        <a href="/" class="brand-logo">
-            <img src="/images/logo.svg" alt="Logo" class="brand-logo-icon">
-            <div class="brand-name-container">
-                <span class="brand-name-main">TechTalent</span><span class="brand-name-accent">Hub</span>
-            </div>
-        </a>
+    <body class="auth-layout-page">
+        <section class="auth-hero">
+            <a href="/" class="brand-logo">
+                <img src="/images/logo.svg" alt="Logo" class="brand-logo-icon">
+                <div class="brand-name-container">
+                    <span class="brand-name-main">TechTalent</span><span class="brand-name-accent">Hub</span>
+                </div>
+            </a>
 
-        <div class="sky-arcs"></div>
+            <div class="sky-arcs"></div>
 
-        <div class="auth-content-wrapper">
-            <div class="container">
-                <div class="row justify-content-center">
-                    <div class="col-sm-10 col-md-8 col-lg-6 col-xl-5">
-                        <div class="card auth-card">
-                            <div class="card-body p-4 p-md-5">
+            <div class="auth-content-wrapper">
+                <div class="container">
+                    <div class="row justify-content-center">
+                        <div class="col-sm-10 col-md-8 col-lg-6 col-xl-5">
+                            <div class="card auth-card">
+                                <div class="card-body p-4 p-md-5">
 
-                                <div class="text-center mb-4">
-                                    <span class="badge badge-pill badge-light text-primary mb-2 shadow-sm px-3 py-1">Step 1 of 2</span>
-                                    <h3 class="mb-1 font-weight-bold text-dark">Create Account</h3>
-                                    <p class="text-muted small">Join our professional community.</p>
-                                </div>
-
-                                <% if (typeof error !== 'undefined' && error) { %>
-                                    <div class="alert alert-danger auth-alert shadow-sm">
-                                        <i class="fas fa-exclamation-circle mr-2"></i><%= error %>
-                                    </div>
-                                <% } %>
-
-                                <form action="/auth/register" method="POST" id="registerForm" novalidate>
-                                    
-                                    <div class="form-group mb-3">
-                                        <div class="input-wrapper">
-                                            <i class="far fa-envelope input-icon"></i>
-                                            <input type="email" class="form-control-modern" id="email" name="email" placeholder="Email Address" required value="<%= typeof oldInput !== 'undefined' ? oldInput.email : '' %>">
-                                        </div>
-                                        <div class="invalid-feedback ml-2">Please enter a valid email.</div>
+                                    <div class="text-center mb-4">
+                                        <span
+                                            class="badge badge-pill badge-light text-primary mb-2 shadow-sm px-3 py-1">Step
+                                            1 of 2</span>
+                                        <h3 class="mb-1 font-weight-bold text-dark">Create Account</h3>
+                                        <p class="text-muted small">Join our professional community.</p>
                                     </div>
 
-                                    <div class="form-group mb-2">
-                                        <div class="input-wrapper">
-                                            <i class="fas fa-lock input-icon"></i>
-                                            <input type="password" class="form-control-modern" id="password" name="password" placeholder="Password" required autocomplete="new-password">
+                                    <% if (typeof error !=='undefined' && error) { %>
+                                        <div class="alert alert-danger auth-alert shadow-sm">
+                                            <i class="fas fa-exclamation-circle mr-2"></i>
+                                            <%= error %>
                                         </div>
-                                        <div class="mt-2 pl-2 d-none" id="passwordCriteria">
-                                            <small class="d-block text-muted" id="lenCheck"><i class="far fa-circle mr-1"></i> At least 8 characters</small>
-                                            <small class="d-block text-muted" id="numCheck"><i class="far fa-circle mr-1"></i> Contains a number</small>
-                                            <small class="d-block text-muted" id="caseCheck"><i class="far fa-circle mr-1"></i> Contains a letter</small>
-                                        </div>
-                                    </div>
+                                        <% } %>
 
-                                    <div class="form-group mb-4">
-                                        <div class="input-wrapper">
-                                            <i class="fas fa-check-circle input-icon"></i>
-                                            <input type="password" class="form-control-modern" id="confirmPassword" name="confirmPassword" placeholder="Confirm Password" required>
-                                        </div>
-                                        <div class="invalid-feedback ml-2">Passwords do not match.</div>
-                                    </div>
+                                            <form action="/auth/register" method="POST" id="registerForm" novalidate>
 
-                                    <div class="form-group mb-4">
-                                        <label class="font-weight-bold small text-dark mb-2 ml-1">I want to...</label>
-                                        <div class="row no-gutters role-selector">
-                                            <div class="col-6 pr-2">
-                                                <label class="role-option w-100">
-                                                    <input type="radio" name="role" value="JobSeeker" checked>
-                                                    <div class="role-card">
-                                                        <i class="fas fa-user-tie"></i>
-                                                        <span>Find Jobs</span>
+                                                <div class="form-group mb-3">
+                                                    <div class="input-wrapper">
+                                                        <i class="far fa-envelope input-icon"></i>
+                                                        <input type="email" class="form-control-modern" id="email"
+                                                            name="email" placeholder="Email Address" required
+                                                            value="<%= typeof oldInput !== 'undefined' ? oldInput.email : '' %>">
                                                     </div>
-                                                </label>
-                                            </div>
-                                            <div class="col-6 pl-2">
-                                                <label class="role-option w-100">
-                                                    <input type="radio" name="role" value="Company">
-                                                    <div class="role-card">
-                                                        <i class="fas fa-building"></i>
-                                                        <span>Hire Talent</span>
+                                                    <div class="invalid-feedback ml-2">Please enter a valid email.</div>
+                                                </div>
+
+                                                <div class="form-group mb-2">
+                                                    <div class="input-wrapper">
+                                                        <i class="fas fa-lock input-icon"></i>
+                                                        <input type="password" class="form-control-modern" id="password"
+                                                            name="password" placeholder="Password" required
+                                                            autocomplete="new-password">
                                                     </div>
-                                                </label>
+                                                    <div class="mt-2 pl-2 d-none" id="passwordCriteria">
+                                                        <small class="d-block text-muted" id="lenCheck"><i
+                                                                class="far fa-circle mr-1"></i> At least 8
+                                                            characters</small>
+                                                        <small class="d-block text-muted" id="numCheck"><i
+                                                                class="far fa-circle mr-1"></i> Contains a
+                                                            number</small>
+                                                        <small class="d-block text-muted" id="caseCheck"><i
+                                                                class="far fa-circle mr-1"></i> Contains a
+                                                            letter</small>
+                                                    </div>
+                                                </div>
+
+                                                <div class="form-group mb-4">
+                                                    <div class="input-wrapper">
+                                                        <i class="fas fa-check-circle input-icon"></i>
+                                                        <input type="password" class="form-control-modern"
+                                                            id="confirmPassword" name="confirmPassword"
+                                                            placeholder="Confirm Password" required>
+                                                    </div>
+                                                    <div class="invalid-feedback ml-2">Passwords do not match.</div>
+                                                </div>
+
+                                                <div class="form-group mb-4">
+                                                    <label class="font-weight-bold small text-dark mb-2 ml-1">I want
+                                                        to...</label>
+                                                    <div class="row no-gutters role-selector">
+                                                        <div class="col-6 pr-2">
+                                                            <label class="role-option w-100">
+                                                                <input type="radio" name="role" value="JobSeeker"
+                                                                    checked>
+                                                                <div class="role-card">
+                                                                    <i class="fas fa-user-tie"></i>
+                                                                    <span>Find Jobs</span>
+                                                                </div>
+                                                            </label>
+                                                        </div>
+                                                        <div class="col-6 pl-2">
+                                                            <label class="role-option w-100">
+                                                                <input type="radio" name="role" value="Company">
+                                                                <div class="role-card">
+                                                                    <i class="fas fa-building"></i>
+                                                                    <span>Hire Talent</span>
+                                                                </div>
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <button type="submit" id="submitBtn"
+                                                    class="btn btn-cta-dark btn-block shadow" disabled>
+                                                    Continue <i class="fas fa-arrow-right ml-2"></i>
+                                                </button>
+                                            </form>
+
+                                            <div class="divider-modern my-4">
+                                                <span class="divider-text">Or register with</span>
                                             </div>
-                                        </div>
-                                    </div>
 
-                                    <button type="submit" id="submitBtn" class="btn btn-cta-dark btn-block shadow" disabled>
-                                        Continue <i class="fas fa-arrow-right ml-2"></i>
-                                    </button>
-                                </form>
+                                            <div class="social-buttons">
+                                                <a class="social-btn" href="/auth/google"><i
+                                                        class="fab fa-google"></i></a>
+                                                <a class="social-btn" href="/auth/facebook"><i
+                                                        class="fab fa-facebook-f"></i></a>
+                                                <a class="social-btn" href="/auth/apple"><i
+                                                        class="fab fa-apple"></i></a>
+                                            </div>
 
-                                <div class="divider-modern my-4">
-                                    <span class="divider-text">Or register with</span>
+                                            <div class="text-center mt-4">
+                                                <p class="small text-muted">Already have an account? <a href="/login"
+                                                        class="font-weight-bold text-primary">Sign in</a></p>
+                                            </div>
+
                                 </div>
-
-                                <div class="social-buttons">
-                                    <a class="social-btn" href="/auth/google"><i class="fab fa-google"></i></a>
-                                    <a class="social-btn" href="/auth/facebook"><i class="fab fa-facebook-f"></i></a>
-                                    <a class="social-btn" href="/auth/apple"><i class="fab fa-apple"></i></a>
-                                </div>
-
-                                <div class="text-center mt-4">
-                                    <p class="small text-muted">Already have an account? <a href="/login" class="font-weight-bold text-primary">Sign in</a></p>
-                                </div>
-
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <%- include('../partials/footer') %>
-    </section>
+        </section>
+            <%- include('../partials/footer') %>
+        <script>
+            const form = document.getElementById('registerForm');
+            const email = document.getElementById('email');
+            const password = document.getElementById('password');
+            const confirmPassword = document.getElementById('confirmPassword');
+            const submitBtn = document.getElementById('submitBtn');
+            const criteriaBox = document.getElementById('passwordCriteria');
 
-    <script>
-        const form = document.getElementById('registerForm');
-        const email = document.getElementById('email');
-        const password = document.getElementById('password');
-        const confirmPassword = document.getElementById('confirmPassword');
-        const submitBtn = document.getElementById('submitBtn');
-        const criteriaBox = document.getElementById('passwordCriteria');
+            // Các tiêu chí mật khẩu
+            const lenCheck = document.getElementById('lenCheck');
+            const numCheck = document.getElementById('numCheck');
+            const caseCheck = document.getElementById('caseCheck');
 
-        // Các tiêu chí mật khẩu
-        const lenCheck = document.getElementById('lenCheck');
-        const numCheck = document.getElementById('numCheck');
-        const caseCheck = document.getElementById('caseCheck');
+            // Regex cho email
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-        // Regex cho email
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            function validateForm() {
+                const isEmailValid = emailRegex.test(email.value);
+                const isPasswordValid = checkPasswordStrength(password.value);
+                const isMatch = password.value === confirmPassword.value && password.value !== '';
 
-        function validateForm() {
-            const isEmailValid = emailRegex.test(email.value);
-            const isPasswordValid = checkPasswordStrength(password.value);
-            const isMatch = password.value === confirmPassword.value && password.value !== '';
-            
-            // Validation UI cho Confirm Password
-            if (confirmPassword.value.length > 0) {
-                if (isMatch) {
-                    confirmPassword.classList.remove('is-invalid');
-                    confirmPassword.classList.add('is-valid');
+                // Validation UI cho Confirm Password
+                if (confirmPassword.value.length > 0) {
+                    if (isMatch) {
+                        confirmPassword.classList.remove('is-invalid');
+                        confirmPassword.classList.add('is-valid');
+                    } else {
+                        confirmPassword.classList.remove('is-valid');
+                        confirmPassword.classList.add('is-invalid');
+                    }
+                }
+
+                // Enable nút submit chỉ khi tất cả đều đúng
+                if (isEmailValid && isPasswordValid && isMatch) {
+                    submitBtn.removeAttribute('disabled');
+                    submitBtn.style.opacity = '1';
                 } else {
-                    confirmPassword.classList.remove('is-valid');
-                    confirmPassword.classList.add('is-invalid');
+                    submitBtn.setAttribute('disabled', 'true');
+                    submitBtn.style.opacity = '0.6';
                 }
             }
 
-            // Enable nút submit chỉ khi tất cả đều đúng
-            if (isEmailValid && isPasswordValid && isMatch) {
-                submitBtn.removeAttribute('disabled');
-                submitBtn.style.opacity = '1';
-            } else {
-                submitBtn.setAttribute('disabled', 'true');
-                submitBtn.style.opacity = '0.6';
-            }
-        }
+            function checkPasswordStrength(pwd) {
+                // Hiện box tiêu chí khi gõ
+                if (pwd.length > 0) criteriaBox.classList.remove('d-none');
+                else criteriaBox.classList.add('d-none');
 
-        function checkPasswordStrength(pwd) {
-            // Hiện box tiêu chí khi gõ
-            if (pwd.length > 0) criteriaBox.classList.remove('d-none');
-            else criteriaBox.classList.add('d-none');
+                let isValid = true;
 
-            let isValid = true;
+                // Check độ dài
+                if (pwd.length >= 8) {
+                    updateCriteria(lenCheck, true);
+                } else {
+                    updateCriteria(lenCheck, false);
+                    isValid = false;
+                }
 
-            // Check độ dài
-            if (pwd.length >= 8) {
-                updateCriteria(lenCheck, true);
-            } else {
-                updateCriteria(lenCheck, false);
-                isValid = false;
-            }
+                // Check số
+                if (/\d/.test(pwd)) {
+                    updateCriteria(numCheck, true);
+                } else {
+                    updateCriteria(numCheck, false);
+                    isValid = false;
+                }
 
-            // Check số
-            if (/\d/.test(pwd)) {
-                updateCriteria(numCheck, true);
-            } else {
-                updateCriteria(numCheck, false);
-                isValid = false;
-            }
+                // Check chữ cái
+                if (/[a-zA-Z]/.test(pwd)) {
+                    updateCriteria(caseCheck, true);
+                } else {
+                    updateCriteria(caseCheck, false);
+                    isValid = false;
+                }
 
-            // Check chữ cái
-            if (/[a-zA-Z]/.test(pwd)) {
-                updateCriteria(caseCheck, true);
-            } else {
-                updateCriteria(caseCheck, false);
-                isValid = false;
+                return isValid;
             }
 
-            return isValid;
-        }
-
-        function updateCriteria(element, valid) {
-            const icon = element.querySelector('i');
-            if (valid) {
-                element.classList.remove('text-muted');
-                element.classList.add('text-success');
-                icon.classList.remove('fa-circle');
-                icon.classList.add('fa-check-circle');
-            } else {
-                element.classList.add('text-muted');
-                element.classList.remove('text-success');
-                icon.classList.add('fa-circle');
-                icon.classList.remove('fa-check-circle');
+            function updateCriteria(element, valid) {
+                const icon = element.querySelector('i');
+                if (valid) {
+                    element.classList.remove('text-muted');
+                    element.classList.add('text-success');
+                    icon.classList.remove('fa-circle');
+                    icon.classList.add('fa-check-circle');
+                } else {
+                    element.classList.add('text-muted');
+                    element.classList.remove('text-success');
+                    icon.classList.add('fa-circle');
+                    icon.classList.remove('fa-check-circle');
+                }
             }
-        }
 
-        // Event Listeners
-        email.addEventListener('input', validateForm);
-        password.addEventListener('input', validateForm);
-        confirmPassword.addEventListener('input', validateForm);
-        
-        // Xử lý khi submit form
-        form.addEventListener('submit', function(e) {
-            if (submitBtn.hasAttribute('disabled')) {
-                e.preventDefault();
+            // Event Listeners
+            email.addEventListener('input', validateForm);
+            password.addEventListener('input', validateForm);
+            confirmPassword.addEventListener('input', validateForm);
+
+            // Xử lý khi submit form
+            form.addEventListener('submit', function (e) {
+                if (submitBtn.hasAttribute('disabled')) {
+                    e.preventDefault();
+                }
+            });
+
+            const errorMessage = "<%= typeof error !== 'undefined' ? error : '' %>";
+
+            if (errorMessage) {
+                Swal.fire({
+                    icon: 'warning', // Dùng icon warning cho lỗi nhập liệu/trùng
+                    title: 'Registration Failed',
+                    text: errorMessage,
+                    confirmButtonColor: '#0063FF'
+                });
             }
-        });
-    </script>
-</body>
+        </script>
+    </body>

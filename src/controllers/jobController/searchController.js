@@ -3,12 +3,12 @@ import searchModel from "~/models/jobModel/searchModel";
 const searchController = {
     searchJobs: async (req, res) => {
         try {
-            const keyword = req.query.q || "";
-            const jobs = await searchModel.searchJobs(keyword);
+            const q = req.query.q || "";
+            const jobs = await searchModel.searchJobs(q);
 
-            res.render("jobs/jobs", {
+            res.render("homepage/job-listing.ejs", {
                 jobs,
-                keyword,
+                q,
                 user: req.session.user
             });
         } catch (error) {
