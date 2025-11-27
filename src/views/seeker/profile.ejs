@@ -1,3 +1,22 @@
+<% 
+    // Mock Data cho Seeker Profile
+    if (typeof seeker === 'undefined') {
+        var seeker = {
+            FirstName: "Nguyen",
+            LastName: "Van A",
+            Email: "nguyenvana@gmail.com",
+            PhoneNumber: "0901234567",
+            ProfessionalTitle: "Senior Frontend Developer",
+            CurrentLocation: "Ho Chi Minh City",
+            Bio: "Experienced developer with 5+ years in React, Node.js and modern web technologies. Passionate about UI/UX and performance optimization.",
+            Skills: "ReactJS, Node.js, MongoDB, TypeScript, Figma",
+            CVFileName: "NguyenVanA_CV_2025.pdf",
+            CVUrl: "https://example.com/cv.pdf",
+            UpdatedAt: new Date()
+        };
+    }
+%>
+
 <%- include('../partials/header', { title: 'Hồ sơ cá nhân' }) %>
 
 <body class="dashboard-page">
@@ -26,48 +45,77 @@
 
             <div class="p-4">
                 <div class="row justify-content-center">
-                    <div class="col-lg-9">
+                    <div class="col-lg-10">
                         
                         <div class="card border-0 shadow-sm rounded-lg mb-4">
                             <div class="card-body p-5">
                                 <div class="d-flex justify-content-between align-items-center mb-4">
-                                    <h5 class="font-weight-bold text-dark">Personal Information</h5>
-                                    <button class="btn btn-sm btn-light text-primary"><i class="fas fa-pen mr-1"></i> Edit</button>
+                                    <h5 class="font-weight-bold text-primary mb-0">Personal Information</h5>
+                                    <span class="badge badge-soft-success">Last updated: <%= new Date(seeker.UpdatedAt).toLocaleDateString() %></span>
                                 </div>
+                                <hr class="mb-4">
 
-                                <form>
+                                <form action="/seeker/profile/update" method="POST">
                                     <div class="row">
                                         <div class="col-md-6 mb-3">
-                                            <label class="small font-weight-bold text-muted">First Name</label>
-                                            <input type="text" class="form-control-modern" value="John" disabled>
+                                            <label class="font-weight-bold small text-dark">First Name</label>
+                                            <div class="input-wrapper">
+                                                <i class="far fa-user input-icon"></i>
+                                                <input type="text" class="form-control-modern" name="FirstName" value="<%= seeker.FirstName %>" required>
+                                            </div>
                                         </div>
                                         <div class="col-md-6 mb-3">
-                                            <label class="small font-weight-bold text-muted">Last Name</label>
-                                            <input type="text" class="form-control-modern" value="Doe" disabled>
+                                            <label class="font-weight-bold small text-dark">Last Name</label>
+                                            <div class="input-wrapper">
+                                                <i class="far fa-user input-icon"></i>
+                                                <input type="text" class="form-control-modern" name="LastName" value="<%= seeker.LastName %>" required>
+                                            </div>
                                         </div>
                                     </div>
+                                   
                                     <div class="row">
                                         <div class="col-md-6 mb-3">
-                                            <label class="small font-weight-bold text-muted">Email</label>
-                                            <input type="email" class="form-control-modern" value="john.doe@example.com" disabled>
+                                            <label class="font-weight-bold small text-dark">Email</label>
+                                            <div class="input-wrapper">
+                                                <i class="far fa-envelope input-icon"></i>
+                                                <input type="email" class="form-control-modern" value="<%= seeker.Email %>" disabled style="background-color: #f8f9fa;">
+                                            </div>
                                         </div>
                                         <div class="col-md-6 mb-3">
-                                            <label class="small font-weight-bold text-muted">Phone</label>
-                                            <input type="tel" class="form-control-modern" value="0901234567">
+                                            <label class="font-weight-bold small text-dark">Phone</label>
+                                            <div class="input-wrapper">
+                                                <i class="fas fa-phone input-icon"></i>
+                                                <input type="tel" class="form-control-modern" name="PhoneNumber" value="<%= seeker.PhoneNumber %>">
+                                            </div>
                                         </div>
                                     </div>
-                                    <div class="form-group mb-3">
-                                        <label class="small font-weight-bold text-muted">Professional Title</label>
-                                        <input type="text" class="form-control-modern" value="Senior Frontend Developer">
+
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label class="font-weight-bold small text-dark">Current Location</label>
+                                            <div class="input-wrapper">
+                                                <i class="fas fa-map-marker-alt input-icon"></i>
+                                                <input type="text" class="form-control-modern" name="CurrentLocation" value="<%= seeker.CurrentLocation %>">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label class="font-weight-bold small text-dark">Professional Title</label>
+                                            <div class="input-wrapper">
+                                                <i class="fas fa-briefcase input-icon"></i>
+                                                <input type="text" class="form-control-modern" name="ProfessionalTitle" value="<%= seeker.ProfessionalTitle %>">
+                                            </div>
+                                        </div>
                                     </div>
                                     
                                     <div class="form-group mb-3">
-                                        <label class="small font-weight-bold text-muted">Bio / Summary</label>
-                                        <textarea class="form-control-modern h-auto py-3" rows="4">Experienced developer with 5+ years in React and Node.js...</textarea>
+                                        <label class="font-weight-bold small text-dark">Bio / Summary</label>
+                                        <textarea class="form-control-modern h-auto py-3" name="Bio" rows="4"><%= seeker.Bio %></textarea>
                                     </div>
 
                                     <div class="text-right mt-4">
-                                        <button type="submit" class="btn btn-primary-modern px-4">Save Changes</button>
+                                        <button type="submit" class="btn btn-primary-modern px-4 shadow-sm font-weight-bold">
+                                            <i class="fas fa-save mr-2"></i> Save Changes
+                                        </button>
                                     </div>
                                 </form>
                             </div>
@@ -75,28 +123,43 @@
 
                         <div class="card border-0 shadow-sm rounded-lg">
                             <div class="card-body p-5">
-                                <h5 class="font-weight-bold text-dark mb-4">Skills & CV</h5>
+                                <h5 class="font-weight-bold text-primary mb-4">Skills & CV</h5>
                                 
                                 <div class="form-group mb-4">
-                                    <label class="small font-weight-bold text-muted">Skills</label>
-                                    <div class="d-flex flex-wrap gap-2 mb-2">
-                                        <span class="badge badge-pill badge-light border px-3 py-2">ReactJS <i class="fas fa-times ml-2 text-muted" style="cursor:pointer"></i></span>
-                                        <span class="badge badge-pill badge-light border px-3 py-2">Node.js <i class="fas fa-times ml-2 text-muted" style="cursor:pointer"></i></span>
-                                        <span class="badge badge-pill badge-light border px-3 py-2">MongoDB <i class="fas fa-times ml-2 text-muted" style="cursor:pointer"></i></span>
+                                    <label class="font-weight-bold small text-dark">Skills</label>
+                                    
+                                    <% if (seeker.Skills) { %>
+                                        <div class="d-flex flex-wrap gap-2 mb-3">
+                                            <% seeker.Skills.split(',').forEach(skill => { %>
+                                                <span class="badge badge-soft-primary px-3 py-2 mr-2 mb-2" style="font-size: 0.9rem;">
+                                                    <%= skill.trim() %> 
+                                                    <i class="fas fa-times ml-2 text-muted" style="cursor:pointer"></i>
+                                                </span>
+                                            <% }) %>
+                                        </div>
+                                    <% } %>
+                                    
+                                    <div class="input-wrapper">
+                                        <i class="fas fa-tags input-icon"></i>
+                                        <input type="text" class="form-control-modern" name="Skills" value="<%= seeker.Skills %>" placeholder="Add skills separated by commas...">
                                     </div>
-                                    <input type="text" class="form-control-modern" placeholder="Add new skill...">
                                 </div>
 
                                 <div class="form-group">
-                                    <label class="small font-weight-bold text-muted">Current CV</label>
+                                    <label class="font-weight-bold small text-dark">Current CV</label>
                                     <div class="d-flex align-items-center p-3 border rounded bg-light">
-                                        <i class="fas fa-file-pdf text-danger fa-2x mr-3"></i>
-                                        <div class="flex-grow-1">
-                                            <h6 class="mb-0 font-weight-bold text-dark">My_Resume_2025.pdf</h6>
-                                            <small class="text-muted">Uploaded on Oct 24, 2025</small>
+                                        <div class="mr-3">
+                                            <i class="fas fa-file-pdf text-danger fa-2x"></i>
                                         </div>
-                                        <button class="btn btn-sm btn-outline-primary mr-2">View</button>
-                                        <button class="btn btn-sm btn-outline-danger">Update</button>
+                                        <div class="flex-grow-1">
+                                            <h6 class="mb-0 font-weight-bold text-dark"><%= seeker.CVFileName || 'No CV Uploaded' %></h6>
+                                            <% if (seeker.CVUrl) { %>
+                                                <a href="<%= seeker.CVUrl %>" target="_blank" class="small text-primary font-weight-bold">View PDF</a>
+                                            <% } %>
+                                        </div>
+                                        <button class="btn btn-sm btn-outline-primary shadow-sm font-weight-bold">
+                                            <i class="fas fa-upload mr-1"></i> Update CV
+                                        </button>
                                     </div>
                                 </div>
                             </div>

@@ -1,0 +1,175 @@
+<%
+    // Mock Data cho Admin Dashboard
+    if (typeof adminStats === 'undefined') {
+        var adminStats = {
+            totalUsers: 15430,
+            totalCompanies: 850,
+            activeJobs: 3200,
+            newReports: 12
+        };
+    }
+
+    if (typeof recentActivities === 'undefined') {
+        var recentActivities = [
+            { id: 1, user: "Google Inc.", action: "Posted a new job", target: "Senior AI Engineer", time: "5 mins ago", icon: "briefcase", color: "primary" },
+            { id: 2, user: "Nguyen Van A", action: "Registered account", target: "Job Seeker", time: "1 hour ago", icon: "user-plus", color: "success" },
+            { id: 3, user: "System", action: "Daily backup completed", target: "Database", time: "3 hours ago", icon: "server", color: "info" },
+            { id: 4, user: "Facebook", action: "Updated profile", target: "Company Info", time: "5 hours ago", icon: "edit", color: "warning" },
+            { id: 5, user: "Tran Thi B", action: "Reported a job", target: "Scam Alert", time: "1 day ago", icon: "flag", color: "danger" }
+        ];
+    }
+%>
+
+<%- include('../partials/header', { title: 'Admin Dashboard' }) %>
+
+<body class="dashboard-page">
+    <div class="dashboard-wrapper">
+        <%- include('../partials/dashboard-sidebar', { activePage: 'dashboard' }) %>
+
+        <main class="main-content">
+            <header class="dashboard-header">
+                <h5 class="mb-0 font-weight-bold text-dark">System Analytics</h5>
+                <div class="d-flex align-items-center">
+                    <div class="dropdown">
+                        <a href="#" class="d-flex align-items-center text-decoration-none text-dark dropdown-toggle" data-toggle="dropdown">
+                            <img src="/images/admin-avatar.png" onerror="this.src='/images/default-avatar.png'" class="rounded-circle mr-2 shadow-sm" width="35" height="35" style="border: 2px solid #fff;">
+                            <span class="font-weight-bold small mr-1">Administrator</span>
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-right border-0 shadow-lg">
+                            <a class="dropdown-item" href="/">Back Home</a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item text-danger" href="/auth/logout">Logout</a>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <div class="p-4">
+                <div class="row mb-4">
+                    <div class="col-md-3 mb-3 mb-md-0">
+                        <div class="stat-card h-100 hover-scale">
+                            <div class="d-flex justify-content-between align-items-start mb-3">
+                                <div>
+                                    <p class="text-muted small font-weight-bold text-uppercase mb-1">Total Users</p>
+                                    <h3 class="font-weight-bold text-dark mb-0"><%= adminStats.totalUsers.toLocaleString() %></h3>
+                                </div>
+                                <div class="stat-icon blue shadow-sm"><i class="fas fa-users"></i></div>
+                            </div>
+                            <span class="text-success small font-weight-bold"><i class="fas fa-arrow-up"></i> +5.2%</span> <span class="text-muted small">this week</span>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-3 mb-md-0">
+                        <div class="stat-card h-100 hover-scale">
+                            <div class="d-flex justify-content-between align-items-start mb-3">
+                                <div>
+                                    <p class="text-muted small font-weight-bold text-uppercase mb-1">Total Companies</p>
+                                    <h3 class="font-weight-bold text-dark mb-0"><%= adminStats.totalCompanies.toLocaleString() %></h3>
+                                </div>
+                                <div class="stat-icon purple shadow-sm"><i class="fas fa-building"></i></div>
+                            </div>
+                            <span class="text-success small font-weight-bold"><i class="fas fa-arrow-up"></i> +12</span> <span class="text-muted small">new partners</span>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-3 mb-md-0">
+                        <div class="stat-card h-100 hover-scale">
+                            <div class="d-flex justify-content-between align-items-start mb-3">
+                                <div>
+                                    <p class="text-muted small font-weight-bold text-uppercase mb-1">Active Jobs</p>
+                                    <h3 class="font-weight-bold text-dark mb-0"><%= adminStats.activeJobs.toLocaleString() %></h3>
+                                </div>
+                                <div class="stat-icon green shadow-sm"><i class="fas fa-briefcase"></i></div>
+                            </div>
+                            <p class="text-muted small mb-0">Live on site</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stat-card h-100 hover-scale">
+                            <div class="d-flex justify-content-between align-items-start mb-3">
+                                <div>
+                                    <p class="text-muted small font-weight-bold text-uppercase mb-1">Reports</p>
+                                    <h3 class="font-weight-bold text-dark mb-0"><%= adminStats.newReports %></h3>
+                                </div>
+                                <div class="stat-icon bg-danger text-white shadow-sm"><i class="fas fa-exclamation-triangle"></i></div>
+                            </div>
+                            <p class="text-muted small mb-0 text-danger font-weight-bold">Requires attention</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-lg-8 mb-4">
+                        <div class="card border-0 shadow-sm rounded-lg h-100">
+                            <div class="card-header bg-white border-0 pt-4 px-4 pb-0 d-flex justify-content-between align-items-center">
+                                <h5 class="font-weight-bold text-dark mb-0">System Activity</h5>
+                                <button class="btn btn-sm btn-light text-primary"><i class="fas fa-sync-alt"></i></button>
+                            </div>
+                            <div class="card-body p-0">
+                                <ul class="list-group list-group-flush mt-3">
+                                    <% recentActivities.forEach(item => { %>
+                                        <li class="list-group-item border-0 px-4 py-3 d-flex align-items-center hover-bg-light">
+                                            <div class="bg-soft-<%= item.color %> text-<%= item.color %> rounded-circle d-flex align-items-center justify-content-center mr-3" style="width: 40px; height: 40px; min-width: 40px;">
+                                                <i class="fas fa-<%= item.icon %>"></i>
+                                            </div>
+                                            <div class="flex-grow-1">
+                                                <div class="d-flex justify-content-between align-items-center">
+                                                    <h6 class="mb-0 font-weight-bold text-dark"><%= item.user %></h6>
+                                                    <small class="text-muted"><%= item.time %></small>
+                                                </div>
+                                                <p class="mb-0 small text-muted"><%= item.action %>: <span class="text-dark font-weight-bold"><%= item.target %></span></p>
+                                            </div>
+                                        </li>
+                                    <% }) %>
+                                </ul>
+                            </div>
+                            <div class="card-footer bg-white border-0 text-center pb-4 pt-0">
+                                <a href="#" class="small text-primary font-weight-bold">View All Activity</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-4 mb-4">
+                        <div class="card border-0 shadow-sm rounded-lg h-100 bg-gradient-primary text-white" style="background: linear-gradient(135deg, #0063FF 0%, #004ecc 100%);">
+                            <div class="card-body p-4">
+                                <h5 class="font-weight-bold mb-4"><i class="fas fa-server mr-2"></i> Server Status</h5>
+                                
+                                <div class="mb-4">
+                                    <div class="d-flex justify-content-between mb-1">
+                                        <span class="small font-weight-bold">CPU Usage</span>
+                                        <span class="small">45%</span>
+                                    </div>
+                                    <div class="progress" style="height: 6px; background: rgba(255,255,255,0.2);">
+                                        <div class="progress-bar bg-white" role="progressbar" style="width: 45%;"></div>
+                                    </div>
+                                </div>
+
+                                <div class="mb-4">
+                                    <div class="d-flex justify-content-between mb-1">
+                                        <span class="small font-weight-bold">Memory Usage</span>
+                                        <span class="small">62%</span>
+                                    </div>
+                                    <div class="progress" style="height: 6px; background: rgba(255,255,255,0.2);">
+                                        <div class="progress-bar bg-white" role="progressbar" style="width: 62%;"></div>
+                                    </div>
+                                </div>
+
+                                <div class="mb-4">
+                                    <div class="d-flex justify-content-between mb-1">
+                                        <span class="small font-weight-bold">Disk Space</span>
+                                        <span class="small">28%</span>
+                                    </div>
+                                    <div class="progress" style="height: 6px; background: rgba(255,255,255,0.2);">
+                                        <div class="progress-bar bg-white" role="progressbar" style="width: 28%;"></div>
+                                    </div>
+                                </div>
+
+                                <div class="mt-auto text-center pt-3 border-top border-white-50">
+                                    <p class="mb-0 small"><i class="fas fa-check-circle mr-1"></i> All systems operational</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    <%- include('../partials/footer') %>

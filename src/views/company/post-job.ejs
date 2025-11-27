@@ -1,24 +1,20 @@
-<%- include('../partials/header', { title: 'Post a New Job' }) %>
+<%- include('../partials/header', { title: 'Post A Job' }) %>
 
 <body class="dashboard-page">
     <div class="dashboard-wrapper">
-        
         <%- include('../partials/dashboard-sidebar', { activePage: 'post-job' }) %>
 
         <main class="main-content">
-            
             <header class="dashboard-header">
                 <h5 class="mb-0 font-weight-bold text-dark">Post a New Job</h5>
                 <div class="d-flex align-items-center">
                     <div class="dropdown">
                         <a href="#" class="d-flex align-items-center text-decoration-none text-dark dropdown-toggle" data-toggle="dropdown">
                             <img src="<%= (typeof user !== 'undefined' && user.avatarUrl) ? user.avatarUrl : '/images/default-avatar.png' %>" class="rounded-circle mr-2" width="35" height="35" style="object-fit: cover; border: 1px solid #dee2e6;">
-                            <span class="font-weight-bold small mr-1">
-                                <%= (typeof user !== 'undefined' && user.email) ? user.email.split('@')[0] : 'User' %>
-                            </span>
+                            <span class="font-weight-bold small mr-1"><%= (typeof user !== 'undefined' && user.email) ? user.email.split('@')[0] : 'Company' %></span>
                         </a>
                         <div class="dropdown-menu dropdown-menu-right border-0 shadow-lg">
-                            <a class="dropdown-item" href="/">Back to Home</a>
+                            <a class="dropdown-item" href="/">Back Home</a>
                             <div class="dropdown-divider"></div>
                             <a class="dropdown-item text-danger" href="/auth/logout">Logout</a>
                         </div>
@@ -32,10 +28,9 @@
                         
                         <div class="card border-0 shadow-sm rounded-lg">
                             <div class="card-body p-5">
-                                
-                                <div class="mb-4">
+                                <div class="mb-4 pb-3 border-bottom">
                                     <h4 class="font-weight-bold text-primary mb-1">Job Details</h4>
-                                    <p class="text-muted small">Fill in the information to attract the best talent.</p>
+                                    <p class="text-muted small mb-0">Fill in the information to attract the best talent.</p>
                                 </div>
 
                                 <form action="/company/jobs/create" method="POST">
@@ -43,50 +38,71 @@
                                     <div class="row">
                                         <div class="col-md-8 mb-3">
                                             <label class="font-weight-bold small text-dark">Job Title <span class="text-danger">*</span></label>
-                                            <input type="text" class="form-control-modern" name="JobTitle" placeholder="e.g. Senior React Developer" required>
+                                            <div class="input-wrapper">
+                                                <i class="fas fa-briefcase input-icon"></i>
+                                                <input type="text" class="form-control-modern" name="JobTitle" placeholder="e.g. Senior React Developer" required>
+                                            </div>
                                         </div>
                                         <div class="col-md-4 mb-3">
                                             <label class="font-weight-bold small text-dark">Employment Type</label>
-                                            <select class="form-control-modern" name="EmploymentType">
-                                                <option value="FullTime">Full-time</option>
-                                                <option value="PartTime">Part-time</option>
-                                                <option value="Contract">Contract</option>
-                                                <option value="Internship">Internship</option>
-                                                <option value="Remote">Remote</option>
-                                            </select>
+                                            <div class="input-wrapper">
+                                                <i class="far fa-clock input-icon"></i>
+                                                <select class="form-control-modern" name="EmploymentType">
+                                                    <option value="FullTime">Full-time</option>
+                                                    <option value="PartTime">Part-time</option>
+                                                    <option value="Contract">Contract</option>
+                                                    <option value="Internship">Internship</option>
+                                                    <option value="Remote">Remote</option>
+                                                </select>
+                                            </div>
                                         </div>
                                     </div>
 
                                     <div class="row">
                                         <div class="col-md-4 mb-3">
                                             <label class="font-weight-bold small text-dark">Min Salary ($)</label>
-                                            <input type="number" class="form-control-modern" name="SalaryMin" placeholder="1000">
+                                            <div class="input-wrapper">
+                                                <i class="fas fa-dollar-sign input-icon"></i>
+                                                <input type="number" class="form-control-modern" name="SalaryMin" placeholder="1000">
+                                            </div>
                                         </div>
                                         <div class="col-md-4 mb-3">
                                             <label class="font-weight-bold small text-dark">Max Salary ($)</label>
-                                            <input type="number" class="form-control-modern" name="SalaryMax" placeholder="3000">
+                                            <div class="input-wrapper">
+                                                <i class="fas fa-dollar-sign input-icon"></i>
+                                                <input type="number" class="form-control-modern" name="SalaryMax" placeholder="3000">
+                                            </div>
                                         </div>
                                         <div class="col-md-4 mb-3">
                                             <label class="font-weight-bold small text-dark">Experience (Years)</label>
-                                            <input type="number" class="form-control-modern" name="ExperienceRequired" placeholder="2" min="0">
+                                            <div class="input-wrapper">
+                                                <i class="fas fa-medal input-icon"></i>
+                                                <input type="number" class="form-control-modern" name="ExperienceRequired" placeholder="2" min="0">
+                                            </div>
                                         </div>
                                     </div>
 
                                     <div class="row">
                                         <div class="col-md-8 mb-3">
                                             <label class="font-weight-bold small text-dark">Job Location <span class="text-danger">*</span></label>
-                                            <input type="text" class="form-control-modern" name="Location" placeholder="e.g. Dist 1, Ho Chi Minh City" required>
+                                            <div class="input-wrapper">
+                                                <i class="fas fa-map-marker-alt input-icon"></i>
+                                                <input type="text" class="form-control-modern" name="Location" placeholder="e.g. District 1, Ho Chi Minh City" required>
+                                            </div>
                                         </div>
                                         <div class="col-md-4 mb-3">
                                             <label class="font-weight-bold small text-dark">Application Deadline</label>
-                                            <input type="date" class="form-control-modern" name="ApplicationDeadline">
+                                            <div class="input-wrapper">
+                                                <i class="far fa-calendar-alt input-icon"></i>
+                                                <input type="date" class="form-control-modern" name="ApplicationDeadline">
+                                            </div>
                                         </div>
                                     </div>
 
                                     <div class="form-group mb-4">
                                         <label class="font-weight-bold small text-dark">Job Description <span class="text-danger">*</span></label>
                                         <textarea class="form-control-modern h-auto py-3" name="JobDescription" rows="8" placeholder="Describe the role, responsibilities, and requirements..." required></textarea>
-                                        <small class="text-muted">Tip: Use bullet points for readability.</small>
+                                        <small class="text-muted mt-1"><i class="fas fa-info-circle mr-1"></i> Tip: Use bullet points for better readability.</small>
                                     </div>
 
                                     <div class="form-group mb-4">
@@ -100,9 +116,9 @@
                                     <hr class="my-4">
 
                                     <div class="d-flex justify-content-end">
-                                        <a href="/company/dashboard" class="btn btn-light mr-2">Cancel</a>
-                                        <button type="submit" class="btn btn-primary px-5 shadow-sm font-weight-bold">
-                                            Post Job Now
+                                        <a href="/company/dashboard" class="btn btn-light mr-3 font-weight-bold text-muted">Cancel</a>
+                                        <button type="submit" class="btn btn-primary-modern px-5 shadow-md font-weight-bold">
+                                            Post Job Now <i class="fas fa-paper-plane ml-2"></i>
                                         </button>
                                     </div>
 
@@ -115,6 +131,5 @@
             </div>
         </main>
     </div>
-
     <%- include('../partials/footer') %>
 </body>

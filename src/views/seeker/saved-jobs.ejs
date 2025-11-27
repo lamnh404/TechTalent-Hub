@@ -1,3 +1,44 @@
+<% 
+    // Mock Data cho Saved Jobs
+    if (typeof savedJobs === 'undefined') {
+        var savedJobs = [
+            {
+                JobID: 3,
+                JobTitle: "Senior Data Scientist",
+                CompanyName: "Netflix",
+                LogoURL: "https://logo.clearbit.com/netflix.com",
+                Location: "Remote",
+                EmploymentType: "Full-time",
+                SalaryMin: 3000,
+                SalaryMax: 5000,
+                SavedDate: "2 days ago"
+            },
+            {
+                JobID: 4,
+                JobTitle: "UX Researcher",
+                CompanyName: "Airbnb",
+                LogoURL: "https://logo.clearbit.com/airbnb.com",
+                Location: "Singapore",
+                EmploymentType: "Contract",
+                SalaryMin: 2000,
+                SalaryMax: 3500,
+                SavedDate: "1 week ago"
+            },
+            {
+                JobID: 5,
+                JobTitle: "DevOps Engineer",
+                CompanyName: "Amazon",
+                LogoURL: "https://logo.clearbit.com/amazon.com",
+                Location: "Seattle",
+                EmploymentType: "Full-time",
+                SalaryMin: 4000,
+                SalaryMax: 6000,
+                SavedDate: "2 weeks ago"
+            }
+        ];
+    }
+%>
+
 <%- include('../partials/header', { title: 'Việc làm đã lưu' }) %>
 
 <body class="dashboard-page">
@@ -27,41 +68,50 @@
             <div class="p-4">
                 <div class="row">
                     
-                    <div class="col-md-6 col-lg-4 mb-4">
-                        <div class="card border-0 shadow-sm h-100 job-card p-3">
-                            <div class="d-flex justify-content-between align-items-start">
-                                <img src="https://logo.clearbit.com/netflix.com" width="50" class="rounded border p-1">
-                                <button class="btn btn-sm btn-link text-danger" title="Remove"><i class="fas fa-heart"></i></button>
+                    <% if (savedJobs && savedJobs.length > 0) { %>
+                        <% savedJobs.forEach(job => { %>
+                            <div class="col-md-6 col-lg-4 mb-4">
+                                <div class="card border-0 shadow-sm h-100 job-card p-4 hover-scale" style="border-radius: 12px; transition: all 0.3s;">
+                                    <div class="d-flex justify-content-between align-items-start">
+                                        <div class="bg-white p-2 rounded border" style="width: 60px; height: 60px; display: flex; align-items: center; justify-content: center;">
+                                            <img src="<%= job.LogoURL %>" class="img-fluid" style="max-height: 100%;">
+                                        </div>
+                                        <button class="btn btn-sm btn-light text-danger shadow-sm rounded-circle" title="Remove from saved" style="width: 32px; height: 32px;">
+                                            <i class="fas fa-trash-alt"></i>
+                                        </button>
+                                    </div>
+                                    
+                                    <div class="mt-4">
+                                        <h5 class="font-weight-bold text-dark mb-1 text-truncate" title="<%= job.JobTitle %>">
+                                            <a href="/jobs/<%= job.JobID %>" class="text-dark text-decoration-none"><%= job.JobTitle %></a>
+                                        </h5>
+                                        <p class="small text-muted mb-2"><%= job.CompanyName %> • <%= job.Location %></p>
+                                        
+                                        <div class="d-flex align-items-center mb-3">
+                                            <span class="badge badge-soft-primary mr-2"><%= job.EmploymentType %></span>
+                                            <span class="text-success font-weight-bold small">
+                                                $<%= job.SalaryMin.toLocaleString() %> - $<%= job.SalaryMax.toLocaleString() %>
+                                            </span>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="mt-auto pt-3 border-top d-flex justify-content-between align-items-center">
+                                        <small class="text-muted font-italic">Saved <%= job.SavedDate %></small>
+                                        <a href="/jobs/<%= job.JobID %>" class="btn btn-sm btn-primary-modern shadow-sm px-3 rounded-pill">Apply Now</a>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="mt-3">
-                                <h6 class="font-weight-bold text-dark mb-1">Senior Data Scientist</h6>
-                                <p class="small text-muted mb-2">Netflix • Remote</p>
-                                <span class="badge badge-soft-primary">Full-time</span>
+                        <% }) %>
+                    <% } else { %>
+                        <div class="col-12 text-center py-5">
+                            <div class="mb-3 opacity-50">
+                                <i class="far fa-heart fa-4x text-muted"></i>
                             </div>
-                            <div class="mt-auto pt-3 d-flex justify-content-between align-items-center">
-                                <small class="text-muted">Saved 2 days ago</small>
-                                <a href="/jobs/3" class="btn btn-sm btn-outline-primary rounded-pill px-3">Apply</a>
-                            </div>
+                            <h4 class="text-dark">No saved jobs yet</h4>
+                            <p class="text-muted">Jobs you save will appear here for easy access.</p>
+                            <a href="/jobs" class="btn btn-primary px-4 rounded-pill mt-2">Browse Jobs</a>
                         </div>
-                    </div>
-
-                    <div class="col-md-6 col-lg-4 mb-4">
-                        <div class="card border-0 shadow-sm h-100 job-card p-3">
-                            <div class="d-flex justify-content-between align-items-start">
-                                <img src="https://logo.clearbit.com/airbnb.com" width="50" class="rounded border p-1">
-                                <button class="btn btn-sm btn-link text-danger" title="Remove"><i class="fas fa-heart"></i></button>
-                            </div>
-                            <div class="mt-3">
-                                <h6 class="font-weight-bold text-dark mb-1">UX Researcher</h6>
-                                <p class="small text-muted mb-2">Airbnb • Singapore</p>
-                                <span class="badge badge-soft-primary">Contract</span>
-                            </div>
-                            <div class="mt-auto pt-3 d-flex justify-content-between align-items-center">
-                                <small class="text-muted">Saved 1 week ago</small>
-                                <a href="/jobs/4" class="btn btn-sm btn-outline-primary rounded-pill px-3">Apply</a>
-                            </div>
-                        </div>
-                    </div>
+                    <% } %>
 
                 </div>
             </div>

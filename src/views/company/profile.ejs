@@ -1,0 +1,185 @@
+<%
+    if (typeof company === 'undefined') {
+        company = {
+            CompanyName: 'Google LLC',
+            FounderYear: '2000',
+            Industry: 'Data Technology',
+            CompanySize: '20000+',
+            CompanyWebsite: '',
+            CompanyAddress: '',
+            CompanyDescription: '',
+            LogoURL: ''
+        };
+    }
+%>
+
+<%- include('../partials/header', { title: 'Hồ sơ công ty' }) %>
+
+<body class="dashboard-page">
+    <div class="dashboard-wrapper">
+        
+        <%- include('../partials/dashboard-sidebar', { activePage: 'profile' }) %>
+
+        <main class="main-content">
+            
+            <header class="dashboard-header">
+                <h5 class="mb-0 font-weight-bold text-dark">Company Profile</h5>
+                <div class="d-flex align-items-center">
+                    <div class="dropdown">
+                        <a href="#" class="d-flex align-items-center text-decoration-none text-dark dropdown-toggle" data-toggle="dropdown">
+                            <img src="<%= (user && user.avatarUrl) ? user.avatarUrl : '/images/default-avatar.png' %>" class="rounded-circle mr-2" width="35" height="35" style="object-fit: cover; border: 1px solid #dee2e6;">
+                            <span class="font-weight-bold small mr-1"><%= (user && user.email) ? user.email.split('@')[0] : 'Company' %></span>
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-right border-0 shadow-lg">
+                            <a class="dropdown-item" href="/">Back Home</a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item text-danger" href="/auth/logout">Logout</a>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <div class="p-4">
+                <div class="row justify-content-center">
+                    <div class="col-lg-9">
+                        
+                        <% if (typeof success !== 'undefined' && success) { %>
+                            <div class="alert alert-success alert-dismissible fade show shadow-sm border-0 mb-4" role="alert">
+                                <i class="fas fa-check-circle mr-2"></i> Update successfully!
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                            </div>
+                        <% } %>
+
+                        <div class="card border-0 shadow-sm rounded-lg">
+                            <div class="card-body p-5">
+                                <div class="d-flex justify-content-between align-items-center mb-4">
+                                    <div>
+                                        <h4 class="font-weight-bold text-primary mb-1">Company Details</h4>
+                                        <p class="text-muted small mb-0">Update your organization information.</p>
+                                    </div>
+                                    <a href="/companies" class="btn btn-light text-primary font-weight-bold shadow-sm" target="_blank">
+                                        <i class="fas fa-external-link-alt mr-2"></i> Public View
+                                    </a>
+                                </div>
+                                <hr class="my-4">
+
+                                <form action="/company/profile" method="POST">
+                                    
+                                    <div class="row">
+                                        <div class="col-md-8 mb-3">
+                                            <label class="font-weight-bold small text-dark">Company Name <span class="text-danger">*</span></label>
+                                            <div class="input-wrapper">
+                                                <i class="far fa-building input-icon"></i>
+                                                <input type="text" class="form-control-modern" name="CompanyName" 
+                                                       value="<%= company.CompanyName %>" required placeholder="Ex: TechTalent Inc.">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4 mb-3">
+                                            <label class="font-weight-bold small text-dark">Founded Year</label>
+                                            <div class="input-wrapper">
+                                                <i class="far fa-calendar-alt input-icon"></i>
+                                                <input type="number" class="form-control-modern" name="FounderYear" 
+                                                       value="<%= company.FounderYear %>" placeholder="2010">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label class="font-weight-bold small text-dark">Industry</label>
+                                            <div class="input-wrapper">
+                                                <i class="fas fa-globe input-icon"></i>
+                                                <select class="form-control-modern" name="Industry">
+                                                    <option value="Software" <%= company.Industry === 'Software' ? 'selected' : '' %>>IT / Software</option>
+                                                    <option value="Fintech" <%= company.Industry === 'Fintech' ? 'selected' : '' %>>Fintech</option>
+                                                    <option value="E-commerce" <%= company.Industry === 'E-commerce' ? 'selected' : '' %>>E-commerce</option>
+                                                    <option value="Education" <%= company.Industry === 'Education' ? 'selected' : '' %>>Education</option>
+                                                    <option value="Other" <%= company.Industry === 'Other' ? 'selected' : '' %>>Other</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label class="font-weight-bold small text-dark">Company Size</label>
+                                            <div class="input-wrapper">
+                                                <i class="fas fa-users input-icon"></i>
+                                                <select class="form-control-modern" name="CompanySize">
+                                                    <option value="Small" <%= company.CompanySize === 'Small' ? 'selected' : '' %>>Startup (1-10)</option>
+                                                    <option value="Medium" <%= company.CompanySize === 'Medium' ? 'selected' : '' %>>Growing (11-50)</option>
+                                                    <option value="Large" <%= company.CompanySize === 'Large' ? 'selected' : '' %>>Established (51-200)</option>
+                                                    <option value="Enterprise" <%= company.CompanySize === 'Enterprise' ? 'selected' : '' %>>Enterprise (200+)</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group mb-3">
+                                        <label class="font-weight-bold small text-dark">Website URL</label>
+                                        <div class="input-wrapper">
+                                            <i class="fas fa-link input-icon"></i>
+                                            <input type="url" class="form-control-modern" name="CompanyWebsite" 
+                                                   value="<%= company.CompanyWebsite %>" placeholder="https://company.com">
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group mb-3">
+                                        <label class="font-weight-bold small text-dark">Headquarters Address</label>
+                                        <div class="input-wrapper">
+                                            <i class="fas fa-map-marked-alt input-icon"></i>
+                                            <input type="text" class="form-control-modern" name="CompanyAddress" 
+                                                   value="<%= company.CompanyAddress %>" placeholder="Full address...">
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group mb-3">
+                                        <label class="font-weight-bold small text-dark">About Company</label>
+                                        <textarea class="form-control-modern h-auto py-3" name="CompanyDescription" rows="5" placeholder="Describe your company culture and mission..."><%= company.CompanyDescription %></textarea>
+                                    </div>
+
+                                    <div class="form-group mb-4">
+                                        <label class="font-weight-bold small text-dark">Logo URL</label>
+                                        <div class="d-flex align-items-start">
+                                            <img src="<%= company.LogoURL || '/images/default-company.png' %>" 
+                                                 class="rounded border p-1 mr-3 bg-light" id="logoPreview"
+                                                 style="width: 60px; height: 60px; object-fit: contain;">
+                                            <div class="flex-grow-1 input-wrapper">
+                                                <i class="far fa-image input-icon"></i>
+                                                <input type="url" class="form-control-modern" name="LogoURL" id="logoInput"
+                                                       value="<%= company.LogoURL %>" placeholder="https://example.com/logo.png">
+                                                <small class="text-muted mt-1 d-block">Paste a direct link to your logo image.</small>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <hr class="my-4">
+
+                                    <div class="d-flex justify-content-end">
+                                        <a href="/company/dashboard" class="btn btn-light mr-2">Cancel</a>
+                                        <button type="submit" class="btn btn-primary-modern px-5 shadow-sm font-weight-bold">
+                                            Save Changes <i class="fas fa-check ml-2"></i>
+                                        </button>
+                                    </div>
+
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <%- include('../partials/footer') %>
+    
+    <script>
+        const logoInput = document.getElementById('logoInput');
+        const logoPreview = document.getElementById('logoPreview');
+        
+        logoInput.addEventListener('input', function() {
+            if(this.value && this.value.startsWith('http')) {
+                logoPreview.src = this.value;
+            }
+        });
+        logoPreview.addEventListener('error', function() {
+            this.src = '/images/default-company.png';
+        });
+    </script>

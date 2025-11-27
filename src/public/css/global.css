@@ -276,3 +276,35 @@ body:not(.auth-layout-page):not(.dashboard-page) {
 a, button, input, select, textarea, .btn, .card {
     transition: var(--trans-smooth);
 }
+
+/* Thêm vào global.css */
+
+.btn-primary-modern {
+    /* Gradient chéo nhẹ */
+    background: linear-gradient(135deg, #0063FF 0%, #004ecc 100%);
+    border: none;
+    box-shadow: 0 4px 15px rgba(0, 99, 255, 0.3); /* Shadow màu của nút */
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+
+.btn-primary-modern:hover {
+    background: linear-gradient(135deg, #004ecc 0%, #003db3 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 99, 255, 0.4); /* Shadow to hơn khi hover */
+}
+
+/* Nút phụ (Outline) */
+.btn-outline-primary {
+    border: 2px solid #e0f2fe;
+    color: var(--primary-color);
+    background: transparent;
+    font-weight: 600;
+}
+
+.btn-outline-primary:hover {
+    background: #e0f2fe;
+    color: var(--primary-dark);
+    border-color: #e0f2fe;
+    box-shadow: none;
+}

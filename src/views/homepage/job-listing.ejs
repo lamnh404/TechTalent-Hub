@@ -5,58 +5,44 @@
         document.addEventListener('DOMContentLoaded', function () {
             const jobContainer = document.getElementById('job-list-container');
 
-            // Lắng nghe sự kiện click vào bất kỳ thẻ nào trong jobContainer
-            jobContainer.addEventListener('click', function (e) {
-                // Kiểm tra xem cái được click có phải là nút phân trang (.page-link) không
-                const link = e.target.closest('.page-link');
-                
-                // Nếu đúng là link phân trang và không bị disable
-                if (link && !link.parentElement.classList.contains('disabled')) {
-                    e.preventDefault(); // 1. Chặn trình duyệt reload trang
-                    
-                    const url = link.href; // Lấy đường dẫn trang mới (VD: /jobs?page=2)
+            if (jobContainer) {
+                jobContainer.addEventListener('click', function (e) {
+                    const link = e.target.closest('.page-link');
+                    if (link && !link.parentElement.classList.contains('disabled')) {
+                        e.preventDefault();
+                        const url = link.href;
 
-                    // Hiệu ứng mờ đi để người dùng biết đang tải
-                    jobContainer.style.opacity = '0.5';
-                    jobContainer.style.pointerEvents = 'none';
+                        // Hiệu ứng mờ khi tải
+                        jobContainer.style.opacity = '0.5';
+                        jobContainer.style.pointerEvents = 'none';
 
-                    // 2. Gọi AJAX để lấy nội dung trang mới
-                    fetch(url)
-                        .then(response => response.text())
-                        .then(html => {
-                            // 3. Phân tích HTML trả về
-                            const parser = new DOMParser();
-                            const doc = parser.parseFromString(html, 'text/html');
-                            
-                            // Lấy nội dung mới của phần job-list-container
-                            const newContent = doc.getElementById('job-list-container').innerHTML;
+                        fetch(url)
+                            .then(response => response.text())
+                            .then(html => {
+                                const parser = new DOMParser();
+                                const doc = parser.parseFromString(html, 'text/html');
+                                const newContent = doc.getElementById('job-list-container').innerHTML;
 
-                            // 4. Thay thế nội dung cũ bằng nội dung mới
-                            jobContainer.innerHTML = newContent;
-                            
-                            // Khôi phục hiệu ứng
-                            jobContainer.style.opacity = '1';
-                            jobContainer.style.pointerEvents = 'auto';
+                                jobContainer.innerHTML = newContent;
+                                jobContainer.style.opacity = '1';
+                                jobContainer.style.pointerEvents = 'auto';
 
-                            // 5. Cập nhật URL trên thanh địa chỉ mà không reload
-                            window.history.pushState({}, '', url);
-
-                            // 6. Cuộn nhẹ lên đầu danh sách (thay vì đầu trang)
-                            // Trừ đi khoảng 100px để không bị che bởi menu
-                            const y = jobContainer.getBoundingClientRect().top + window.scrollY - 100;
-                            window.scrollTo({top: y, behavior: 'smooth'});
-                        })
-                        .catch(err => {
-                            console.error('Lỗi tải trang:', err);
-                            jobContainer.style.opacity = '1';
-                            jobContainer.style.pointerEvents = 'auto';
-                            // Nếu lỗi thì fallback về reload thường
-                            window.location.href = url;
-                        });
-                }
-            });
+                                window.history.pushState({}, '', url);
+                                
+                                // Cuộn lên đầu danh sách nhẹ nhàng
+                                const y = jobContainer.getBoundingClientRect().top + window.scrollY - 100;
+                                window.scrollTo({top: y, behavior: 'smooth'});
+                            })
+                            .catch(err => {
+                                console.error('Lỗi tải trang:', err);
+                                window.location.href = url; // Fallback nếu lỗi
+                            });
+                    }
+                });
+            }
         });
     </script>
+
     <%- include('../partials/navbar', {activePage: 'jobs' }) %>
 
     <section class="home-hero" style="padding: 140px 0 80px;">
@@ -82,41 +68,9 @@
 
     <section class="section bg-light pt-5 pb-5">
         <div class="container">
-            <div class="row">
+            <div class="row justify-content-center">
 
-                <div class="col-lg-3 mb-4">
-                    <div class="filter-card sticky-top" style="top: 100px; z-index: 1;">
-                        <div class="d-flex justify-content-between align-items-center mb-4">
-                            <h6 class="font-weight-bold mb-0 text-dark"><i class="fas fa-filter mr-2 text-primary"></i>Filters</h6>
-                            <a href="/jobs" class="small text-muted text-decoration-none">Reset</a>
-                        </div>
-
-                        <div class="mb-4">
-                            <label class="small font-weight-bold text-muted text-uppercase mb-3">Job Type</label>
-                            <div class="custom-control custom-checkbox mb-2">
-                                <input type="checkbox" class="custom-control-input" id="typeFull">
-                                <label class="custom-control-label text-dark" for="typeFull">Full-time</label>
-                            </div>
-                            <div class="custom-control custom-checkbox mb-2">
-                                <input type="checkbox" class="custom-control-input" id="typeRemote">
-                                <label class="custom-control-label text-dark" for="typeRemote">Remote</label>
-                            </div>
-                        </div>
-
-                        <div class="mb-4">
-                            <label class="small font-weight-bold text-muted text-uppercase mb-3">Location</label>
-                            <select class="form-control-modern" style="height: 45px; padding-left: 15px;">
-                                <option>All Locations</option>
-                                <option>Ho Chi Minh</option>
-                                <option>Ha Noi</option>
-                            </select>
-                        </div>
-
-                        <button class="btn-primary-modern w-100">Apply Filters</button>
-                    </div>
-                </div>
-
-                <div class="col-lg-9" id="job-list-container">
+                <div class="col-lg-10" id="job-list-container">
                     
                     <div class="d-flex justify-content-between align-items-center mb-4">
                         <p class="text-muted mb-0 small">Showing <strong><%= (typeof pagination !== 'undefined' && pagination.totalJobs) ? pagination.totalJobs : 0 %></strong> jobs</p>
@@ -168,7 +122,7 @@
                         <div class="text-center py-5">
                             <div class="mb-3"><i class="fas fa-search fa-3x text-muted opacity-50"></i></div>
                             <h3>No jobs found</h3>
-                            <p class="text-muted">Try adjusting your search criteria or clear filters.</p>
+                            <p class="text-muted">Try adjusting your search criteria.</p>
                             <a href="/jobs" class="btn btn-outline-primary mt-3">View All Jobs</a>
                         </div>
                     <% } %>
@@ -179,8 +133,7 @@
 
                                 <li class="page-item <%= pagination.currentPage === 1 ? 'disabled' : '' %>">
                                     <a class="page-link border-0 shadow-sm rounded-pill px-3 mr-2"
-                                       href="/jobs?q=<%= typeof q !== 'undefined' ? q : '' %>&page=<%= pagination.currentPage - 1 %>"
-                                       tabindex="-1">
+                                       href="/jobs?q=<%= typeof q !== 'undefined' ? q : '' %>&page=<%= pagination.currentPage - 1 %>">
                                         <i class="fas fa-chevron-left mr-1"></i> Prev
                                     </a>
                                 </li>

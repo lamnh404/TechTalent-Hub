@@ -151,3 +151,117 @@ body.dashboard-page {
     color: var(--text-dark);
     border-bottom: 1px solid #f3f4f6;
 }
+
+/* Thêm vào dashboard.css */
+
+/* 1. Reset Card Style */
+.card {
+    border: none !important; /* Bỏ viền cứng */
+    border-radius: 20px !important; /* Bo góc mạnh hơn */
+    background: #ffffff;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04); /* Shadow rất nhẹ lúc bình thường */
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    overflow: hidden; /* Để nội dung con không bị lòi ra khỏi bo góc */
+}
+
+/* 2. Hiệu ứng Hover "Nhấc lên" */
+.card.hover-scale:hover, .job-card:hover {
+    transform: translateY(-8px) !important; /* Bay lên cao hơn chút */
+    box-shadow: 0 15px 35px rgba(0, 99, 255, 0.1) !important; /* Shadow màu xanh nhạt lan tỏa */
+}
+
+/* 3. Hiệu ứng viền phát sáng nhẹ khi hover */
+.card::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 20px;
+    padding: 2px;
+    background: linear-gradient(45deg, transparent, rgba(0, 99, 255, 0.3), transparent);
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+}
+.card:hover::after {
+    opacity: 1;
+}
+
+/* Thêm vào global.css hoặc dashboard.css */
+
+.form-control-modern {
+    background-color: #f8fafc; /* Nền xám xanh cực nhạt */
+    border: 1px solid #e2e8f0;
+    color: #334155;
+    font-weight: 500;
+    padding-left: 50px !important; /* Chừa chỗ cho Icon */
+    height: 55px; /* Cao hơn chút cho thoáng */
+}
+
+/* Khi click vào ô input */
+.form-control-modern:focus {
+    background-color: #ffffff;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 4px rgba(0, 99, 255, 0.15); /* Shadow lan tỏa thay vì viền xanh mặc định */
+    transform: translateY(0); /* Reset transform cũ nếu có */
+}
+
+/* Icon trong input */
+.input-wrapper .input-icon {
+    color: #94a3b8; /* Màu icon nhạt */
+    transition: color 0.3s;
+}
+
+/* Khi focus vào input thì icon cũng đổi màu */
+.input-wrapper:focus-within .input-icon {
+    color: var(--primary-color);
+}
+
+/* Thêm vào dashboard.css */
+
+.rounded-circle {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Avatar trong header hoặc profile */
+.dashboard-header img.rounded-circle, 
+.card-body img.rounded-circle {
+    border: 2px solid #ffffff;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.dashboard-header img.rounded-circle:hover {
+    transform: scale(1.1);
+    box-shadow: 0 0 0 3px rgba(0, 99, 255, 0.2);
+}
+
+/* Thêm vào dashboard.css */
+
+.sidebar {
+    background: #ffffff;
+    border-right: none !important; /* Bỏ đường kẻ dọc xấu xí */
+    box-shadow: 4px 0 20px rgba(0, 0, 0, 0.02); /* Dùng shadow thay cho border */
+}
+
+.menu-link {
+    border-radius: 12px !important;
+    margin-bottom: 8px !important;
+    font-weight: 600 !important;
+    color: #64748b !important;
+}
+
+.menu-link:hover, .menu-link.active {
+    background: #eff6ff !important;
+    color: var(--primary-color) !important;
+    transform: translateX(5px); /* Hiệu ứng trượt nhẹ sang phải */
+}
+
+.menu-link i {
+    transition: transform 0.3s;
+}
+
+.menu-link:hover i {
+    transform: scale(1.2); /* Icon phóng to nhẹ khi hover */
+}
