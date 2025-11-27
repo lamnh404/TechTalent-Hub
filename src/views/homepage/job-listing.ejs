@@ -1,21 +1,77 @@
 <%- include('../partials/header', { title: 'Tìm việc làm IT' }) %>
 
 <body class="animate-fade-in">
-    <%- include('../partials/navbar', {activePage: 'jobs'}) %>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const jobContainer = document.getElementById('job-list-container');
+
+            // Lắng nghe sự kiện click vào bất kỳ thẻ nào trong jobContainer
+            jobContainer.addEventListener('click', function (e) {
+                // Kiểm tra xem cái được click có phải là nút phân trang (.page-link) không
+                const link = e.target.closest('.page-link');
+                
+                // Nếu đúng là link phân trang và không bị disable
+                if (link && !link.parentElement.classList.contains('disabled')) {
+                    e.preventDefault(); // 1. Chặn trình duyệt reload trang
+                    
+                    const url = link.href; // Lấy đường dẫn trang mới (VD: /jobs?page=2)
+
+                    // Hiệu ứng mờ đi để người dùng biết đang tải
+                    jobContainer.style.opacity = '0.5';
+                    jobContainer.style.pointerEvents = 'none';
+
+                    // 2. Gọi AJAX để lấy nội dung trang mới
+                    fetch(url)
+                        .then(response => response.text())
+                        .then(html => {
+                            // 3. Phân tích HTML trả về
+                            const parser = new DOMParser();
+                            const doc = parser.parseFromString(html, 'text/html');
+                            
+                            // Lấy nội dung mới của phần job-list-container
+                            const newContent = doc.getElementById('job-list-container').innerHTML;
+
+                            // 4. Thay thế nội dung cũ bằng nội dung mới
+                            jobContainer.innerHTML = newContent;
+                            
+                            // Khôi phục hiệu ứng
+                            jobContainer.style.opacity = '1';
+                            jobContainer.style.pointerEvents = 'auto';
+
+                            // 5. Cập nhật URL trên thanh địa chỉ mà không reload
+                            window.history.pushState({}, '', url);
+
+                            // 6. Cuộn nhẹ lên đầu danh sách (thay vì đầu trang)
+                            // Trừ đi khoảng 100px để không bị che bởi menu
+                            const y = jobContainer.getBoundingClientRect().top + window.scrollY - 100;
+                            window.scrollTo({top: y, behavior: 'smooth'});
+                        })
+                        .catch(err => {
+                            console.error('Lỗi tải trang:', err);
+                            jobContainer.style.opacity = '1';
+                            jobContainer.style.pointerEvents = 'auto';
+                            // Nếu lỗi thì fallback về reload thường
+                            window.location.href = url;
+                        });
+                }
+            });
+        });
+    </script>
+    <%- include('../partials/navbar', {activePage: 'jobs' }) %>
 
     <section class="home-hero" style="padding: 140px 0 80px;">
         <div class="container position-relative" style="z-index: 2;">
             <div class="text-center">
                 <span class="badge badge-pill badge-primary px-3 py-2 mb-3 animate__animated animate__fadeInDown">
-                    🚀 124 Jobs Available
+                    🚀 <%= (typeof pagination !== 'undefined' && pagination.totalJobs) ? pagination.totalJobs : '0' %> Jobs Available
                 </span>
                 <h1 class="hero-title mb-3 animate__animated animate__fadeInUp">Find Your Next <span class="text-primary">Tech Job</span></h1>
-                
+
                 <div class="search-wrapper animate__animated animate__fadeInUp animate__delay-1s mx-auto">
                     <form action="/jobs" method="GET" class="d-flex w-100 align-items-center">
                         <div class="flex-grow-1 position-relative">
                             <i class="fas fa-search position-absolute text-muted" style="left: 20px; top: 50%; transform: translateY(-50%); z-index: 5;"></i>
-                            <input type="text" name="q" class="search-input" placeholder="Search jobs..." style="padding-left: 50px; width: 100%;" value="<%= typeof query !== 'undefined' ? query : '' %>">
+                            <input type="text" name="q" class="search-input" placeholder="Search jobs..." style="padding-left: 50px; width: 100%;" value="<%= typeof q !== 'undefined' ? q : '' %>">
                         </div>
                         <button type="submit" class="btn-search ml-2">Search</button>
                     </form>
@@ -27,14 +83,14 @@
     <section class="section bg-light pt-5 pb-5">
         <div class="container">
             <div class="row">
-                
+
                 <div class="col-lg-3 mb-4">
                     <div class="filter-card sticky-top" style="top: 100px; z-index: 1;">
                         <div class="d-flex justify-content-between align-items-center mb-4">
                             <h6 class="font-weight-bold mb-0 text-dark"><i class="fas fa-filter mr-2 text-primary"></i>Filters</h6>
                             <a href="/jobs" class="small text-muted text-decoration-none">Reset</a>
                         </div>
-                        
+
                         <div class="mb-4">
                             <label class="small font-weight-bold text-muted text-uppercase mb-3">Job Type</label>
                             <div class="custom-control custom-checkbox mb-2">
@@ -60,54 +116,99 @@
                     </div>
                 </div>
 
-                <div class="col-lg-9">
+                <div class="col-lg-9" id="job-list-container">
+                    
                     <div class="d-flex justify-content-between align-items-center mb-4">
-                        <p class="text-muted mb-0 small">Showing <strong>12</strong> jobs</p>
+                        <p class="text-muted mb-0 small">Showing <strong><%= (typeof pagination !== 'undefined' && pagination.totalJobs) ? pagination.totalJobs : 0 %></strong> jobs</p>
                         <div class="dropdown">
                             <button class="btn btn-light border shadow-sm btn-sm dropdown-toggle" type="button" data-toggle="dropdown">Newest</button>
-                            <div class="dropdown-menu dropdown-menu-right border-0 shadow-sm"><a class="dropdown-item" href="#">Newest</a></div>
-                        </div>
-                    </div>
-
-                    <div class="job-card-horizontal mb-3 hover-scale">
-                        <img src="https://logo.clearbit.com/google.com" alt="Logo" class="company-logo-sm">
-                        
-                        <div class="flex-grow-1">
-                            <h5 class="font-weight-bold mb-1">
-                                <a href="/jobs/1" class="text-dark text-decoration-none stretched-link">Product Designer</a>
-                            </h5>
-                            <p class="text-muted small mb-2">Google Inc. • Ho Chi Minh</p>
-                            <div>
-                                <span class="tag tag-fulltime">Full-time</span>
-                                <span class="tag" style="background: #f3f4f6; color: #4b5563;">UI/UX</span>
+                            <div class="dropdown-menu dropdown-menu-right border-0 shadow-sm">
+                                <a class="dropdown-item" href="#">Newest</a>
+                                <a class="dropdown-item" href="#">Oldest</a>
                             </div>
                         </div>
-
-                        <div class="text-md-right">
-                            <h5 class="text-primary font-weight-bold mb-1">$2000</h5>
-                            <span class="text-muted small">2 days ago</span>
-                        </div>
                     </div>
 
-                    <div class="job-card-horizontal mb-3 hover-scale">
-                        <img src="https://logo.clearbit.com/shopee.com" alt="Logo" class="company-logo-sm">
-                        
-                        <div class="flex-grow-1">
-                            <h5 class="font-weight-bold mb-1">
-                                <a href="/jobs/2" class="text-dark text-decoration-none stretched-link">Backend Engineer</a>
-                            </h5>
-                            <p class="text-muted small mb-2">Shopee • Remote</p>
-                            <div>
-                                <span class="tag tag-remote">Remote</span>
-                                <span class="tag" style="background: #f3f4f6; color: #4b5563;">Golang</span>
+                    <% if (typeof jobs !== 'undefined' && jobs && jobs.length > 0) { %>
+                        <% jobs.forEach(job => { %>
+                            <div class="job-card-horizontal mb-3 hover-scale">
+                                <img src="<%= job.LogoURL ? job.LogoURL : '/images/default-company.png' %>" 
+                                     alt="<%= job.CompanyName %>" 
+                                     class="company-logo-sm"
+                                     onerror="this.src='/images/default-company.png'"
+                                     style="object-fit: contain; background: #fff;">
+                                
+                                <div class="flex-grow-1">
+                                    <h5 class="font-weight-bold mb-1">
+                                        <a href="/jobs/<%= job.JobID %>" class="text-dark text-decoration-none stretched-link">
+                                            <%= job.JobTitle %>
+                                        </a>
+                                    </h5>
+                                    <p class="text-muted small mb-2">
+                                        <i class="far fa-building mr-1"></i><%= job.CompanyName %> &bull; 
+                                        <i class="fas fa-map-marker-alt mr-1"></i><%= job.Location %>
+                                    </p>
+                                    <div>
+                                        <span class="tag tag-fulltime"><%= job.EmploymentType %></span>
+                                    </div>
+                                </div>
+
+                                <div class="text-md-right">
+                                    <h5 class="text-primary font-weight-bold mb-1">
+                                        $<%= job.SalaryMin ? job.SalaryMin.toLocaleString() : 'N/A' %> - 
+                                        $<%= job.SalaryMax ? job.SalaryMax.toLocaleString() : 'N/A' %>
+                                    </h5>
+                                    <span class="text-muted small">
+                                        Posted: <%= new Date(job.PostedDate).toLocaleDateString('vi-VN') %>
+                                    </span>
+                                </div>
                             </div>
+                        <% }) %>
+                    <% } else { %>
+                        <div class="text-center py-5">
+                            <div class="mb-3"><i class="fas fa-search fa-3x text-muted opacity-50"></i></div>
+                            <h3>No jobs found</h3>
+                            <p class="text-muted">Try adjusting your search criteria or clear filters.</p>
+                            <a href="/jobs" class="btn btn-outline-primary mt-3">View All Jobs</a>
                         </div>
+                    <% } %>
 
-                        <div class="text-md-right">
-                            <h5 class="text-primary font-weight-bold mb-1">$3500</h5>
-                            <span class="text-muted small">5 hours ago</span>
-                        </div>
-                    </div>
+                    <% if (typeof pagination !== 'undefined' && pagination.totalPages > 1) { %>
+                        <nav class="mt-5">
+                            <ul class="pagination justify-content-center">
+
+                                <li class="page-item <%= pagination.currentPage === 1 ? 'disabled' : '' %>">
+                                    <a class="page-link border-0 shadow-sm rounded-pill px-3 mr-2"
+                                       href="/jobs?q=<%= typeof q !== 'undefined' ? q : '' %>&page=<%= pagination.currentPage - 1 %>"
+                                       tabindex="-1">
+                                        <i class="fas fa-chevron-left mr-1"></i> Prev
+                                    </a>
+                                </li>
+
+                                <% 
+                                    let startPage = Math.max(1, pagination.currentPage - 2);
+                                    let endPage = Math.min(pagination.totalPages, pagination.currentPage + 2);
+                                %>
+
+                                <% for(let i = startPage; i <= endPage; i++) { %>
+                                    <li class="page-item <%= pagination.currentPage === i ? 'active' : '' %>">
+                                        <a class="page-link border-0 shadow-sm rounded-circle mx-1 d-flex align-items-center justify-content-center"
+                                           style="width: 40px; height: 40px;"
+                                           href="/jobs?q=<%= typeof q !== 'undefined' ? q : '' %>&page=<%= i %>">
+                                            <%= i %>
+                                        </a>
+                                    </li>
+                                <% } %>
+
+                                <li class="page-item <%= pagination.currentPage === pagination.totalPages ? 'disabled' : '' %>">
+                                    <a class="page-link border-0 shadow-sm rounded-pill px-3 ml-2"
+                                       href="/jobs?q=<%= typeof q !== 'undefined' ? q : '' %>&page=<%= pagination.currentPage + 1 %>">
+                                        Next <i class="fas fa-chevron-right ml-1"></i>
+                                    </a>
+                                </li>
+                            </ul>
+                        </nav>
+                    <% } %>
 
                 </div>
             </div>

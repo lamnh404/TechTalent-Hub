@@ -9,7 +9,4 @@ router.get('/', (req, res) => {
 })
 router.get('/jobs', searchController.searchJobs)
 
-router.get('/jobs', (req, res) => {
-    res.render('homepage/job-listing.ejs', { title: 'Job Listings', user : req.session.user } )
-})
 export const homepageRouter = router
