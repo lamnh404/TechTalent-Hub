@@ -1,0 +1,207 @@
+<%- include('../partials/header') %>
+
+    <body>
+        <%- include('../partials/navbar') %>
+
+            <div class="main-content" style="padding-top: 80px;">
+                <div class="container">
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <h2 class="font-weight-bold">Candidates</h2>
+                            <p class="text-muted">Manage applications for your job postings.</p>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-12">
+                            <% if (candidates && candidates.length> 0) { %>
+                                <div class="card shadow-sm border-0">
+                                    <div class="card-body p-0">
+                                        <div class="table-responsive">
+                                            <table class="table table-hover mb-0">
+                                                <thead class="bg-light">
+                                                    <tr>
+                                                        <th class="border-top-0 pl-4">Candidate</th>
+                                                        <th class="border-top-0">Applied For</th>
+                                                        <th class="border-top-0">Applied Date</th>
+                                                        <th class="border-top-0">Status</th>
+                                                        <th class="border-top-0 text-right pr-4">Action</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <% candidates.forEach(candidate=> { %>
+                                                        <tr>
+                                                            <td class="pl-4 align-middle">
+                                                                <div class="d-flex align-items-center">
+                                                                    <img src="<%= candidate.SeekerAvatar || '/images/default-avatar.png' %>"
+                                                                        alt="<%= candidate.SeekerName %>"
+                                                                        class="rounded-circle mr-3"
+                                                                        style="width: 40px; height: 40px; object-fit: cover;">
+                                                                    <div>
+                                                                        <h6 class="mb-0 font-weight-bold">
+                                                                            <%= candidate.SeekerName %>
+                                                                        </h6>
+                                                                        <small class="text-muted">
+                                                                            <%= candidate.SeekerEmail %>
+                                                                        </small>
+                                                                    </div>
+                                                                </div>
+                                                            </td>
+                                                            <td class="align-middle">
+                                                                <span class="text-dark font-weight-bold">
+                                                                    <%= candidate.JobTitle %>
+                                                                </span>
+                                                            </td>
+                                                            <td class="align-middle">
+                                                                <%= new
+                                                                    Date(candidate.ApplicationDate).toLocaleDateString()
+                                                                    %>
+                                                            </td>
+                                                            <td class="align-middle">
+                                                                <% let badgeClass='badge-secondary' ; if
+                                                                    (candidate.ApplicationStatus==='Submitted' )
+                                                                    badgeClass='badge-info' ; else if
+                                                                    (candidate.ApplicationStatus==='UnderReview' )
+                                                                    badgeClass='badge-warning' ; else if
+                                                                    (candidate.ApplicationStatus==='Interview' )
+                                                                    badgeClass='badge-primary' ; else if
+                                                                    (candidate.ApplicationStatus==='Offer' )
+                                                                    badgeClass='badge-success' ; else if
+                                                                    (candidate.ApplicationStatus==='Rejected' )
+                                                                    badgeClass='badge-danger' ; %>
+                                                                    <span class="badge <%= badgeClass %> px-3 py-2"
+                                                                        id="status-<%= candidate.ApplicationID %>">
+                                                                        <%= candidate.ApplicationStatus %>
+                                                                    </span>
+                                                                    <% if (candidate.ApplicationStatus==='Submitted' ) {
+                                                                        %>
+                                                                        <span
+                                                                            class="badge badge-danger ml-2 animate__animated animate__flash animate__infinite">New</span>
+                                                                        <% } %>
+                                                            </td>
+                                                            <td class="align-middle text-right pr-4">
+                                                                <button
+                                                                    class="btn btn-sm btn-outline-primary view-candidate-btn"
+                                                                    data-id="<%= candidate.ApplicationID %>"
+                                                                    data-status="<%= candidate.ApplicationStatus %>"
+                                                                    data-toggle="modal"
+                                                                    data-target="#candidateModal-<%= candidate.ApplicationID %>">
+                                                                    View Details
+                                                                </button>
+                                                            </td>
+                                                        </tr>
+
+                                                        <!-- Candidate Modal -->
+                                                        <div class="modal fade"
+                                                            id="candidateModal-<%= candidate.ApplicationID %>"
+                                                            tabindex="-1" role="dialog" aria-hidden="true">
+                                                            <div class="modal-dialog modal-lg modal-dialog-centered"
+                                                                role="document">
+                                                                <div class="modal-content border-0 shadow-lg">
+                                                                    <div class="modal-header border-0 pb-0">
+                                                                        <button type="button" class="close"
+                                                                            data-dismiss="modal" aria-label="Close">
+                                                                            <span aria-hidden="true">&times;</span>
+                                                                        </button>
+                                                                    </div>
+                                                                    <div class="modal-body p-4">
+                                                                        <div class="text-center mb-4">
+                                                                            <img src="<%= candidate.SeekerAvatar || '/images/default-avatar.png' %>"
+                                                                                alt="<%= candidate.SeekerName %>"
+                                                                                class="rounded-circle shadow-sm mb-3"
+                                                                                style="width: 100px; height: 100px; object-fit: cover;">
+                                                                            <h4 class="font-weight-bold">
+                                                                                <%= candidate.SeekerName %>
+                                                                            </h4>
+                                                                            <p class="text-muted">
+                                                                                <%= candidate.SeekerEmail %>
+                                                                            </p>
+                                                                        </div>
+
+                                                                        <div class="row">
+                                                                            <div class="col-md-6">
+                                                                                <h6
+                                                                                    class="font-weight-bold text-uppercase text-muted small mb-3">
+                                                                                    Application Details</h6>
+                                                                                <p><strong>Job:</strong>
+                                                                                    <%= candidate.JobTitle %>
+                                                                                </p>
+                                                                                <p><strong>Applied:</strong>
+                                                                                    <%= new
+                                                                                        Date(candidate.ApplicationDate).toLocaleDateString()
+                                                                                        %>
+                                                                                </p>
+                                                                                <p><strong>Status:</strong> <span
+                                                                                        class="badge <%= badgeClass %>">
+                                                                                        <%= candidate.ApplicationStatus
+                                                                                            %>
+                                                                                    </span></p>
+                                                                            </div>
+                                                                            <div class="col-md-6">
+                                                                                <!-- Add more details here if available -->
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="modal-footer border-0 bg-light">
+                                                                        <button type="button" class="btn btn-secondary"
+                                                                            data-dismiss="modal">Close</button>
+                                                                        <a href="mailto:<%= candidate.SeekerEmail %>"
+                                                                            class="btn btn-primary">Contact
+                                                                            Candidate</a>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <% }) %>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                                <% } else { %>
+                                    <div class="text-center py-5">
+                                        <img src="/images/empty-state.svg" alt="No Candidates" class="mb-4"
+                                            style="max-width: 200px; opacity: 0.5;">
+                                        <h4>No candidates yet</h4>
+                                        <p class="text-muted mb-4">Your job postings haven't received any applications
+                                            yet.</p>
+                                    </div>
+                                    <% } %>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <%- include('../partials/footer') %>
+
+                <script>
+                    $(document).ready(function () {
+                        $('.view-candidate-btn').click(function () {
+                            const appId = $(this).data('id');
+                            const status = $(this).data('status');
+
+                            if (status === 'Submitted') {
+                                // Update status to UnderReview
+                                $.ajax({
+                                    url: '/applications/' + appId + '/status',
+                                    type: 'POST',
+                                    data: { status: 'UnderReview' },
+                                    success: function (response) {
+                                        // Update UI
+                                        $('#status-' + appId).text('UnderReview')
+                                            .removeClass('badge-info')
+                                            .addClass('badge-warning');
+                                        // Remove the "New" badge if present
+                                        $(this).closest('td').find('.badge-danger').remove();
+                                    },
+                                    error: function (err) {
+                                        console.error('Error updating status:', err);
+                                    }
+                                });
+                            }
+                        });
+                    });
+                </script>
+    </body>
+
+    </html>
