@@ -25,9 +25,12 @@ const searchModel = {
                         J.EmploymentType, 
                         J.PostedDate,
                         C.CompanyName,
-                        C.LogoURL
+                        C.LogoURL,
+                        JM.ViewCount,
+                        JM.AppliedCount
                     FROM [Job] J
                     JOIN [Company] C ON J.CompanyID = C.CompanyID
+                    LEFT JOIN [JobMetrics] JM ON J.JobID = JM.JobMetricID
                     LEFT JOIN [JobRequireSkill] JRS ON J.JobID = JRS.JobID
                     LEFT JOIN [Skill] S ON JRS.SkillID = S.SkillID
                     WHERE J.JobTitle LIKE @keyword

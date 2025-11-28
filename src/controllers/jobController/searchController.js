@@ -5,8 +5,8 @@ const searchController = {
         try {
             const q = req.query.q || "";
             const page = parseInt(req.query.page) || 1;
-            const limit = parseInt(req.query.limit) || 2;
-            
+            const limit = parseInt(req.query.limit) || 7;
+
             const jobs = await searchModel.searchJobs(q, page, limit);
 
             let totalJobs = 0;
