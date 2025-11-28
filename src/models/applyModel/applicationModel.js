@@ -54,7 +54,7 @@ const getCandidatesByCompanyId = async (companyId) => {
         let result = await pool.request()
             .input('companyId', companyId)
             .query(`
-                SELECT A.*, J.JobTitle, (JS.FirstName + ' ' + JS.LastName) as SeekerName, U.Email as SeekerEmail, U.AvatarURL as SeekerAvatar
+                SELECT A.*, J.JobTitle, (JS.FirstName + ' ' + JS.LastName) as SeekerName, U.Email as SeekerEmail
                 FROM [Application] A
                 JOIN [Job] J ON A.JobID = J.JobID
                 JOIN [JobSeeker] JS ON A.JobSeekerID = JS.JobSeekerID

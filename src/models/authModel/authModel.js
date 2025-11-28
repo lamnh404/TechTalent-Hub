@@ -10,7 +10,7 @@ const login = async (email, password) => {
         const result = await pool.request()
             .input('email', email)
             .query(`
-                SELECT userId, email, passwordHash, userType, avatarUrl 
+                SELECT userId, email, passwordHash, userType
                 FROM [User] 
                 WHERE email = @email`)
         const user = result.recordset[0]

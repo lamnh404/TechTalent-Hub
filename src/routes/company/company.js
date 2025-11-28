@@ -1,25 +1,21 @@
 import express from 'express'
+import { companyController } from '~/controllers/companyController/companyController.js'
 
 const router = express.Router()
 
-router.get('/dashboard', (req, res) => {
-    res.render('company/dashboard.ejs', { title: 'Company Dashboard', user : req.session.user } )
-})
+router.get('/dashboard', companyController.getDashboard)
 
-router.get('/jobs/create', (req, res) => {
-    res.render('company/post-job.ejs', { title: 'Create Job', user : req.session.user } )
-})
+router.get('/jobs/create', companyController.getCreateJobPage)
+router.post('/jobs/create', companyController.createJob)
 
-router.get('/jobs', (req, res) => {
-    res.render('company/job-list.ejs', { title: 'My Jobs Posts', user : req.session.user } )
-})
+router.get('/jobs', companyController.getJobs)
 
-router.get('/candidates', (req, res) => {
-    res.render('company/candidates.ejs', { title: 'My Candidates', user : req.session.user } )
-})
+router.get('/candidates', companyController.getCandidates)
 
-router.get('/profile', (req, res) => {
-    res.render('company/profile.ejs', { title: 'Company Profile', user : req.session.user } )
-})
+router.get('/profile', companyController.getProfile)
+router.post('/profile', companyController.updateProfile)
+
+// Route for updating application status
+router.post('/applications/:applicationId/status', companyController.updateApplicationStatus)
 
 export const companyRouter = router
