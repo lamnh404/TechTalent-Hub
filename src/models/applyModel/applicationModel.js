@@ -15,12 +15,21 @@ const createApplication = async (applicationData) => {
         if (result.recordset.length > 0) {
             throw new ApiError(StatusCodes.BAD_REQUEST, 'You have already applied for this job')
         }
+        let CVUrl = await pool.request()
+            .input('jobSeekerId', jobSeekerId)
+            .query(`
+                SELECT CVFileUrl FROM [JobSeeker] WHERE JobSeekerID = @jobSeekerId
+            `)
+        if (!CVUrl.recordset.length > 0) {
+            throw new ApiError(StatusCodes.BAD_REQUEST, 'You have not uploaded your CV')
+        }
         result = await pool.request()
             .input('jobSeekerId', jobSeekerId)
             .input('jobId', jobId)
+            .input('CVUrl', CVUrl.recordset[0].CVFileUrl)
             .query(`
-                INSERT INTO [Application] (JobSeekerID, JobID, ApplicationDate, ApplicationStatus, isActive)
-                VALUES (@jobSeekerId, @jobId, GETDATE(), 'Submitted', 1)
+                INSERT INTO [Application] (JobSeekerID, JobID, ApplicationDate, ApplicationStatus, isActive, CoverLetterURL)
+                VALUES (@jobSeekerId, @jobId, GETDATE(), 'Submitted', 1, @CVUrl)
             `)
 
         return result

@@ -31,9 +31,9 @@ const getSeekerApplications = async (req, res, next) => {
 
         const applications = await applicationModel.getApplicationsBySeekerId(user.id)
 
-        res.render('seeker/applications', {
+        res.render('seeker/my-applications.ejs', {
             applications,
-            title: 'Applications',
+            title: 'My Applications',
             user: user
         })
     } catch (error) {
