@@ -6,9 +6,6 @@ import { ApiError } from '~/utils/ApiError'
 
 const getDashboard = async (req, res, next) => {
     try {
-        if (!req.session.user) {
-            return res.redirect('/auth/login')
-        }
         const companyId = req.session.user.id
         const stats = await companyModel.getDashboardStats(companyId)
         const recentJobs = await companyModel.getRecentJobs(companyId)
@@ -26,9 +23,6 @@ const getDashboard = async (req, res, next) => {
 
 const getJobs = async (req, res, next) => {
     try {
-        if (!req.session.user) {
-            return res.redirect('/auth/login')
-        }
         const companyId = req.session.user.id
         const jobs = await jobModel.getJobsByCompanyId(companyId)
 
@@ -44,9 +38,6 @@ const getJobs = async (req, res, next) => {
 
 const getCandidates = async (req, res, next) => {
     try {
-        if (!req.session.user) {
-            return res.redirect('/auth/login')
-        }
         const companyId = req.session.user.id
         const candidates = await applicationModel.getCandidatesByCompanyId(companyId)
 
@@ -62,9 +53,6 @@ const getCandidates = async (req, res, next) => {
 
 const getProfile = async (req, res, next) => {
     try {
-        if (!req.session.user) {
-            return res.redirect('/auth/login')
-        }
         const companyId = req.session.user.id
         const company = await companyModel.getCompanyProfile(companyId)
 
@@ -81,9 +69,6 @@ const getProfile = async (req, res, next) => {
 
 const updateProfile = async (req, res, next) => {
     try {
-        if (!req.session.user) {
-            return res.redirect('/auth/login')
-        }
         const companyId = req.session.user.id
         await companyModel.updateCompanyProfile(companyId, req.body)
 
@@ -94,19 +79,14 @@ const updateProfile = async (req, res, next) => {
 }
 
 const getCreateJobPage = (req, res) => {
-    if (!req.session.user) {
-        return res.redirect('/auth/login')
-    }
     res.render('company/post-job.ejs', { title: 'Post A Job', user: req.session.user })
 }
 
 const createJob = async (req, res, next) => {
     try {
-        if (!req.session.user) {
-            return res.redirect('/auth/login')
-        }
-        const { JobTitle, JobDescription, SalaryMin, SalaryMax, Location, EmploymentType, ExperienceRequired, ApplicationDeadline, OpeningCount } = req.body
+        const { JobTitle, JobDescription, SalaryMin, SalaryMax, Location, EmploymentType, ExperienceRequired, ApplicationDeadline, skills } = req.body
         const companyId = req.session.user.id
+        console.log('Company ID:', companyId)
 
         await jobModel.createJob({
             jobTitle: JobTitle,
@@ -134,9 +114,6 @@ const createJob = async (req, res, next) => {
 
 const updateApplicationStatus = async (req, res, next) => {
     try {
-        if (!req.session.user) {
-            return res.status(StatusCodes.UNAUTHORIZED).json({ message: 'Unauthorized' })
-        }
         const { applicationId } = req.params
         const { status } = req.body
 

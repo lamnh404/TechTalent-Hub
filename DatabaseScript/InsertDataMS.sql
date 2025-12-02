@@ -1,5 +1,6 @@
-    USE [TechTalentHub];
+USE [TechTalentHub];
 GO
+
 
 INSERT INTO [User] ([Email], [PasswordHash], [UserType], [AccountStatus], [RegistrationDate]) VALUES
 (N'admin@techtalenthub.com', N'$2a$12$yF6QALwl2DVbZ7X1iQiF/ONXNUhBcm2Hj8abEMJvuQqJaFLvF7zxi', N'Admin', N'Active', N'2024-01-15 09:00:00'),
@@ -14,52 +15,89 @@ INSERT INTO [User] ([Email], [PasswordHash], [UserType], [AccountStatus], [Regis
 (N'hoang.van.e@gmail.com', N'$2a$12$r0864CDy8t8DdL8/dVExpOBvaVDfqP5poySgzvF8dPOUjsUASVBSq', N'JobSeeker', N'Active', N'2024-03-20 15:00:00');
 GO
 
-INSERT INTO [Admin] ([AdminId], [AdminName], [AdminRole], [DateAssigned]) VALUES
-(N'US0000001', N'System Administrator', N'SuperAdmin', N'2024-01-15 09:00:00');
+
+DECLARE @AdminId NVARCHAR(128) = (SELECT UserId FROM [User] WHERE Email = N'admin@techtalenthub.com');
+DECLARE @CompanyId1 NVARCHAR(128) = (SELECT UserId FROM [User] WHERE Email = N'hr@fpt.com.vn');
+DECLARE @CompanyId2 NVARCHAR(128) = (SELECT UserId FROM [User] WHERE Email = N'recruitment@vng.com.vn');
+DECLARE @CompanyId3 NVARCHAR(128) = (SELECT UserId FROM [User] WHERE Email = N'talent@techcombank.com.vn');
+DECLARE @CompanyId4 NVARCHAR(128) = (SELECT UserId FROM [User] WHERE Email = N'hr@viettel.com.vn');
+DECLARE @JobSeekerId1 NVARCHAR(128) = (SELECT UserId FROM [User] WHERE Email = N'nguyen.van.a@gmail.com');
+DECLARE @JobSeekerId2 NVARCHAR(128) = (SELECT UserId FROM [User] WHERE Email = N'tran.thi.b@gmail.com');
+DECLARE @JobSeekerId3 NVARCHAR(128) = (SELECT UserId FROM [User] WHERE Email = N'le.van.c@gmail.com');
+DECLARE @JobSeekerId4 NVARCHAR(128) = (SELECT UserId FROM [User] WHERE Email = N'pham.thi.d@gmail.com');
+DECLARE @JobSeekerId5 NVARCHAR(128) = (SELECT UserId FROM [User] WHERE Email = N'hoang.van.e@gmail.com');
+
+INSERT INTO [Admin] ([AdminId], [AdminName], [AdminRole], [DateAssigned])
+SELECT @AdminId, N'System Administrator', N'SuperAdmin', N'2024-01-15 09:00:00';
 GO
 
-INSERT INTO [Company] ([CompanyID], [CompanyName], [FounderYear], [CompanySize], [Industry], [CompanyDescription], [CompanyWebsite], [VerificationStatus], [LogoURL]) VALUES
-(N'US0000002', N'FPT Software', 1999, N'Enterprise', N'Information Technology', 
+
+DECLARE @CompanyId1 NVARCHAR(128) = (SELECT UserId FROM [User] WHERE Email = N'hr@fpt.com.vn');
+DECLARE @CompanyId2 NVARCHAR(128) = (SELECT UserId FROM [User] WHERE Email = N'recruitment@vng.com.vn');
+DECLARE @CompanyId3 NVARCHAR(128) = (SELECT UserId FROM [User] WHERE Email = N'talent@techcombank.com.vn');
+DECLARE @CompanyId4 NVARCHAR(128) = (SELECT UserId FROM [User] WHERE Email = N'hr@viettel.com.vn');
+
+INSERT INTO [Company] ([CompanyID], [CompanyName], [FounderYear], [CompanySize], [Industry], [CompanyDescription], [CompanyWebsite], [VerificationStatus], [LogoURL])
+SELECT @CompanyId1, N'FPT Software', 1999, N'Enterprise', N'Information Technology', 
  N'Leading software outsourcing company in Vietnam with over 30,000 employees worldwide. Specializing in digital transformation, AI, cloud computing, and enterprise solutions.',
- N'https://fptsoftware.com', N'ACCEPTED', N'https://fptsoftware.com/logo.png'),
-(N'US0000003', N'VNG Corporation', 2004, N'Large', N'Technology & Entertainment',
+ N'https://fptsoftware.com', N'ACCEPTED', N'https://fptsoftware.com/logo.png'
+UNION ALL
+SELECT @CompanyId2, N'VNG Corporation', 2004, N'Large', N'Technology & Entertainment',
  N'Pioneer in online games, digital content, and e-commerce platforms in Vietnam. Creator of Zalo, Vietnam''s leading messaging app with over 70 million users.',
- N'https://vng.com.vn', N'ACCEPTED', N'https://vng.com.vn/logo.png'),
-(N'US0000004', N'Vietnam Technological and Commercial Joint Stock Bank', 1993, N'Large', N'Banking & Finance',
+ N'https://vng.com.vn', N'ACCEPTED', N'https://vng.com.vn/logo.png'
+UNION ALL
+SELECT @CompanyId3, N'Vietnam Technological and Commercial Joint Stock Bank', 1993, N'Large', N'Banking & Finance',
  N'One of the leading commercial banks in Vietnam with cutting-edge fintech solutions. Recognized for innovation in digital banking and customer experience.',
- N'https://techcombank.com.vn', N'ACCEPTED', N'https://techcombank.com.vn/logo.png'),
-(N'US0000005', N'Viettel Group', 1989, N'Enterprise', N'Telecommunications',
+ N'https://techcombank.com.vn', N'ACCEPTED', N'https://techcombank.com.vn/logo.png'
+UNION ALL
+SELECT @CompanyId4, N'Viettel Group', 1989, N'Enterprise', N'Telecommunications',
  N'Largest telecommunications company in Vietnam providing mobile, internet, and digital services. Expanding into AI, IoT, cloud computing, and cybersecurity solutions.',
- N'https://viettel.com.vn', N'ACCEPTED', N'https://viettel.com.vn/logo.png');
+ N'https://viettel.com.vn', N'ACCEPTED', N'https://viettel.com.vn/logo.png';
 GO
 
-INSERT INTO [CompanyLocation] ([CompanyID], [Address]) VALUES
-(N'US0000002', N'FPT Building, Tan Thuan Export Processing Zone, District 7, Ho Chi Minh City'),
-(N'US0000002', N'FPT Tower, Duy Tan Street, Cau Giay District, Hanoi'),
-(N'US0000003', N'VNG Campus, Z06 Street, Tan Thuan EPZ, District 7, Ho Chi Minh City'),
-(N'US0000003', N'VNG Hanoi Office, Keangnam Landmark 72, Pham Hung Street, Hanoi'),
-(N'US0000004', N'Techcombank Tower, 191 Ba Trieu, Hai Ba Trung District, Hanoi'),
-(N'US0000004', N'162-164 Pasteur, Ben Nghe Ward, District 1, Ho Chi Minh City'),
-(N'US0000005', N'Viettel Tower, 285 Cach Mang Thang Tam, District 10, Ho Chi Minh City'),
-(N'US0000005', N'Viettel Building, Giang Vo Street, Ba Dinh District, Hanoi');
+
+DECLARE @CompanyId1 NVARCHAR(128) = (SELECT UserId FROM [User] WHERE Email = N'hr@fpt.com.vn');
+DECLARE @CompanyId2 NVARCHAR(128) = (SELECT UserId FROM [User] WHERE Email = N'recruitment@vng.com.vn');
+DECLARE @CompanyId3 NVARCHAR(128) = (SELECT UserId FROM [User] WHERE Email = N'talent@techcombank.com.vn');
+DECLARE @CompanyId4 NVARCHAR(128) = (SELECT UserId FROM [User] WHERE Email = N'hr@viettel.com.vn');
+
+INSERT INTO [CompanyLocation] ([CompanyID], [Address])
+SELECT @CompanyId1, N'FPT Building, Tan Thuan EPZ, District 7, HCMC'
+UNION ALL SELECT @CompanyId1, N'FPT Tower, Duy Tan Street, Cau Giay, Hanoi'
+UNION ALL SELECT @CompanyId2, N'VNG Campus, Z06 Street, Tan Thuan EPZ, District 7, HCMC'
+UNION ALL SELECT @CompanyId2, N'VNG Hanoi Office, Keangnam Landmark 72, Pham Hung, Hanoi'
+UNION ALL SELECT @CompanyId3, N'Techcombank Tower, 191 Ba Trieu, Hai Ba Trung, Hanoi'
+UNION ALL SELECT @CompanyId3, N'162-164 Pasteur, Ben Nghe Ward, District 1, HCMC'
+UNION ALL SELECT @CompanyId4, N'Viettel Tower, 285 Cach Mang Thang Tam, District 10, HCMC'
+UNION ALL SELECT @CompanyId4, N'Viettel Building, Giang Vo Street, Ba Dinh, Hanoi';
 GO
 
-INSERT INTO [JobSeeker] ([JobSeekerID], [FirstName], [LastName], [PhoneNumber], [Gender], [DateOfBirth], [CurrentLocation], [ExperienceLevel], [ProfileSummary], [CVFileURL]) VALUES
-(N'US0000006', N'Van A', N'Nguyen', N'+84901234567', N'MALE', N'1995-05-15', N'Ho Chi Minh City', N'Mid-Level',
+DECLARE @JobSeekerId1 NVARCHAR(128) = (SELECT UserId FROM [User] WHERE Email = N'nguyen.van.a@gmail.com');
+DECLARE @JobSeekerId2 NVARCHAR(128) = (SELECT UserId FROM [User] WHERE Email = N'tran.thi.b@gmail.com');
+DECLARE @JobSeekerId3 NVARCHAR(128) = (SELECT UserId FROM [User] WHERE Email = N'le.van.c@gmail.com');
+DECLARE @JobSeekerId4 NVARCHAR(128) = (SELECT UserId FROM [User] WHERE Email = N'pham.thi.d@gmail.com');
+DECLARE @JobSeekerId5 NVARCHAR(128) = (SELECT UserId FROM [User] WHERE Email = N'hoang.van.e@gmail.com');
+
+INSERT INTO [JobSeeker] ([JobSeekerID], [FirstName], [LastName], [PhoneNumber], [Gender], [DateOfBirth], [CurrentLocation], [ExperienceLevel], [ProfileSummary], [CVFileURL])
+SELECT @JobSeekerId1, N'Van A', N'Nguyen', N'+84901234567', N'MALE', N'1995-05-15', N'Ho Chi Minh City', N'Mid-Level',
  N'Experienced Full-stack Developer with 4+ years building scalable web applications using React, Node.js, and PostgreSQL. Strong problem-solving skills and passion for clean code.',
- N'https://storage.example.com/cv/nguyen-van-a.pdf'),
-(N'US0000007', N'Thi B', N'Tran', N'+84912345678', N'FEMALE', N'1998-08-20', N'Hanoi', N'Entry-Level',
+ N'https://storage.example.com/cv/nguyen-van-a.pdf'
+UNION ALL
+SELECT @JobSeekerId2, N'Thi B', N'Tran', N'+84912345678', N'FEMALE', N'1998-08-20', N'Hanoi', N'Entry-Level',
  N'Recent graduate with Bachelor degree in Computer Science. Specialized in Data Science and Machine Learning. Completed multiple projects using Python, TensorFlow, and scikit-learn.',
- N'https://storage.example.com/cv/tran-thi-b.pdf'),
-(N'US0000008', N'Van C', N'Le', N'+84923456789', N'MALE', N'1992-03-10', N'Da Nang', N'Senior-Level',
+ N'https://storage.example.com/cv/tran-thi-b.pdf'
+UNION ALL
+SELECT @JobSeekerId3, N'Van C', N'Le', N'+84923456789', N'MALE', N'1992-03-10', N'Da Nang', N'Senior-Level',
  N'Senior Backend Engineer with 7+ years experience in Java, Spring Boot, and microservices architecture. Expert in system design, performance optimization, and leading technical teams.',
- N'https://storage.example.com/cv/le-van-c.pdf'),
-(N'US0000009', N'Thi D', N'Pham', N'+84934567890', N'FEMALE', N'1996-11-25', N'Ho Chi Minh City', N'Mid-Level',
+ N'https://storage.example.com/cv/le-van-c.pdf'
+UNION ALL
+SELECT @JobSeekerId4, N'Thi D', N'Pham', N'+84934567890', N'FEMALE', N'1996-11-25', N'Ho Chi Minh City', N'Mid-Level',
  N'DevOps Engineer with 3+ years expertise in AWS, Docker, Kubernetes, and CI/CD automation. Experienced in infrastructure as code using Terraform and building reliable deployment pipelines.',
- N'https://storage.example.com/cv/pham-thi-d.pdf'),
-(N'US0000010', N'Van E', N'Hoang', N'+84945678901', N'MALE', N'1994-07-08', N'Hanoi', N'Mid-Level',
+ N'https://storage.example.com/cv/pham-thi-d.pdf'
+UNION ALL
+SELECT @JobSeekerId5, N'Van E', N'Hoang', N'+84945678901', N'MALE', N'1994-07-08', N'Hanoi', N'Mid-Level',
  N'Mobile Developer specializing in React Native and Flutter. Built 15+ production mobile apps with 1M+ downloads. Strong focus on UI/UX and app performance optimization.',
- N'https://storage.example.com/cv/hoang-van-e.pdf');
+ N'https://storage.example.com/cv/hoang-van-e.pdf';
 GO
 
 INSERT INTO [Skill] ([SkillName], [SkillCategory], [PopularityScore]) VALUES
@@ -80,424 +118,409 @@ INSERT INTO [Skill] ([SkillName], [SkillCategory], [PopularityScore]) VALUES
 (N'Flutter', N'Mobile Development', 0);
 GO
 
-INSERT INTO [JobSeekerSkill] ([JobSeekerID], [SkillID], [ProficiencyLevel], [YearOfExperience]) VALUES
-(N'US0000006', 3, N'Expert', 4.0),
-(N'US0000006', 4, N'Expert', 4.0),
-(N'US0000006', 5, N'Advanced', 3.5),
-(N'US0000006', 8, N'Advanced', 3.0),
-(N'US0000007', 2, N'Intermediate', 1.5),
-(N'US0000007', 12, N'Intermediate', 1.0),
-(N'US0000007', 13, N'Beginner', 1.0),
-(N'US0000008', 1, N'Expert', 7.0),
-(N'US0000008', 6, N'Expert', 6.5),
-(N'US0000008', 7, N'Advanced', 7.0),
-(N'US0000008', 8, N'Advanced', 5.0),
-(N'US0000008', 10, N'Advanced', 4.0),
-(N'US0000009', 9, N'Expert', 3.5),
-(N'US0000009', 10, N'Expert', 3.5),
-(N'US0000009', 11, N'Advanced', 2.5),
-(N'US0000009', 2, N'Advanced', 3.0),
-(N'US0000010', 3, N'Expert', 4.0),
-(N'US0000010', 4, N'Advanced', 3.5),
-(N'US0000010', 14, N'Expert', 3.0),
-(N'US0000010', 15, N'Intermediate', 1.5);
+-- Step 8: Insert JobSeeker Skills
+DECLARE @JobSeekerId1 NVARCHAR(128) = (SELECT UserId FROM [User] WHERE Email = N'nguyen.van.a@gmail.com');
+DECLARE @JobSeekerId2 NVARCHAR(128) = (SELECT UserId FROM [User] WHERE Email = N'tran.thi.b@gmail.com');
+DECLARE @JobSeekerId3 NVARCHAR(128) = (SELECT UserId FROM [User] WHERE Email = N'le.van.c@gmail.com');
+DECLARE @JobSeekerId4 NVARCHAR(128) = (SELECT UserId FROM [User] WHERE Email = N'pham.thi.d@gmail.com');
+DECLARE @JobSeekerId5 NVARCHAR(128) = (SELECT UserId FROM [User] WHERE Email = N'hoang.van.e@gmail.com');
+
+INSERT INTO [JobSeekerSkill] ([JobSeekerID], [SkillID], [ProficiencyLevel], [YearOfExperience])
+SELECT @JobSeekerId1, 3, N'Expert', 4.0
+UNION ALL SELECT @JobSeekerId1, 4, N'Expert', 4.0
+UNION ALL SELECT @JobSeekerId1, 5, N'Advanced', 3.5
+UNION ALL SELECT @JobSeekerId1, 8, N'Advanced', 3.0
+UNION ALL SELECT @JobSeekerId2, 2, N'Intermediate', 1.5
+UNION ALL SELECT @JobSeekerId2, 12, N'Intermediate', 1.0
+UNION ALL SELECT @JobSeekerId2, 13, N'Beginner', 1.0
+UNION ALL SELECT @JobSeekerId3, 1, N'Expert', 7.0
+UNION ALL SELECT @JobSeekerId3, 6, N'Expert', 6.5
+UNION ALL SELECT @JobSeekerId3, 7, N'Advanced', 7.0
+UNION ALL SELECT @JobSeekerId3, 8, N'Advanced', 5.0
+UNION ALL SELECT @JobSeekerId3, 10, N'Advanced', 4.0
+UNION ALL SELECT @JobSeekerId4, 9, N'Expert', 3.5
+UNION ALL SELECT @JobSeekerId4, 10, N'Expert', 3.5
+UNION ALL SELECT @JobSeekerId4, 11, N'Advanced', 2.5
+UNION ALL SELECT @JobSeekerId4, 2, N'Advanced', 3.0
+UNION ALL SELECT @JobSeekerId5, 3, N'Expert', 4.0
+UNION ALL SELECT @JobSeekerId5, 4, N'Advanced', 3.5
+UNION ALL SELECT @JobSeekerId5, 14, N'Expert', 3.0
+UNION ALL SELECT @JobSeekerId5, 15, N'Intermediate', 1.5;
 GO
 
-INSERT INTO [Job] ([CompanyID], [JobTitle], [JobDescription], [EmploymentType], [ExperienceRequired], [SalaryMin], [SalaryMax], [Location], [OpeningCount], [ApplicationDeadline], [JobStatus], [PostedDate]) VALUES
-(N'US0000002', N'Senior Java Developer', 
+DECLARE @CompanyId1 NVARCHAR(128) = (SELECT UserId FROM [User] WHERE Email = N'hr@fpt.com.vn');
+DECLARE @CompanyId2 NVARCHAR(128) = (SELECT UserId FROM [User] WHERE Email = N'recruitment@vng.com.vn');
+DECLARE @CompanyId3 NVARCHAR(128) = (SELECT UserId FROM [User] WHERE Email = N'talent@techcombank.com.vn');
+DECLARE @CompanyId4 NVARCHAR(128) = (SELECT UserId FROM [User] WHERE Email = N'hr@viettel.com.vn');
+
+INSERT INTO [Job] ([CompanyID], [JobTitle], [JobDescription], [EmploymentType], [ExperienceRequired], [SalaryMin], [SalaryMax], [Location], [OpeningCount], [ApplicationDeadline], [JobStatus], [PostedDate])
+SELECT @CompanyId1, N'Senior Java Developer', 
  N'Join our team to develop enterprise solutions for global clients. You will work on large-scale systems using Java, Spring Boot, and microservices architecture. Requirements: 5+ years Java experience, strong knowledge of design patterns, RESTful APIs, and database optimization.',
- N'FullTime', 5, 2500.00, 4000.00, N'Ho Chi Minh City', 3, N'2025-12-31 23:59:59', N'Open', N'2024-11-01 09:00:00'),
-(N'US0000003', N'Data Scientist', 
+ N'FullTime', 5, 2500.00, 4000.00, N'Ho Chi Minh City', 3, N'2025-12-31 23:59:59', N'Open', N'2024-11-01 09:00:00'
+UNION ALL
+SELECT @CompanyId2, N'Data Scientist', 
  N'Develop machine learning models for gaming analytics and user behavior prediction. Work with big data, Python, TensorFlow, and cloud platforms. Requirements: 2+ years experience in data science, strong statistical knowledge, and passion for gaming industry.',
- N'FullTime', 2, 2000.00, 3500.00, N'Ho Chi Minh City', 2, N'2025-11-30 23:59:59', N'Open', N'2024-11-05 10:00:00'),
-(N'US0000004', N'Full-stack Developer', 
+ N'FullTime', 2, 2000.00, 3500.00, N'Ho Chi Minh City', 2, N'2025-11-30 23:59:59', N'Open', N'2024-11-05 10:00:00'
+UNION ALL
+SELECT @CompanyId3, N'Full-stack Developer', 
  N'Build and maintain banking applications using React, Node.js, and PostgreSQL. Ensure security, scalability, and excellent user experience. Requirements: 3+ years full-stack experience, knowledge of fintech regulations, and attention to detail.',
- N'FullTime', 3, 2200.00, 3800.00, N'Hanoi', 4, N'2025-12-15 23:59:59', N'Open', N'2024-11-08 11:00:00'),
-(N'US0000005', N'DevOps Engineer', 
+ N'FullTime', 3, 2200.00, 3800.00, N'Hanoi', 4, N'2025-12-15 23:59:59', N'Open', N'2024-11-08 11:00:00'
+UNION ALL
+SELECT @CompanyId4, N'DevOps Engineer', 
  N'Manage cloud infrastructure and implement CI/CD pipelines for telecommunications services. Work with AWS, Docker, Kubernetes, and Terraform. Requirements: 3+ years DevOps experience, AWS certification preferred, strong automation skills.',
- N'FullTime', 3, 2400.00, 4200.00, N'Ho Chi Minh City', 2, N'2026-01-15 23:59:59', N'Open', N'2024-11-10 14:00:00'),
-(N'US0000002', N'Backend Developer (Spring Boot)', 
+ N'FullTime', 3, 2400.00, 4200.00, N'Ho Chi Minh City', 2, N'2026-01-15 23:59:59', N'Open', N'2024-11-10 14:00:00'
+UNION ALL
+SELECT @CompanyId1, N'Backend Developer (Spring Boot)', 
  N'Build scalable microservices using Spring Boot for international projects. Requirements: 4+ years Java/Spring Boot experience, knowledge of message queues, caching strategies, and API design best practices.',
- N'FullTime', 4, 2300.00, 3800.00, N'Hanoi', 2, N'2026-01-31 23:59:59', N'Open', N'2024-11-12 15:00:00'),
-(N'US0000003', N'Mobile Developer (React Native)', 
+ N'FullTime', 4, 2300.00, 3800.00, N'Hanoi', 2, N'2026-01-31 23:59:59', N'Open', N'2024-11-12 15:00:00'
+UNION ALL
+SELECT @CompanyId2, N'Mobile Developer (React Native)', 
  N'Develop cross-platform mobile applications for our digital services. Requirements: 3+ years React Native experience, published apps on App Store/Google Play, strong UI/UX skills, and performance optimization expertise.',
- N'FullTime', 3, 2000.00, 3500.00, N'Ho Chi Minh City', 2, N'2025-12-20 23:59:59', N'Open', N'2024-11-15 16:00:00');
+ N'FullTime', 3, 2000.00, 3500.00, N'Ho Chi Minh City', 2, N'2025-12-20 23:59:59', N'Open', N'2024-11-15 16:00:00';
 GO
 
-INSERT INTO [JobRequireSkill] ([JobID], [SkillID], [ProficiencyLevel], [IsRequired]) VALUES
-(N'JOB0000001', 1, N'Expert', 1),
-(N'JOB0000001', 6, N'Expert', 1),
-(N'JOB0000001', 7, N'Advanced', 1),
-(N'JOB0000001', 10, N'Intermediate', 0),
-(N'JOB0000002', 2, N'Advanced', 1),
-(N'JOB0000002', 12, N'Advanced', 1),
-(N'JOB0000002', 13, N'Intermediate', 1),
-(N'JOB0000002', 8, N'Intermediate', 0),
-(N'JOB0000003', 3, N'Advanced', 1),
-(N'JOB0000003', 4, N'Advanced', 1),
-(N'JOB0000003', 5, N'Advanced', 1),
-(N'JOB0000003', 8, N'Advanced', 1),
-(N'JOB0000003', 10, N'Intermediate', 0),
-(N'JOB0000004', 9, N'Expert', 1),
-(N'JOB0000004', 10, N'Expert', 1),
-(N'JOB0000004', 11, N'Advanced', 1),
-(N'JOB0000004', 2, N'Advanced', 0),
-(N'JOB0000005', 1, N'Expert', 1),
-(N'JOB0000005', 6, N'Expert', 1),
-(N'JOB0000005', 7, N'Advanced', 1),
-(N'JOB0000005', 8, N'Advanced', 0),
-(N'JOB0000005', 10, N'Intermediate', 0),
-(N'JOB0000006', 3, N'Expert', 1),
-(N'JOB0000006', 14, N'Expert', 1),
-(N'JOB0000006', 4, N'Advanced', 0),
-(N'JOB0000006', 15, N'Intermediate', 0);
+
+DECLARE @Job1 NVARCHAR(128) = (SELECT TOP 1 JobID FROM [Job] WHERE JobTitle = N'Senior Java Developer' ORDER BY PostedDate);
+DECLARE @Job2 NVARCHAR(128) = (SELECT TOP 1 JobID FROM [Job] WHERE JobTitle = N'Data Scientist' ORDER BY PostedDate);
+DECLARE @Job3 NVARCHAR(128) = (SELECT TOP 1 JobID FROM [Job] WHERE JobTitle = N'Full-stack Developer' ORDER BY PostedDate);
+DECLARE @Job4 NVARCHAR(128) = (SELECT TOP 1 JobID FROM [Job] WHERE JobTitle = N'DevOps Engineer' ORDER BY PostedDate);
+DECLARE @Job5 NVARCHAR(128) = (SELECT TOP 1 JobID FROM [Job] WHERE JobTitle = N'Backend Developer (Spring Boot)' ORDER BY PostedDate);
+DECLARE @Job6 NVARCHAR(128) = (SELECT TOP 1 JobID FROM [Job] WHERE JobTitle = N'Mobile Developer (React Native)' ORDER BY PostedDate);
+
+INSERT INTO [JobRequireSkill] ([JobID], [SkillID], [ProficiencyLevel], [IsRequired])
+SELECT @Job1, 1, N'Expert', 1
+UNION ALL SELECT @Job1, 6, N'Expert', 1
+UNION ALL SELECT @Job1, 7, N'Advanced', 1
+UNION ALL SELECT @Job1, 10, N'Intermediate', 0
+UNION ALL SELECT @Job2, 2, N'Advanced', 1
+UNION ALL SELECT @Job2, 12, N'Advanced', 1
+UNION ALL SELECT @Job2, 13, N'Intermediate', 1
+UNION ALL SELECT @Job2, 8, N'Intermediate', 0
+UNION ALL SELECT @Job3, 3, N'Advanced', 1
+UNION ALL SELECT @Job3, 4, N'Advanced', 1
+UNION ALL SELECT @Job3, 5, N'Advanced', 1
+UNION ALL SELECT @Job3, 8, N'Advanced', 1
+UNION ALL SELECT @Job3, 10, N'Intermediate', 0
+UNION ALL SELECT @Job4, 9, N'Expert', 1
+UNION ALL SELECT @Job4, 10, N'Expert', 1
+UNION ALL SELECT @Job4, 11, N'Advanced', 1
+UNION ALL SELECT @Job4, 2, N'Advanced', 0
+UNION ALL SELECT @Job5, 1, N'Expert', 1
+UNION ALL SELECT @Job5, 6, N'Expert', 1
+UNION ALL SELECT @Job5, 7, N'Advanced', 1
+UNION ALL SELECT @Job5, 8, N'Advanced', 0
+UNION ALL SELECT @Job5, 10, N'Intermediate', 0
+UNION ALL SELECT @Job6, 3, N'Expert', 1
+UNION ALL SELECT @Job6, 14, N'Expert', 1
+UNION ALL SELECT @Job6, 4, N'Advanced', 0
+UNION ALL SELECT @Job6, 15, N'Intermediate', 0;
 GO
 
-INSERT INTO [JobMetrics] ([JobMetricID], [AppliedCount], [LikeCount], [ViewCount]) VALUES
-(N'JOB0000001', 0, 15, 120),
-(N'JOB0000002', 0, 12, 95),
-(N'JOB0000003', 0, 18, 145),
-(N'JOB0000004', 0, 10, 88),
-(N'JOB0000005', 0, 14, 102),
-(N'JOB0000006', 0, 16, 110);
+DECLARE @Job1 NVARCHAR(128) = (SELECT TOP 1 JobID FROM [Job] WHERE JobTitle = N'Senior Java Developer' ORDER BY PostedDate);
+DECLARE @Job2 NVARCHAR(128) = (SELECT TOP 1 JobID FROM [Job] WHERE JobTitle = N'Data Scientist' ORDER BY PostedDate);
+DECLARE @Job3 NVARCHAR(128) = (SELECT TOP 1 JobID FROM [Job] WHERE JobTitle = N'Full-stack Developer' ORDER BY PostedDate);
+DECLARE @Job4 NVARCHAR(128) = (SELECT TOP 1 JobID FROM [Job] WHERE JobTitle = N'DevOps Engineer' ORDER BY PostedDate);
+DECLARE @Job5 NVARCHAR(128) = (SELECT TOP 1 JobID FROM [Job] WHERE JobTitle = N'Backend Developer (Spring Boot)' ORDER BY PostedDate);
+DECLARE @Job6 NVARCHAR(128) = (SELECT TOP 1 JobID FROM [Job] WHERE JobTitle = N'Mobile Developer (React Native)' ORDER BY PostedDate);
+
+INSERT INTO [JobMetrics] ([JobMetricID], [AppliedCount], [LikeCount], [ViewCount])
+SELECT @Job1, 0, 15, 120
+UNION ALL SELECT @Job2, 0, 12, 95
+UNION ALL SELECT @Job3, 0, 18, 145
+UNION ALL SELECT @Job4, 0, 10, 88
+UNION ALL SELECT @Job5, 0, 14, 102
+UNION ALL SELECT @Job6, 0, 16, 110;
 GO
 
-INSERT INTO [Application] ([JobSeekerID], [JobID], [ApplicationDate], [ApplicationStatus], [CoverLetterURL], [InterviewDate], [InterviewNote]) VALUES
-(N'US0000006', N'JOB0000003', N'2024-11-09 10:00:00', N'Interview', N'https://storage.example.com/cover/app001.pdf', 
- N'2024-11-20 14:00:00', N'Strong technical skills, good communication'),
-(N'US0000006', N'JOB0000006', N'2024-11-16 09:30:00', N'UnderReview', N'https://storage.example.com/cover/app002.pdf', 
- NULL, NULL),
-(N'US0000007', N'JOB0000002', N'2024-11-06 11:00:00', N'Offered', N'https://storage.example.com/cover/app003.pdf',
- N'2024-11-18 10:00:00', N'Excellent academic background, enthusiastic learner'),
-(N'US0000008', N'JOB0000001', N'2024-11-02 14:30:00', N'Interview', N'https://storage.example.com/cover/app004.pdf',
- N'2024-11-22 15:00:00', N'Very experienced, strong system design skills'),
-(N'US0000008', N'JOB0000005', N'2024-11-13 16:00:00', N'Shortlisted', N'https://storage.example.com/cover/app005.pdf',
- NULL, NULL),
-(N'US0000009', N'JOB0000004', N'2024-11-11 13:00:00', N'Interview', N'https://storage.example.com/cover/app006.pdf',
- N'2024-11-25 11:00:00', N'Strong AWS and Kubernetes experience'),
-(N'US0000010', N'JOB0000006', N'2024-11-16 10:00:00', N'UnderReview', N'https://storage.example.com/cover/app007.pdf',
- NULL, NULL),
-(N'US0000007', N'JOB0000003', N'2024-11-14 12:00:00', N'Rejected', N'https://storage.example.com/cover/app008.pdf',
- NULL, N'Insufficient experience in full-stack development');
+
+DECLARE @JobSeekerId1 NVARCHAR(128) = (SELECT UserId FROM [User] WHERE Email = N'nguyen.van.a@gmail.com');
+DECLARE @JobSeekerId2 NVARCHAR(128) = (SELECT UserId FROM [User] WHERE Email = N'tran.thi.b@gmail.com');
+DECLARE @JobSeekerId3 NVARCHAR(128) = (SELECT UserId FROM [User] WHERE Email = N'le.van.c@gmail.com');
+DECLARE @JobSeekerId4 NVARCHAR(128) = (SELECT UserId FROM [User] WHERE Email = N'pham.thi.d@gmail.com');
+DECLARE @JobSeekerId5 NVARCHAR(128) = (SELECT UserId FROM [User] WHERE Email = N'hoang.van.e@gmail.com');
+DECLARE @Job1 NVARCHAR(128) = (SELECT TOP 1 JobID FROM [Job] WHERE JobTitle = N'Senior Java Developer' ORDER BY PostedDate);
+DECLARE @Job2 NVARCHAR(128) = (SELECT TOP 1 JobID FROM [Job] WHERE JobTitle = N'Data Scientist' ORDER BY PostedDate);
+DECLARE @Job3 NVARCHAR(128) = (SELECT TOP 1 JobID FROM [Job] WHERE JobTitle = N'Full-stack Developer' ORDER BY PostedDate);
+DECLARE @Job4 NVARCHAR(128) = (SELECT TOP 1 JobID FROM [Job] WHERE JobTitle = N'DevOps Engineer' ORDER BY PostedDate);
+DECLARE @Job5 NVARCHAR(128) = (SELECT TOP 1 JobID FROM [Job] WHERE JobTitle = N'Backend Developer (Spring Boot)' ORDER BY PostedDate);
+DECLARE @Job6 NVARCHAR(128) = (SELECT TOP 1 JobID FROM [Job] WHERE JobTitle = N'Mobile Developer (React Native)' ORDER BY PostedDate);
+
+INSERT INTO [Application] ([JobSeekerID], [JobID], [ApplicationDate], [ApplicationStatus], [CoverLetterURL], [InterviewDate], [InterviewNote])
+SELECT @JobSeekerId1, @Job3, N'2024-11-09 10:00:00', N'Interview', N'https://storage.example.com/cover/app001.pdf', 
+ N'2024-11-20 14:00:00', N'Strong technical skills, good communication'
+UNION ALL
+SELECT @JobSeekerId1, @Job6, N'2024-11-16 09:30:00', N'UnderReview', N'https://storage.example.com/cover/app002.pdf', 
+ NULL, NULL
+UNION ALL
+SELECT @JobSeekerId2, @Job2, N'2024-11-06 11:00:00', N'Offered', N'https://storage.example.com/cover/app003.pdf',
+ N'2024-11-18 10:00:00', N'Excellent academic background, enthusiastic learner'
+UNION ALL
+SELECT @JobSeekerId3, @Job1, N'2024-11-02 14:30:00', N'Interview', N'https://storage.example.com/cover/app004.pdf',
+ N'2024-11-22 15:00:00', N'Very experienced, strong system design skills'
+UNION ALL
+SELECT @JobSeekerId3, @Job5, N'2024-11-13 16:00:00', N'Shortlisted', N'https://storage.example.com/cover/app005.pdf',
+ NULL, NULL
+UNION ALL
+SELECT @JobSeekerId4, @Job4, N'2024-11-11 13:00:00', N'Interview', N'https://storage.example.com/cover/app006.pdf',
+ N'2024-11-25 11:00:00', N'Strong AWS and Kubernetes experience'
+UNION ALL
+SELECT @JobSeekerId5, @Job6, N'2024-11-16 10:00:00', N'UnderReview', N'https://storage.example.com/cover/app007.pdf',
+ NULL, NULL
+UNION ALL
+SELECT @JobSeekerId2, @Job3, N'2024-11-14 12:00:00', N'Rejected', N'https://storage.example.com/cover/app008.pdf',
+ NULL, N'Insufficient experience in full-stack development';
 GO
 
-UPDATE [JobMetrics] SET [AppliedCount] = 2 WHERE [JobMetricID] = N'JOB0000001';
-UPDATE [JobMetrics] SET [AppliedCount] = 1 WHERE [JobMetricID] = N'JOB0000002';
-UPDATE [JobMetrics] SET [AppliedCount] = 2 WHERE [JobMetricID] = N'JOB0000003';
-UPDATE [JobMetrics] SET [AppliedCount] = 1 WHERE [JobMetricID] = N'JOB0000004';
-UPDATE [JobMetrics] SET [AppliedCount] = 1 WHERE [JobMetricID] = N'JOB0000005';
-UPDATE [JobMetrics] SET [AppliedCount] = 2 WHERE [JobMetricID] = N'JOB0000006';
+
+DECLARE @Job1 NVARCHAR(128) = (SELECT TOP 1 JobID FROM [Job] WHERE JobTitle = N'Senior Java Developer' ORDER BY PostedDate);
+DECLARE @Job2 NVARCHAR(128) = (SELECT TOP 1 JobID FROM [Job] WHERE JobTitle = N'Data Scientist' ORDER BY PostedDate);
+DECLARE @Job3 NVARCHAR(128) = (SELECT TOP 1 JobID FROM [Job] WHERE JobTitle = N'Full-stack Developer' ORDER BY PostedDate);
+DECLARE @Job4 NVARCHAR(128) = (SELECT TOP 1 JobID FROM [Job] WHERE JobTitle = N'DevOps Engineer' ORDER BY PostedDate);
+DECLARE @Job5 NVARCHAR(128) = (SELECT TOP 1 JobID FROM [Job] WHERE JobTitle = N'Backend Developer (Spring Boot)' ORDER BY PostedDate);
+DECLARE @Job6 NVARCHAR(128) = (SELECT TOP 1 JobID FROM [Job] WHERE JobTitle = N'Mobile Developer (React Native)' ORDER BY PostedDate);
+
+UPDATE [JobMetrics]
+SET [AppliedCount] = (
+    SELECT COUNT(*) FROM [Application] WHERE [JobID] = [JobMetricID]
+)
+WHERE [JobMetricID] IN (@Job1, @Job2, @Job3, @Job4, @Job5, @Job6);
 GO
 
-INSERT INTO [Experience] ([JobSeekerID], [CompanyID], [JobTitle], [ExperienceType], [StartDate], [EndDate], [Description]) VALUES
-(N'US0000006', N'US0000002', N'Junior Full-stack Developer', N'FullTime', N'2020-06-01', N'2022-05-31',
- N'Developed web applications using React and Node.js. Collaborated with cross-functional teams to deliver high-quality software products.'),
-(N'US0000006', N'US0000003', N'Full-stack Developer', N'FullTime', N'2022-06-01', NULL,
- N'Currently working on scalable web platforms serving millions of users. Implementing new features and optimizing application performance.'),
-(N'US0000008', N'US0000002', N'Java Developer', N'FullTime', N'2017-03-01', N'2020-12-31',
- N'Built enterprise applications using Java and Spring framework. Participated in system architecture design and code reviews.'),
-(N'US0000008', N'US0000004', N'Senior Backend Engineer', N'FullTime', N'2021-01-01', NULL,
- N'Leading backend development team for banking systems. Designing microservices architecture and ensuring system reliability.'),
-(N'US0000009', N'US0000005', N'Junior DevOps Engineer', N'FullTime', N'2021-07-01', N'2023-06-30',
- N'Managed CI/CD pipelines and cloud infrastructure. Automated deployment processes and improved system monitoring.'),
-(N'US0000009', N'US0000002', N'DevOps Engineer', N'FullTime', N'2023-07-01', NULL,
- N'Currently managing AWS infrastructure for multiple projects. Implementing infrastructure as code using Terraform and Kubernetes orchestration.');
+DECLARE @JobSeekerId1 NVARCHAR(128) = (SELECT UserId FROM [User] WHERE Email = N'nguyen.van.a@gmail.com');
+DECLARE @JobSeekerId2 NVARCHAR(128) = (SELECT UserId FROM [User] WHERE Email = N'tran.thi.b@gmail.com');
+DECLARE @JobSeekerId3 NVARCHAR(128) = (SELECT UserId FROM [User] WHERE Email = N'le.van.c@gmail.com');
+DECLARE @JobSeekerId4 NVARCHAR(128) = (SELECT UserId FROM [User] WHERE Email = N'pham.thi.d@gmail.com');
+DECLARE @JobSeekerId5 NVARCHAR(128) = (SELECT UserId FROM [User] WHERE Email = N'hoang.van.e@gmail.com');
+DECLARE @CompanyId1 NVARCHAR(128) = (SELECT UserId FROM [User] WHERE Email = N'hr@fpt.com.vn');
+DECLARE @CompanyId2 NVARCHAR(128) = (SELECT UserId FROM [User] WHERE Email = N'recruitment@vng.com.vn');
+DECLARE @CompanyId3 NVARCHAR(128) = (SELECT UserId FROM [User] WHERE Email = N'talent@techcombank.com.vn');
+DECLARE @CompanyId4 NVARCHAR(128) = (SELECT UserId FROM [User] WHERE Email = N'hr@viettel.com.vn');
+
+INSERT INTO [Experience] ([JobSeekerID], [CompanyID], [JobTitle], [ExperienceType], [StartDate], [EndDate], [Description])
+SELECT @JobSeekerId1, @CompanyId1, N'Full-stack Developer', N'FullTime', N'2020-06-01', N'2024-02-28',
+ N'Developed and maintained web applications using React and Node.js. Collaborated with cross-functional teams to deliver high-quality software solutions.'
+UNION ALL
+SELECT @JobSeekerId1, @CompanyId2, N'Junior Web Developer', N'FullTime', N'2019-03-15', N'2020-05-31',
+ N'Built responsive web interfaces and implemented RESTful APIs. Gained experience in Agile development methodology.'
+UNION ALL
+SELECT @JobSeekerId2, @CompanyId1, N'Data Science Intern', N'Internship', N'2023-06-01', N'2023-12-31',
+ N'Analyzed large datasets using Python and machine learning algorithms. Created data visualizations and predictive models for business insights.'
+UNION ALL
+SELECT @JobSeekerId3, @CompanyId3, N'Senior Backend Engineer', N'FullTime', N'2020-01-01', NULL,
+ N'Leading backend development team. Architected microservices infrastructure and mentored junior developers. Implemented CI/CD pipelines and optimized database performance.'
+UNION ALL
+SELECT @JobSeekerId3, @CompanyId1, N'Backend Developer', N'FullTime', N'2017-07-01', N'2019-12-31',
+ N'Developed enterprise Java applications using Spring Boot. Worked on payment processing systems and financial transaction management.'
+UNION ALL
+SELECT @JobSeekerId3, @CompanyId2, N'Junior Java Developer', N'FullTime', N'2015-09-01', N'2017-06-30',
+ N'Built RESTful APIs and integrated third-party services. Learned best practices in software engineering and code quality.'
+UNION ALL
+SELECT @JobSeekerId4, @CompanyId4, N'DevOps Engineer', N'FullTime', N'2021-03-01', NULL,
+ N'Managing AWS infrastructure and implementing automated deployment pipelines. Reduced deployment time by 60% through automation.'
+UNION ALL
+SELECT @JobSeekerId4, @CompanyId1, N'Junior DevOps Engineer', N'FullTime', N'2019-06-01', N'2021-02-28',
+ N'Assisted in cloud migration projects. Implemented monitoring and logging solutions using ELK stack.'
+UNION ALL
+SELECT @JobSeekerId5, @CompanyId2, N'Mobile Developer', N'FullTime', N'2020-08-01', NULL,
+ N'Developing cross-platform mobile applications using React Native and Flutter. Published 10+ apps with excellent user ratings.'
+UNION ALL
+SELECT @JobSeekerId5, @CompanyId1, N'Mobile Developer Intern', N'Internship', N'2019-06-01', N'2020-07-31',
+ N'Learned mobile development fundamentals. Contributed to feature development and bug fixes in production apps.';
 GO
 
-INSERT INTO [ReviewCompany] ([JobSeekerID], [CompanyID], [ReviewTitle], [ReviewText], [Rating], [VerificationStatus], [IsAnonymous], [ReviewDate]) VALUES
-(N'US0000006', N'US0000002', N'Great place for career growth',
- N'FPT Software provides excellent learning opportunities and modern tech stack. The work environment is professional and supportive. Good salary and benefits package.',
- 5, N'Verified', 0, N'2024-10-15 14:30:00'),
-(N'US0000006', N'US0000003', N'Innovative and dynamic workplace',
- N'VNG has an amazing startup culture with focus on innovation. Great for young developers who want to work on consumer products. Work-life balance could be better during product launches.',
- 4, N'Verified', 0, N'2024-10-20 16:00:00'),
-(N'US0000008', N'US0000002', N'Solid company for experienced developers',
- N'Good projects with international clients. Professional development environment. However, sometimes bureaucracy can slow down decision making.',
- 4, N'Verified', 1, N'2024-10-25 10:00:00'),
-(N'US0000008', N'US0000004', N'Excellent fintech experience',
- N'Techcombank is leading in digital banking transformation. Challenging projects, competitive salary, and great benefits. Highly recommended for those interested in fintech.',
- 5, N'Verified', 0, N'2024-11-01 11:30:00');
+DECLARE @JobSeekerId1 NVARCHAR(128) = (SELECT UserId FROM [User] WHERE Email = N'nguyen.van.a@gmail.com');
+DECLARE @JobSeekerId3 NVARCHAR(128) = (SELECT UserId FROM [User] WHERE Email = N'le.van.c@gmail.com');
+DECLARE @JobSeekerId4 NVARCHAR(128) = (SELECT UserId FROM [User] WHERE Email = N'pham.thi.d@gmail.com');
+DECLARE @JobSeekerId5 NVARCHAR(128) = (SELECT UserId FROM [User] WHERE Email = N'hoang.van.e@gmail.com');
+DECLARE @CompanyId1 NVARCHAR(128) = (SELECT UserId FROM [User] WHERE Email = N'hr@fpt.com.vn');
+DECLARE @CompanyId2 NVARCHAR(128) = (SELECT UserId FROM [User] WHERE Email = N'recruitment@vng.com.vn');
+DECLARE @CompanyId3 NVARCHAR(128) = (SELECT UserId FROM [User] WHERE Email = N'talent@techcombank.com.vn');
+DECLARE @CompanyId4 NVARCHAR(128) = (SELECT UserId FROM [User] WHERE Email = N'hr@viettel.com.vn');
+
+INSERT INTO [ReviewCompany] ([JobSeekerID], [CompanyID], [ReviewTitle], [ReviewDate], [ReviewText], [Rating], [VerificationStatus], [IsAnonymous])
+SELECT @JobSeekerId1, @CompanyId1, N'Great place to grow your career', N'2024-03-15 10:00:00',
+ N'FPT Software provides excellent learning opportunities and supportive team environment. Good salary and benefits. Work-life balance could be better during peak project times.',
+ 4, N'Verified', 0
+UNION ALL
+SELECT @JobSeekerId1, @CompanyId2, N'Innovative and fun workplace', N'2024-03-20 14:30:00',
+ N'VNG has a young, dynamic culture with cutting-edge technology. Great office facilities and team activities. Management is open to new ideas.',
+ 5, N'Verified', 0
+UNION ALL
+SELECT @JobSeekerId3, @CompanyId3, N'Excellent fintech company', N'2024-04-10 09:00:00',
+ N'Techcombank offers competitive compensation and modern working environment. Challenging projects in banking technology. Great career development opportunities.',
+ 5, N'Verified', 1
+UNION ALL
+SELECT @JobSeekerId3, @CompanyId1, N'Good company for Java developers', N'2024-04-15 16:00:00',
+ N'Strong technical team with experienced seniors. Good training programs and project exposure. Salary is competitive for the market.',
+ 4, N'Verified', 1
+UNION ALL
+SELECT @JobSeekerId4, @CompanyId4, N'Leading telecom with good infrastructure', N'2024-05-01 11:00:00',
+ N'Viettel provides stable career path and comprehensive benefits. Good for learning telecom and cloud technologies. Large organization with structured processes.',
+ 4, N'Verified', 0
+UNION ALL
+SELECT @JobSeekerId4, @CompanyId1, N'Great for learning DevOps', N'2024-05-10 13:00:00',
+ N'FPT has many international projects which provide good exposure. DevOps practices are well-established. Good mentorship from senior engineers.',
+ 4, N'Verified', 1
+UNION ALL
+SELECT @JobSeekerId5, @CompanyId2, N'Best place for mobile developers', N'2024-06-01 10:30:00',
+ N'VNG invests heavily in mobile technology. You will work on products with millions of users. Great team collaboration and modern tech stack.',
+ 5, N'Verified', 0;
 GO
 
-INSERT INTO [Notification] ([NotificationType], [NotificationContent], [SendDate], [ReadStatus], [DeliveryMethod]) VALUES
-(N'Application', N'Your application for Full-stack Developer at Techcombank has been received and is under review.', 
- N'2024-11-09 10:05:00', 1, N'Email'),
-(N'Interview', N'Congratulations! You have been shortlisted for an interview for Data Scientist position at VNG Corporation.', 
- N'2024-11-10 09:00:00', 1, N'Email'),
-(N'Offer', N'Great news! You have received a job offer for Data Scientist position at VNG Corporation.', 
- N'2024-11-19 10:00:00', 0, N'Email'),
-(N'Interview', N'You have been invited for an interview for Senior Java Developer at FPT Software on Nov 22, 2024.', 
- N'2024-11-12 14:00:00', 1, N'InApp'),
-(N'System', N'Welcome to TechTalentHub! Complete your profile to get better job recommendations.', 
- N'2024-11-01 08:00:00', 1, N'InApp');
+
+DECLARE @JobSeekerId1 NVARCHAR(128) = (SELECT UserId FROM [User] WHERE Email = N'nguyen.van.a@gmail.com');
+DECLARE @JobSeekerId2 NVARCHAR(128) = (SELECT UserId FROM [User] WHERE Email = N'tran.thi.b@gmail.com');
+DECLARE @JobSeekerId3 NVARCHAR(128) = (SELECT UserId FROM [User] WHERE Email = N'le.van.c@gmail.com');
+DECLARE @JobSeekerId4 NVARCHAR(128) = (SELECT UserId FROM [User] WHERE Email = N'pham.thi.d@gmail.com');
+DECLARE @JobSeekerId5 NVARCHAR(128) = (SELECT UserId FROM [User] WHERE Email = N'hoang.van.e@gmail.com');
+DECLARE @CompanyId1 NVARCHAR(128) = (SELECT UserId FROM [User] WHERE Email = N'hr@fpt.com.vn');
+DECLARE @CompanyId2 NVARCHAR(128) = (SELECT UserId FROM [User] WHERE Email = N'recruitment@vng.com.vn');
+DECLARE @CompanyId3 NVARCHAR(128) = (SELECT UserId FROM [User] WHERE Email = N'talent@techcombank.com.vn');
+DECLARE @CompanyId4 NVARCHAR(128) = (SELECT UserId FROM [User] WHERE Email = N'hr@viettel.com.vn');
+
+INSERT INTO [SocialProfile] ([OwnerId], [ProfileType], [URL])
+SELECT @JobSeekerId1, N'LinkedIn', N'https://linkedin.com/in/nguyen-van-a'
+UNION ALL SELECT @JobSeekerId1, N'GitHub', N'https://github.com/nguyenvana'
+UNION ALL SELECT @JobSeekerId1, N'Portfolio', N'https://nguyenvana.dev'
+UNION ALL SELECT @JobSeekerId2, N'LinkedIn', N'https://linkedin.com/in/tran-thi-b'
+UNION ALL SELECT @JobSeekerId2, N'GitHub', N'https://github.com/tranthib'
+UNION ALL SELECT @JobSeekerId3, N'LinkedIn', N'https://linkedin.com/in/le-van-c'
+UNION ALL SELECT @JobSeekerId3, N'GitHub', N'https://github.com/levanc'
+UNION ALL SELECT @JobSeekerId3, N'Portfolio', N'https://levanc.tech'
+UNION ALL SELECT @JobSeekerId4, N'LinkedIn', N'https://linkedin.com/in/pham-thi-d'
+UNION ALL SELECT @JobSeekerId4, N'GitHub', N'https://github.com/phamthid'
+UNION ALL SELECT @JobSeekerId5, N'LinkedIn', N'https://linkedin.com/in/hoang-van-e'
+UNION ALL SELECT @JobSeekerId5, N'GitHub', N'https://github.com/hoangvane'
+UNION ALL SELECT @JobSeekerId5, N'Portfolio', N'https://hoangvane.com'
+UNION ALL SELECT @CompanyId1, N'LinkedIn', N'https://linkedin.com/company/fpt-software'
+UNION ALL SELECT @CompanyId1, N'Facebook', N'https://facebook.com/fptsoftware'
+UNION ALL SELECT @CompanyId2, N'LinkedIn', N'https://linkedin.com/company/vng-corporation'
+UNION ALL SELECT @CompanyId2, N'Facebook', N'https://facebook.com/vngcorp'
+UNION ALL SELECT @CompanyId3, N'LinkedIn', N'https://linkedin.com/company/techcombank'
+UNION ALL SELECT @CompanyId3, N'Facebook', N'https://facebook.com/techcombank'
+UNION ALL SELECT @CompanyId4, N'LinkedIn', N'https://linkedin.com/company/viettel-group'
+UNION ALL SELECT @CompanyId4, N'Facebook', N'https://facebook.com/viettelgroup';
 GO
 
-INSERT INTO [ReceiveNotification] ([NotificationID], [ReceiverID]) VALUES
-(1, N'US0000006'),
-(2, N'US0000007'),
-(3, N'US0000007'),
-(4, N'US0000008'),
-(5, N'US0000006'),
-(5, N'US0000007'),
-(5, N'US0000008'),
-(5, N'US0000009');
+
+DECLARE @JobSeekerId1 NVARCHAR(128) = (SELECT UserId FROM [User] WHERE Email = N'nguyen.van.a@gmail.com');
+DECLARE @JobSeekerId2 NVARCHAR(128) = (SELECT UserId FROM [User] WHERE Email = N'tran.thi.b@gmail.com');
+DECLARE @JobSeekerId3 NVARCHAR(128) = (SELECT UserId FROM [User] WHERE Email = N'le.van.c@gmail.com');
+DECLARE @JobSeekerId4 NVARCHAR(128) = (SELECT UserId FROM [User] WHERE Email = N'pham.thi.d@gmail.com');
+DECLARE @JobSeekerId5 NVARCHAR(128) = (SELECT UserId FROM [User] WHERE Email = N'hoang.van.e@gmail.com');
+DECLARE @CompanyId1 NVARCHAR(128) = (SELECT UserId FROM [User] WHERE Email = N'hr@fpt.com.vn');
+DECLARE @CompanyId2 NVARCHAR(128) = (SELECT UserId FROM [User] WHERE Email = N'recruitment@vng.com.vn');
+DECLARE @CompanyId3 NVARCHAR(128) = (SELECT UserId FROM [User] WHERE Email = N'talent@techcombank.com.vn');
+DECLARE @CompanyId4 NVARCHAR(128) = (SELECT UserId FROM [User] WHERE Email = N'hr@viettel.com.vn');
+
+INSERT INTO [Follow] ([FollowerID], [FolloweeID], [FollowDate])
+SELECT @JobSeekerId1, @CompanyId1, N'2024-03-02 08:00:00'
+UNION ALL SELECT @JobSeekerId1, @CompanyId2, N'2024-03-03 09:00:00'
+UNION ALL SELECT @JobSeekerId1, @CompanyId3, N'2024-03-05 10:00:00'
+UNION ALL SELECT @JobSeekerId2, @CompanyId1, N'2024-03-06 11:00:00'
+UNION ALL SELECT @JobSeekerId2, @CompanyId2, N'2024-03-07 12:00:00'
+UNION ALL SELECT @JobSeekerId3, @CompanyId1, N'2024-03-11 08:30:00'
+UNION ALL SELECT @JobSeekerId3, @CompanyId3, N'2024-03-12 09:30:00'
+UNION ALL SELECT @JobSeekerId3, @CompanyId4, N'2024-03-13 10:30:00'
+UNION ALL SELECT @JobSeekerId4, @CompanyId4, N'2024-03-16 11:30:00'
+UNION ALL SELECT @JobSeekerId4, @CompanyId1, N'2024-03-17 12:30:00'
+UNION ALL SELECT @JobSeekerId5, @CompanyId2, N'2024-03-21 08:45:00'
+UNION ALL SELECT @JobSeekerId5, @CompanyId1, N'2024-03-22 09:45:00';
 GO
 
-INSERT INTO [Follow] ([FollowerID], [FolloweeID], [FollowDate]) VALUES
-(N'US0000006', N'US0000002', N'2024-10-01 10:00:00'),
-(N'US0000006', N'US0000003', N'2024-10-05 11:00:00'),
-(N'US0000007', N'US0000003', N'2024-10-10 09:00:00'),
-(N'US0000008', N'US0000002', N'2024-10-15 14:00:00'),
-(N'US0000009', N'US0000005', N'2024-10-20 16:00:00');
+
+DECLARE @CompanyId1 NVARCHAR(128) = (SELECT UserId FROM [User] WHERE Email = N'hr@fpt.com.vn');
+DECLARE @CompanyId2 NVARCHAR(128) = (SELECT UserId FROM [User] WHERE Email = N'recruitment@vng.com.vn');
+DECLARE @CompanyId3 NVARCHAR(128) = (SELECT UserId FROM [User] WHERE Email = N'talent@techcombank.com.vn');
+DECLARE @CompanyId4 NVARCHAR(128) = (SELECT UserId FROM [User] WHERE Email = N'hr@viettel.com.vn');
+
+INSERT INTO [DepartmentContact] ([CompanyID], [ContactEmail], [ContactName], [ContactPhone], [ContactRole], [Department])
+SELECT @CompanyId1, N'hr@fpt.com.vn', N'Nguyen Thi Mai', N'+84281234567', N'HR Manager', N'Human Resources'
+UNION ALL SELECT @CompanyId1, N'tech.recruitment@fpt.com.vn', N'Tran Van Hoang', N'+84281234568', N'Technical Recruiter', N'Talent Acquisition'
+UNION ALL SELECT @CompanyId1, N'it.support@fpt.com.vn', N'Le Thi Lan', N'+84281234569', N'IT Support Lead', N'Information Technology'
+UNION ALL SELECT @CompanyId2, N'recruitment@vng.com.vn', N'Pham Van Duc', N'+84282345678', N'Recruitment Lead', N'Human Resources'
+UNION ALL SELECT @CompanyId2, N'tech.hiring@vng.com.vn', N'Hoang Thi Nga', N'+84282345679', N'Tech Talent Partner', N'Engineering'
+UNION ALL SELECT @CompanyId3, N'talent@techcombank.com.vn', N'Vu Van Thanh', N'+84243456789', N'Talent Acquisition Manager', N'Human Resources'
+UNION ALL SELECT @CompanyId3, N'it.recruitment@techcombank.com.vn', N'Nguyen Thi Huong', N'+84243456790', N'IT Recruiter', N'Technology'
+UNION ALL SELECT @CompanyId4, N'hr@viettel.com.vn', N'Dang Van Minh', N'+84284567890', N'HR Director', N'Human Resources'
+UNION ALL SELECT @CompanyId4, N'tech.jobs@viettel.com.vn', N'Bui Thi Thao', N'+84284567891', N'Technical Recruiter', N'Technology Division';
 GO
 
-INSERT INTO [SocialProfile] ([OwnerId], [ProfileType], [URL]) VALUES
-(N'US0000006', N'LinkedIn', N'https://linkedin.com/in/nguyen-van-a'),
-(N'US0000006', N'GitHub', N'https://github.com/nguyenvana'),
-(N'US0000007', N'LinkedIn', N'https://linkedin.com/in/tran-thi-b'),
-(N'US0000007', N'GitHub', N'https://github.com/tranthib'),
-(N'US0000008', N'LinkedIn', N'https://linkedin.com/in/le-van-c'),
-(N'US0000008', N'GitHub', N'https://github.com/levanc'),
-(N'US0000009', N'LinkedIn', N'https://linkedin.com/in/pham-thi-d'),
-(N'US0000010', N'GitHub', N'https://github.com/hoangvane');
+
+INSERT INTO [Notification] ([NotificationType], [NotificationContent], [SendDate], [ReadStatus], [DeliveryMethod])
+SELECT N'Application', N'Your application for Senior Java Developer at FPT Software has been received', N'2024-11-02 14:35:00', 1, N'InApp'
+UNION ALL SELECT N'Interview', N'You have been scheduled for an interview for Full-stack Developer position at Techcombank', N'2024-11-10 09:00:00', 1, N'Email'
+UNION ALL SELECT N'Offer', N'Congratulations! You have received a job offer for Data Scientist position at VNG Corporation', N'2024-11-19 10:00:00', 1, N'Email'
+UNION ALL SELECT N'Interview', N'Interview reminder: Your interview for DevOps Engineer at Viettel is tomorrow at 11:00 AM', N'2024-11-24 09:00:00', 0, N'InApp'
+UNION ALL SELECT N'Application', N'New application received for Mobile Developer (React Native) position', N'2024-11-16 10:05:00', 1, N'InApp'
+UNION ALL SELECT N'System', N'Welcome to TechTalentHub! Complete your profile to get better job recommendations', N'2024-03-01 08:05:00', 1, N'InApp'
+UNION ALL SELECT N'System', N'Your company profile has been verified successfully', N'2024-02-02 11:00:00', 1, N'Email'
+UNION ALL SELECT N'Message', N'You have a new message from FPT Software HR team', N'2024-11-15 14:30:00', 0, N'InApp';
 GO
 
-INSERT INTO [AuditLog] ([ActorID], [ActionType], [Timestamp], [Detailed], [IPAddress]) VALUES
-(N'US0000001', N'USER_LOGIN', N'2024-11-01 09:00:00', N'Admin logged in successfully', N'192.168.1.100'),
-(N'US0000002', N'JOB_POST_CREATED', N'2024-11-01 09:30:00', N'Created job posting JOB0000001', N'192.168.1.101'),
-(N'US0000006', N'APPLICATION_SUBMITTED', N'2024-11-09 10:00:00', N'Applied to job JOB0000003', N'192.168.1.102'),
-(N'US0000007', N'APPLICATION_SUBMITTED', N'2024-11-06 11:00:00', N'Applied to job JOB0000002', N'192.168.1.103'),
-(N'US0000002', N'APPLICATION_STATUS_UPDATED', N'2024-11-10 09:00:00', N'Updated application status to Interview', N'192.168.1.101'),
-(N'US0000003', N'APPLICATION_STATUS_UPDATED', N'2024-11-19 10:00:00', N'Updated application status to Offered', N'192.168.1.104');
+
+DECLARE @JobSeekerId1 NVARCHAR(128) = (SELECT UserId FROM [User] WHERE Email = N'nguyen.van.a@gmail.com');
+DECLARE @JobSeekerId2 NVARCHAR(128) = (SELECT UserId FROM [User] WHERE Email = N'tran.thi.b@gmail.com');
+DECLARE @JobSeekerId3 NVARCHAR(128) = (SELECT UserId FROM [User] WHERE Email = N'le.van.c@gmail.com');
+DECLARE @JobSeekerId4 NVARCHAR(128) = (SELECT UserId FROM [User] WHERE Email = N'pham.thi.d@gmail.com');
+DECLARE @JobSeekerId5 NVARCHAR(128) = (SELECT UserId FROM [User] WHERE Email = N'hoang.van.e@gmail.com');
+DECLARE @CompanyId1 NVARCHAR(128) = (SELECT UserId FROM [User] WHERE Email = N'hr@fpt.com.vn');
+DECLARE @CompanyId2 NVARCHAR(128) = (SELECT UserId FROM [User] WHERE Email = N'recruitment@vng.com.vn');
+
+INSERT INTO [ReceiveNotification] ([NotificationID], [ReceiverID])
+SELECT 1, @JobSeekerId3  -- Application received notification
+UNION ALL SELECT 2, @JobSeekerId1  -- Interview schedule notification
+UNION ALL SELECT 3, @JobSeekerId2  -- Job offer notification
+UNION ALL SELECT 4, @JobSeekerId4  -- Interview reminder notification
+UNION ALL SELECT 5, @CompanyId2  -- New application received
+UNION ALL SELECT 6, @JobSeekerId1  -- Welcome notification
+UNION ALL SELECT 6, @JobSeekerId2
+UNION ALL SELECT 6, @JobSeekerId3
+UNION ALL SELECT 6, @JobSeekerId4
+UNION ALL SELECT 6, @JobSeekerId5
+UNION ALL SELECT 7, @CompanyId1  -- Profile verified notification
+UNION ALL SELECT 8, @JobSeekerId1;  -- New message notification
 GO
 
-INSERT INTO [DepartmentContact] ([CompanyID], [ContactEmail], [ContactName], [ContactPhone], [ContactRole], [Department]) VALUES
-(N'US0000002', N'hr.recruitment@fpt.com.vn', N'Nguyen Thi Mai', N'+84281234567', N'Senior HR Manager', N'Human Resources'),
-(N'US0000002', N'tech.lead@fpt.com.vn', N'Tran Van Hung', N'+84281234568', N'Technical Lead', N'Engineering'),
-(N'US0000003', N'talent@vng.com.vn', N'Le Thi Lan', N'+84283456789', N'Talent Acquisition Manager', N'Human Resources'),
-(N'US0000004', N'recruitment@techcombank.com.vn', N'Pham Van Minh', N'+84285678901', N'HR Director', N'Human Resources'),
-(N'US0000005', N'hr.tech@viettel.com.vn', N'Hoang Thi Nga', N'+84287890123', N'Technical Recruiter', N'Human Resources'),
-(N'US0000005', N'devops.manager@viettel.com.vn', N'Nguyen Van Duc', N'+84287890124', N'DevOps Manager', N'Engineering');
+DECLARE @AdminId NVARCHAR(128) = (SELECT UserId FROM [User] WHERE Email = N'admin@techtalenthub.com');
+DECLARE @CompanyId1 NVARCHAR(128) = (SELECT UserId FROM [User] WHERE Email = N'hr@fpt.com.vn');
+DECLARE @CompanyId2 NVARCHAR(128) = (SELECT UserId FROM [User] WHERE Email = N'recruitment@vng.com.vn');
+
+INSERT INTO [AuditLog] ([ActorID], [ActionType], [Timestamp], [Detailed], [IPAddress])
+SELECT @AdminId, N'SYSTEM_INIT', N'2024-01-15 09:00:00', N'System initialized and admin account created', N'127.0.0.1'
+UNION ALL SELECT @AdminId, N'COMPANY_VERIFICATION', N'2024-02-02 11:00:00', N'Verified company: FPT Software', N'192.168.1.100'
+UNION ALL SELECT @AdminId, N'COMPANY_VERIFICATION', N'2024-02-06 10:00:00', N'Verified company: VNG Corporation', N'192.168.1.100'
+UNION ALL SELECT @AdminId, N'COMPANY_VERIFICATION', N'2024-02-11 09:00:00', N'Verified company: Techcombank', N'192.168.1.100'
+UNION ALL SELECT @AdminId, N'COMPANY_VERIFICATION', N'2024-02-16 14:00:00', N'Verified company: Viettel Group', N'192.168.1.100'
+UNION ALL SELECT @CompanyId1, N'JOB_POSTED', N'2024-11-01 09:00:00', N'Posted job: Senior Java Developer', N'118.69.80.123'
+UNION ALL SELECT @CompanyId2, N'JOB_POSTED', N'2024-11-05 10:00:00', N'Posted job: Data Scientist', N'118.69.80.124'
+UNION ALL SELECT @CompanyId1, N'APPLICATION_REVIEWED', N'2024-11-03 14:00:00', N'Reviewed application from Le Van C', N'118.69.80.123';
 GO
 
-SELECT N'Data insertion completed successfully!' AS Status;
-GO
 
-SELECT N'User' AS TableName, COUNT(*) AS Row_Count FROM [User]
-UNION ALL SELECT N'Admin', COUNT(*) FROM [Admin]
-UNION ALL SELECT N'Company', COUNT(*) FROM [Company]
-UNION ALL SELECT N'CompanyLocation', COUNT(*) FROM [CompanyLocation]
-UNION ALL SELECT N'JobSeeker', COUNT(*) FROM [JobSeeker]
-UNION ALL SELECT N'Skill', COUNT(*) FROM [Skill]
-UNION ALL SELECT N'JobSeekerSkill', COUNT(*) FROM [JobSeekerSkill]
-UNION ALL SELECT N'Experience', COUNT(*) FROM [Experience]
-UNION ALL SELECT N'Job', COUNT(*) FROM [Job]
-UNION ALL SELECT N'JobRequireSkill', COUNT(*) FROM [JobRequireSkill]
-UNION ALL SELECT N'JobMetrics', COUNT(*) FROM [JobMetrics]
-UNION ALL SELECT N'Application', COUNT(*) FROM [Application]
-UNION ALL SELECT N'ReviewCompany', COUNT(*) FROM [ReviewCompany]
-UNION ALL SELECT N'Notification', COUNT(*) FROM [Notification]
-UNION ALL SELECT N'ReceiveNotification', COUNT(*) FROM [ReceiveNotification]
-UNION ALL SELECT N'Follow', COUNT(*) FROM [Follow]
-UNION ALL SELECT N'SocialProfile', COUNT(*) FROM [SocialProfile]
-UNION ALL SELECT N'AuditLog', COUNT(*) FROM [AuditLog]
-UNION ALL SELECT N'DepartmentContact', COUNT(*) FROM [DepartmentContact];
-GO
+SELECT 'Users' AS [Table], COUNT(*) AS [Row Count] FROM [User]
+UNION ALL SELECT 'Admins', COUNT(*) FROM [Admin]
+UNION ALL SELECT 'Companies', COUNT(*) FROM [Company]
+UNION ALL SELECT 'Company Locations', COUNT(*) FROM [CompanyLocation]
+UNION ALL SELECT 'Job Seekers', COUNT(*) FROM [JobSeeker]
+UNION ALL SELECT 'Skills', COUNT(*) FROM [Skill]
+UNION ALL SELECT 'JobSeeker Skills', COUNT(*) FROM [JobSeekerSkill]
+UNION ALL SELECT 'Experiences', COUNT(*) FROM [Experience]
+UNION ALL SELECT 'Jobs', COUNT(*) FROM [Job]
+UNION ALL SELECT 'Job Required Skills', COUNT(*) FROM [JobRequireSkill]
+UNION ALL SELECT 'Applications', COUNT(*) FROM [Application]
+UNION ALL SELECT 'Company Reviews', COUNT(*) FROM [ReviewCompany]
+UNION ALL SELECT 'Job Metrics', COUNT(*) FROM [JobMetrics]
+UNION ALL SELECT 'Social Profiles', COUNT(*) FROM [SocialProfile]
+UNION ALL SELECT 'Follows', COUNT(*) FROM [Follow]
+UNION ALL SELECT 'Department Contacts', COUNT(*) FROM [DepartmentContact]
+UNION ALL SELECT 'Notifications', COUNT(*) FROM [Notification]
+UNION ALL SELECT 'Receive Notifications', COUNT(*) FROM [ReceiveNotification]
+UNION ALL SELECT 'Audit Logs', COUNT(*) FROM [AuditLog]
+ORDER BY [Table];
 
-SELECT 
-    c.CompanyName,
-    c.Industry,
-    c.CompanySize,
-    STRING_AGG(cl.[Address], N' | ') AS Locations
-FROM Company c
-LEFT JOIN CompanyLocation cl ON c.CompanyID = cl.CompanyID
-GROUP BY c.CompanyID, c.CompanyName, c.Industry, c.CompanySize;
-GO
-
-SELECT 
-    CONCAT(js.FirstName, N' ', js.LastName) AS FullName,
-    js.ExperienceLevel,
-    js.CurrentLocation,
-    STRING_AGG(CONCAT(s.SkillName, N' (', jss.ProficiencyLevel, N')'), N', ') AS Skills
-FROM JobSeeker js
-LEFT JOIN JobSeekerSkill jss ON js.JobSeekerID = jss.JobSeekerID
-LEFT JOIN Skill s ON jss.SkillID = s.SkillID
-GROUP BY js.JobSeekerID, js.FirstName, js.LastName, js.ExperienceLevel, js.CurrentLocation;
-GO
-
-SELECT 
-    j.JobID,
-    j.JobTitle,
-    c.CompanyName,
-    j.Location,
-	CONCAT(FORMAT(j.SalaryMin, N'N0'), N' - ', FORMAT(j.SalaryMax, N'N0')) AS SalaryRange,
-    j.JobStatus,
-    STRING_AGG(
-        CAST(CONCAT(s.SkillName, N' (', jrs.ProficiencyLevel, 
-        CASE WHEN jrs.IsRequired = 1 THEN N' - Required' ELSE N' - Nice to have' END, N')') AS NVARCHAR(MAX)),
-        N', '
-    ) AS RequiredSkills
-FROM Job j
-INNER JOIN Company c ON j.CompanyID = c.CompanyID
-LEFT JOIN JobRequireSkill jrs ON j.JobID = jrs.JobID
-LEFT JOIN Skill s ON jrs.SkillID = s.SkillID
-GROUP BY j.JobID, j.JobTitle, c.CompanyName, j.Location, j.SalaryMin, j.SalaryMax, j.JobStatus;
-GO
-
-SELECT 
-    CONCAT(js.FirstName, N' ', js.LastName) AS Applicant,
-    j.JobTitle,
-    c.CompanyName,
-    a.ApplicationDate,
-    a.ApplicationStatus,
-    a.InterviewDate
-FROM Application a
-INNER JOIN JobSeeker js ON a.JobSeekerID = js.JobSeekerID
-INNER JOIN Job j ON a.JobID = j.JobID
-INNER JOIN Company c ON j.CompanyID = c.CompanyID
-ORDER BY a.ApplicationDate DESC;
-GO
-
-SELECT 
-    c.CompanyName,
-    CONCAT(js.FirstName, N' ', js.LastName) AS Reviewer,
-    rc.ReviewTitle,
-    rc.Rating,
-    rc.ReviewDate,
-    rc.VerificationStatus,
-    CASE WHEN rc.IsAnonymous = 1 THEN N'Yes' ELSE N'No' END AS Anonymous
-FROM ReviewCompany rc
-INNER JOIN Company c ON rc.CompanyID = c.CompanyID
-INNER JOIN JobSeeker js ON rc.JobSeekerID = js.JobSeekerID
-ORDER BY rc.ReviewDate DESC;
-GO
-
-SELECT 
-    s.SkillName,
-    s.SkillCategory,
-    s.PopularityScore,
-    COUNT(DISTINCT jss.JobSeekerID) AS JobSeekersWithSkill,
-    COUNT(DISTINCT CASE WHEN j.JobStatus = N'Open' THEN jrs.JobID END) AS OpenJobsRequiring
-FROM Skill s
-LEFT JOIN JobSeekerSkill jss ON s.SkillID = jss.SkillID
-LEFT JOIN JobRequireSkill jrs ON s.SkillID = jrs.SkillID
-LEFT JOIN Job j ON jrs.JobID = j.JobID
-GROUP BY s.SkillID, s.SkillName, s.SkillCategory, s.PopularityScore
-ORDER BY s.PopularityScore DESC, s.SkillName;
-GO
-
-SELECT 
-    j.JobTitle,
-    c.CompanyName,
-    jm.ViewCount,
-    jm.LikeCount,
-    jm.AppliedCount,
-    j.OpeningCount,
-    CASE 
-        WHEN jm.AppliedCount >= j.OpeningCount THEN N'High Demand'
-        WHEN jm.AppliedCount >= j.OpeningCount * 0.5 THEN N'Medium Demand'
-        ELSE N'Low Demand'
-    END AS DemandLevel
-FROM JobMetrics jm
-INNER JOIN Job j ON jm.JobMetricID = j.JobID
-INNER JOIN Company c ON j.CompanyID = c.CompanyID
-ORDER BY jm.AppliedCount DESC;
-GO
-
-SELECT 
-    CONCAT(js.FirstName, N' ', js.LastName) AS JobSeekerName,
-    e.JobTitle,
-    c.CompanyName,
-    e.ExperienceType,
-    e.StartDate,
-    COALESCE(CAST(e.EndDate AS NVARCHAR(10)), N'Present') AS EndDate,
-    CASE 
-        WHEN e.EndDate IS NULL THEN DATEDIFF(MONTH, e.StartDate, GETDATE())
-        ELSE DATEDIFF(MONTH, e.StartDate, e.EndDate)
-    END AS DurationMonths
-FROM Experience e
-INNER JOIN JobSeeker js ON e.JobSeekerID = js.JobSeekerID
-INNER JOIN Company c ON e.CompanyID = c.CompanyID
-ORDER BY js.JobSeekerID, e.StartDate DESC;
-GO
-
-SELECT 
-    CONCAT(js.FirstName, N' ', js.LastName) AS Follower,
-    c.CompanyName AS Following,
-    f.FollowDate
-FROM Follow f
-INNER JOIN JobSeeker js ON f.FollowerID = js.JobSeekerID
-INNER JOIN Company c ON f.FolloweeID = c.CompanyID
-ORDER BY f.FollowDate DESC;
-GO
-
-SELECT TOP 10
-    al.Timestamp,
-    COALESCE(CONCAT(js.FirstName, N' ', js.LastName), c.CompanyName, a.AdminName, N'System') AS Actor,
-    al.ActionType,
-    al.Detailed,
-    al.IPAddress
-FROM AuditLog al
-LEFT JOIN JobSeeker js ON al.ActorID = js.JobSeekerID
-LEFT JOIN Company c ON al.ActorID = c.CompanyID
-LEFT JOIN Admin a ON al.ActorID = a.AdminId
-ORDER BY al.Timestamp DESC;
-GO
-
-SELECT N'=== DATABASE SUMMARY STATISTICS ===' AS Info;
-GO
-
-SELECT 
-    (SELECT COUNT(*) FROM [User]) AS TotalUsers,
-    (SELECT COUNT(*) FROM [Company] WHERE VerificationStatus = N'ACCEPTED') AS VerifiedCompanies,
-    (SELECT COUNT(*) FROM [JobSeeker]) AS TotalJobSeekers,
-    (SELECT COUNT(*) FROM [Job] WHERE JobStatus = N'Open') AS OpenJobs,
-    (SELECT COUNT(*) FROM [Application]) AS TotalApplications,
-    (SELECT COUNT(*) FROM [Skill]) AS TotalSkills,
-    (SELECT COUNT(*) FROM [ReviewCompany] WHERE VerificationStatus = N'Verified') AS VerifiedReviews;
-GO
-
-SELECT 
-    EmploymentType,
-    COUNT(*) AS JobCount,
-    FORMAT(AVG(SalaryMin), N'N0') AS AvgMinSalary,
-    FORMAT(AVG(SalaryMax), N'N0') AS AvgMaxSalary
-FROM Job
-WHERE JobStatus = N'Open'
-GROUP BY EmploymentType;
-GO
-
-SELECT 
-    ApplicationStatus,
-    COUNT(*) AS Count,
-    CONCAT(ROUND(COUNT(*) * 100.0 / (SELECT COUNT(*) FROM Application), 1), N'%') AS Percentage
-FROM Application
-GROUP BY ApplicationStatus
-ORDER BY Count DESC;
-GO
-
-SELECT TOP 5
-    s.SkillName,
-    s.SkillCategory,
-    s.PopularityScore,
-    (SELECT COUNT(*) FROM JobRequireSkill jrs 
-     INNER JOIN Job j ON jrs.JobID = j.JobID 
-     WHERE jrs.SkillID = s.SkillID AND j.JobStatus = N'Open') AS JobDemand
-FROM Skill s
-ORDER BY PopularityScore DESC;
-GO
-
-SELECT 
-    c.CompanyName,
-    COUNT(j.JobID) AS TotalJobs,
-    COUNT(CASE WHEN j.JobStatus = N'Open' THEN 1 END) AS OpenJobs,
-    ISNULL(AVG(CAST(rc.Rating AS DECIMAL(3,2))), 0) AS AvgRating
-FROM Company c
-LEFT JOIN Job j ON c.CompanyID = c.CompanyID
-LEFT JOIN ReviewCompany rc ON c.CompanyID = rc.CompanyID AND rc.VerificationStatus = N'Verified'
-GROUP BY c.CompanyID, c.CompanyName
-ORDER BY OpenJobs DESC;
-GO
-
-SELECT N'=== ALL DATA INSERTED SUCCESSFULLY ===' AS Status;
+PRINT '';
+PRINT 'All sample data has been inserted successfully!';
+PRINT 'Database is ready for testing and development.';
+PRINT '';
 GO

@@ -24,6 +24,7 @@ const createJob = async (jobData) => {
             `)
         return null
     } catch (error) {
+        console.log('Error creating job:', error)
         throw new ApiError(StatusCodes.INTERNAL_SERVER_ERROR, error.message)
     }
 }
