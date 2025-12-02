@@ -1,166 +1,155 @@
-<% 
-    // Mock Data cho Applications
-    if (typeof applications === 'undefined') {
-        var applications = [
-            {
-                ApplicationID: 101,
-                JobID: 1,
-                JobTitle: "Senior Product Designer",
-                CompanyName: "Google Inc.",
-                LogoURL: "https://logo.clearbit.com/google.com",
-                Location: "Ho Chi Minh City",
-                EmploymentType: "Full-time",
-                ApplicationDate: new Date("2025-10-25"),
-                ApplicationStatus: "UnderReview"
-            },
-            {
-                ApplicationID: 102,
-                JobID: 2,
-                JobTitle: "Frontend Developer",
-                CompanyName: "Spotify",
-                LogoURL: "https://logo.clearbit.com/spotify.com",
-                Location: "Remote",
-                EmploymentType: "Contract",
-                ApplicationDate: new Date("2025-10-20"),
-                ApplicationStatus: "Rejected"
-            },
-            {
-                ApplicationID: 103,
-                JobID: 3,
-                JobTitle: "Backend Engineer",
-                CompanyName: "Netflix",
-                LogoURL: "https://logo.clearbit.com/netflix.com",
-                Location: "Singapore",
-                EmploymentType: "Full-time",
-                ApplicationDate: new Date("2025-10-28"),
-                ApplicationStatus: "Submitted"
-            }
-        ];
-    }
-%>
-
 <%- include('../partials/header', { title: 'Lịch sử ứng tuyển' }) %>
 
-<body class="dashboard-page">
-    <div class="dashboard-wrapper">
-        
-        <%- include('../partials/dashboard-sidebar', { activePage: 'applications' }) %>
+    <body class="dashboard-page">
+        <div class="dashboard-wrapper">
 
-        <main class="main-content">
-            
-            <header class="dashboard-header">
-                <h5 class="mb-0 font-weight-bold text-dark">My Applications</h5>
-                <div class="d-flex align-items-center">
-                    <div class="dropdown">
-                        <a href="#" class="d-flex align-items-center text-decoration-none text-dark dropdown-toggle" data-toggle="dropdown">
-                            <img src="<%= (typeof user !== 'undefined' && user.avatarUrl) ? user.avatarUrl : '/images/default-avatar.png' %>" class="rounded-circle mr-2" width="35" height="35" style="object-fit: cover; border: 1px solid #dee2e6;">
-                            <span class="font-weight-bold small mr-1"><%= (typeof user !== 'undefined' && user.email) ? user.email.split('@')[0] : 'Seeker' %></span>
-                        </a>
-                        <div class="dropdown-menu dropdown-menu-right border-0 shadow-lg">
-                            <a class="dropdown-item" href="/">Back Home</a>
-                            <div class="dropdown-divider"></div>
-                            <a class="dropdown-item text-danger" href="/auth/logout">Logout</a>
-                        </div>
-                    </div>
-                </div>
-            </header>
+            <%- include('../partials/dashboard-sidebar', { activePage: 'applications' }) %>
 
-            <div class="p-4">
-                
-                <div class="row mb-4">
-                    <div class="col-md-4">
-                        <div class="card border-0 shadow-sm p-3 h-100">
-                            <div class="d-flex justify-content-between align-items-center">
-                                <div>
-                                    <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Total Applied</div>
-                                    <div class="h3 mb-0 font-weight-bold text-dark"><%= applications ? applications.length : 0 %></div>
+                <main class="main-content">
+
+                    <header class="dashboard-header">
+                        <h5 class="mb-0 font-weight-bold text-dark">My Applications</h5>
+                        <div class="d-flex align-items-center">
+                            <div class="dropdown">
+                                <a href="#"
+                                    class="d-flex align-items-center text-decoration-none text-dark dropdown-toggle"
+                                    data-toggle="dropdown">
+                                    <img src="<%= (typeof user !== 'undefined' && user.avatarUrl) ? user.avatarUrl : '/images/default-avatar.png' %>"
+                                        class="rounded-circle mr-2" width="35" height="35"
+                                        style="object-fit: cover; border: 1px solid #dee2e6;">
+                                    <span class="font-weight-bold small mr-1">
+                                        <%= (typeof user !=='undefined' && user.email) ? user.email.split('@')[0]
+                                            : 'Seeker' %>
+                                    </span>
+                                </a>
+                                <div class="dropdown-menu dropdown-menu-right border-0 shadow-lg">
+                                    <a class="dropdown-item" href="/">Back Home</a>
+                                    <div class="dropdown-divider"></div>
+                                    <a class="dropdown-item text-danger" href="/auth/logout">Logout</a>
                                 </div>
-                                <div class="bg-light p-3 rounded text-primary"><i class="fas fa-paper-plane fa-lg"></i></div>
                             </div>
                         </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="card border-0 shadow-sm p-3 h-100">
-                            <div class="d-flex justify-content-between align-items-center">
-                                <div>
-                                    <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">In Review</div>
-                                    <div class="h3 mb-0 font-weight-bold text-dark">
-                                        <%= applications ? applications.filter(a => a.ApplicationStatus === 'UnderReview' || a.ApplicationStatus === 'Interview').length : 0 %>
+                    </header>
+
+                    <div class="p-4">
+
+                        <div class="row mb-4">
+                            <div class="col-md-4">
+                                <div class="card border-0 shadow-sm p-3 h-100">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Total
+                                                Applied</div>
+                                            <div class="h3 mb-0 font-weight-bold text-dark">
+                                                <%= applications ? applications.length : 0 %>
+                                            </div>
+                                        </div>
+                                        <div class="bg-light p-3 rounded text-primary"><i
+                                                class="fas fa-paper-plane fa-lg"></i></div>
                                     </div>
                                 </div>
-                                <div class="bg-light p-3 rounded text-warning"><i class="fas fa-clock fa-lg"></i></div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="card border-0 shadow-sm p-3 h-100">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">In
+                                                Review</div>
+                                            <div class="h3 mb-0 font-weight-bold text-dark">
+                                                <%= applications ? applications.filter(a=> a.ApplicationStatus ===
+                                                    'UnderReview' || a.ApplicationStatus === 'Interview').length : 0 %>
+                                            </div>
+                                        </div>
+                                        <div class="bg-light p-3 rounded text-warning"><i
+                                                class="fas fa-clock fa-lg"></i></div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                </div>
 
-                <div class="card border-0 shadow-sm rounded-lg overflow-hidden">
-                    <div class="custom-table-wrapper">
-                        <table class="table custom-table table-hover mb-0">
-                            <thead>
-                                <tr>
-                                    <th class="pl-4 border-top-0">Company</th>
-                                    <th class="border-top-0">Job Title</th>
-                                    <th class="border-top-0">Applied Date</th>
-                                    <th class="border-top-0">Status</th>
-                                    <th class="text-right border-top-0 pr-4">Action</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <% if (applications && applications.length > 0) { %>
-                                    <% applications.forEach(app => { %>
+                        <div class="card border-0 shadow-sm rounded-lg overflow-hidden">
+                            <div class="custom-table-wrapper">
+                                <table class="table custom-table table-hover mb-0">
+                                    <thead>
                                         <tr>
-                                            <td class="pl-4 align-middle">
-                                                <div class="d-flex align-items-center">
-                                                    <img src="<%= app.LogoURL || '/images/default-company.png' %>" 
-                                                         width="40" height="40" class="rounded border mr-3 p-1 object-fit-contain bg-white">
-                                                    <span class="font-weight-bold text-dark"><%= app.CompanyName %></span>
-                                                </div>
-                                            </td>
-                                            <td class="align-middle">
-                                                <a href="/jobs/<%= app.JobID %>" class="font-weight-bold text-dark text-decoration-none hover-primary">
-                                                    <%= app.JobTitle %>
-                                                </a>
-                                                <br>
-                                                <small class="text-muted"><%= app.Location %> • <%= app.EmploymentType %></small>
-                                            </td>
-                                            <td class="align-middle text-muted">
-                                                <%= new Date(app.ApplicationDate).toLocaleDateString() %>
-                                            </td>
-                                            <td class="align-middle">
-                                                <% 
-                                                    let badgeClass = 'badge-soft-secondary text-secondary';
-                                                    if (app.ApplicationStatus === 'Submitted') badgeClass = 'badge-soft-info text-info';
-                                                    else if (app.ApplicationStatus === 'UnderReview') badgeClass = 'badge-soft-warning text-warning';
-                                                    else if (app.ApplicationStatus === 'Interview') badgeClass = 'badge-soft-primary text-primary';
-                                                    else if (app.ApplicationStatus === 'Offer') badgeClass = 'badge-soft-success text-success';
-                                                    else if (app.ApplicationStatus === 'Rejected') badgeClass = 'badge-soft-danger text-danger';
-                                                %>
-                                                <span class="badge <%= badgeClass %> px-3 py-2"><%= app.ApplicationStatus %></span>
-                                            </td>
-                                            <td class="text-right align-middle pr-4">
-                                                <a href="/jobs/<%= app.JobID %>" class="btn btn-sm btn-outline-primary shadow-sm">
-                                                    View Job
-                                                </a>
-                                            </td>
+                                            <th class="pl-4 border-top-0">Company</th>
+                                            <th class="border-top-0">Job Title</th>
+                                            <th class="border-top-0">Applied Date</th>
+                                            <th class="border-top-0">Status</th>
+                                            <th class="text-right border-top-0 pr-4">Action</th>
                                         </tr>
-                                    <% }) %>
-                                <% } else { %>
-                                    <tr>
-                                        <td colspan="5" class="text-center py-5">
-                                            <img src="/images/empty-state.svg" width="150" class="mb-3 opacity-50">
-                                            <p class="text-muted mb-0">You haven't applied to any jobs yet.</p>
-                                            <a href="/jobs" class="btn btn-primary btn-sm mt-3 px-4">Find Jobs</a>
-                                        </td>
-                                    </tr>
-                                <% } %>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
+                                    </thead>
+                                    <tbody>
+                                        <% if (applications && applications.length> 0) { %>
+                                            <% applications.forEach(app=> { %>
+                                                <tr>
+                                                    <td class="pl-4 align-middle">
+                                                        <div class="d-flex align-items-center">
+                                                            <img src="<%= app.LogoURL || '/images/default-company.png' %>"
+                                                                width="40" height="40"
+                                                                class="rounded border mr-3 p-1 object-fit-contain bg-white">
+                                                            <span class="font-weight-bold text-dark">
+                                                                <%= app.CompanyName %>
+                                                            </span>
+                                                        </div>
+                                                    </td>
+                                                    <td class="align-middle">
+                                                        <a href="/jobs/<%= app.JobID %>"
+                                                            class="font-weight-bold text-dark text-decoration-none hover-primary">
+                                                            <%= app.JobTitle %>
+                                                        </a>
+                                                        <br>
+                                                        <small class="text-muted">
+                                                            <%= app.Location %> • <%= app.EmploymentType %>
+                                                        </small>
+                                                    </td>
+                                                    <td class="align-middle text-muted">
+                                                        <%= new Date(app.ApplicationDate).toLocaleDateString() %>
+                                                    </td>
+                                                    <td class="align-middle">
+                                                        <% let badgeClass='badge-soft-secondary text-secondary' ; if
+                                                            (app.ApplicationStatus==='Submitted' )
+                                                            badgeClass='badge-soft-info text-info' ; else if
+                                                            (app.ApplicationStatus==='UnderReview' )
+                                                            badgeClass='badge-soft-warning text-warning' ; else if
+                                                            (app.ApplicationStatus==='Interview' )
+                                                            badgeClass='badge-soft-primary text-primary' ; else if
+                                                            (app.ApplicationStatus==='Offer' )
+                                                            badgeClass='badge-soft-success text-success' ; else if
+                                                            (app.ApplicationStatus==='Rejected' )
+                                                            badgeClass='badge-soft-danger text-danger' ; %>
+                                                            <span class="badge <%= badgeClass %> px-3 py-2">
+                                                                <%= app.ApplicationStatus %>
+                                                            </span>
+                                                    </td>
+                                                    <td class="text-right align-middle pr-4">
+                                                        <a href="/jobs/<%= app.JobID %>"
+                                                            class="btn btn-sm btn-outline-primary shadow-sm">
+                                                            View Job
+                                                        </a>
+                                                    </td>
+                                                </tr>
+                                                <% }) %>
+                                                    <% } else { %>
+                                                        <tr>
+                                                            <td colspan="5" class="text-center py-5">
+                                                                <img src="/images/empty-state.svg" width="150"
+                                                                    class="mb-3 opacity-50">
+                                                                <p class="text-muted mb-0">You haven't applied to any
+                                                                    jobs yet.</p>
+                                                                <a href="/jobs"
+                                                                    class="btn btn-primary btn-sm mt-3 px-4">Find
+                                                                    Jobs</a>
+                                                            </td>
+                                                        </tr>
+                                                        <% } %>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
 
-            </div>
-        </main>
-    </div>
-    <%- include('../partials/footer') %>
-</body>
+                    </div>
+                </main>
+        </div>
+        <%- include('../partials/footer') %>
+    </body>

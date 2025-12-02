@@ -7,6 +7,7 @@ import { seekerRouter } from './seeker/seeker'
 import { adminRouter } from "~/routes/admin/admin";
 import { jobRouter } from "~/routes/job/jobRouter";
 import isAuthorized from '~/middlewares/authorizedMiddleware'
+import { applicationRouter } from "~/routes/job/applicationRouter";
 
 const router = express.Router()
 
@@ -18,9 +19,11 @@ router.use('/', pagesRouter)
 
 router.use('/company', isAuthorized, companyRouter)
 
-router.use('/seeker',isAuthorized, seekerRouter)
+router.use('/seeker', isAuthorized, seekerRouter)
 
 router.use('/admin', isAuthorized, adminRouter)
 
 router.use('/', jobRouter)
+
+router.use('/', applicationRouter)
 export const API = router
