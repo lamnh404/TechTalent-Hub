@@ -1,0 +1,134 @@
+<%
+    // Mock Data: Thông tin công ty
+    if (typeof company === 'undefined') {
+        var company = {
+            CompanyID: 1,
+            CompanyName: "Google Inc.",
+            LogoURL: "https://logo.clearbit.com/google.com",
+            Industry: "Internet & Technology",
+            CompanySize: "10,000+ Employees",
+            FoundedYear: 1998,
+            Website: "https://about.google",
+            Location: "Mountain View, CA (Headquarters)",
+            Description: "Google's mission is to organize the world's information and make it universally accessible and useful. We create products and services that help billions of people around the world.",
+            Socials: { facebook: "#", linkedin: "#", twitter: "#" }
+        };
+    }
+
+    // Mock Data: Các job đang tuyển của công ty này
+    if (typeof openJobs === 'undefined') {
+        var openJobs = [
+            { JobID: 101, JobTitle: "Senior Software Engineer", Location: "Remote", Type: "Full-time", Salary: "$120k - $150k" },
+            { JobID: 102, JobTitle: "Product Manager", Location: "Singapore", Type: "Full-time", Salary: "$90k - $120k" },
+            { JobID: 103, JobTitle: "UX Researcher", Location: "Ho Chi Minh", Type: "Contract", Salary: "Negotiable" }
+        ];
+    }
+%>
+
+<%- include('../partials/header', { title: company.CompanyName }) %>
+
+<body class="animate-fade-in">
+    <%- include('../partials/navbar', {activePage: 'companies'}) %>
+
+    <div style="height: 250px; background: linear-gradient(135deg, #0063FF 0%, #004ecc 100%); position: relative;">
+        <div class="container h-100 position-relative">
+            <div style="position: absolute; bottom: -50px; right: 10%; opacity: 0.1; font-size: 15rem; color: white;">
+                <i class="fab fa-google"></i>
+            </div>
+        </div>
+    </div>
+
+    <div class="container" style="margin-top: -80px; position: relative; z-index: 2;">
+        <div class="row">
+            <div class="col-lg-4 mb-4">
+                <div class="card border-0 shadow-lg rounded-lg mb-4">
+                    <div class="card-body p-4 text-center">
+                        <div class="bg-white p-2 rounded-circle shadow-sm d-inline-flex mb-3" style="width: 120px; height: 120px; align-items: center; justify-content: center;">
+                            <img src="<%= company.LogoURL || '/images/default-company.png' %>" 
+                                 alt="<%= company.CompanyName %>" 
+                                 class="img-fluid" 
+                                 style="max-height: 80px; object-fit: contain;">
+                        </div>
+                        <h3 class="font-weight-bold mb-1"><%= company.CompanyName %></h3>
+                        <p class="text-primary font-weight-bold mb-3"><%= company.Industry %></p>
+                        
+                        <div class="d-flex justify-content-center gap-2 mb-4">
+                            <a href="<%= company.Socials.website %>" target="_blank" class="btn btn-sm btn-light rounded-circle" style="width: 40px; height: 40px; display:inline-flex; align-items:center; justify-content:center;"><i class="fas fa-globe"></i></a>
+                            <a href="#" class="btn btn-sm btn-light rounded-circle" style="width: 40px; height: 40px; display:inline-flex; align-items:center; justify-content:center;"><i class="fab fa-facebook-f"></i></a>
+                            <a href="#" class="btn btn-sm btn-light rounded-circle" style="width: 40px; height: 40px; display:inline-flex; align-items:center; justify-content:center;"><i class="fab fa-linkedin-in"></i></a>
+                        </div>
+
+                        <hr>
+
+                        <div class="text-left mt-4">
+                            <div class="mb-3 d-flex align-items-center">
+                                <div class="icon-box-sm bg-soft-primary text-primary mr-3 rounded-circle p-2"><i class="fas fa-users"></i></div>
+                                <div>
+                                    <small class="text-muted d-block">Company Size</small>
+                                    <span class="font-weight-bold text-dark"><%= company.CompanySize %></span>
+                                </div>
+                            </div>
+                            <div class="mb-3 d-flex align-items-center">
+                                <div class="icon-box-sm bg-soft-primary text-primary mr-3 rounded-circle p-2"><i class="far fa-calendar-alt"></i></div>
+                                <div>
+                                    <small class="text-muted d-block">Founded</small>
+                                    <span class="font-weight-bold text-dark"><%= company.FoundedYear %></span>
+                                </div>
+                            </div>
+                            <div class="d-flex align-items-center">
+                                <div class="icon-box-sm bg-soft-primary text-primary mr-3 rounded-circle p-2"><i class="fas fa-map-marker-alt"></i></div>
+                                <div>
+                                    <small class="text-muted d-block">Location</small>
+                                    <span class="font-weight-bold text-dark"><%= company.Location %></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-8" style="padding-top: 90px;">
+                <div class="card border-0 shadow-sm rounded-lg mb-4">
+                    <div class="card-body p-4">
+                        <h5 class="font-weight-bold text-dark mb-3">About Us</h5>
+                        <p class="text-muted" style="line-height: 1.8;">
+                            <%= company.Description %>
+                        </p>
+                    </div>
+                </div>
+
+                <h5 class="font-weight-bold text-dark mb-3">Open Positions (<%= openJobs.length %>)</h5>
+                
+                <% if (openJobs && openJobs.length > 0) { %>
+                    <% openJobs.forEach(job => { %>
+                        <div class="card border-0 shadow-sm rounded-lg mb-3 hover-scale job-card-horizontal p-3">
+                            <div class="d-flex align-items-center w-100">
+                                <div class="flex-grow-1">
+                                    <h6 class="font-weight-bold mb-1">
+                                        <a href="/jobs/<%= job.JobID %>" class="text-dark text-decoration-none stretched-link"><%= job.JobTitle %></a>
+                                    </h6>
+                                    <div class="small text-muted">
+                                        <i class="fas fa-map-marker-alt mr-1"></i> <%= job.Location %> &bull; 
+                                        <i class="far fa-clock mr-1 ml-1"></i> <%= job.Type %>
+                                    </div>
+                                </div>
+                                <div class="text-right d-none d-md-block">
+                                    <span class="text-primary font-weight-bold"><%= job.Salary %></span>
+                                    <br>
+                                    <a href="/jobs/<%= job.JobID %>" class="btn btn-sm btn-outline-primary rounded-pill mt-2 px-3">Apply</a>
+                                </div>
+                            </div>
+                        </div>
+                    <% }) %>
+                <% } else { %>
+                    <div class="text-center py-4 text-muted">
+                        No open positions at the moment.
+                    </div>
+                <% } %>
+
+            </div>
+        </div>
+    </div>
+
+    <%- include('../partials/footer') %>
+</body>

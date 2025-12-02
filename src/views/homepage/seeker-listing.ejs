@@ -1,0 +1,88 @@
+<%
+    // Mock Data: Danh sách ứng viên
+    if (typeof seekers === 'undefined') {
+        var seekers = [
+            { UserID: 1, Name: "Nguyen Van A", Title: "Senior Frontend Dev", Skills: ["React", "VueJS", "Figma"], Avatar: "https://i.pravatar.cc/150?u=1", Location: "Ho Chi Minh" },
+            { UserID: 2, Name: "Tran Thi B", Title: "Product Designer", Skills: ["UI/UX", "Sketch", "Prototyping"], Avatar: "https://i.pravatar.cc/150?u=2", Location: "Ha Noi" },
+            { UserID: 3, Name: "Le Van C", Title: "DevOps Engineer", Skills: ["AWS", "Docker", "Kubernetes"], Avatar: "https://i.pravatar.cc/150?u=3", Location: "Da Nang" },
+            { UserID: 4, Name: "Sarah Connor", Title: "Fullstack Developer", Skills: ["Node.js", "React", "MongoDB"], Avatar: "https://i.pravatar.cc/150?u=4", Location: "Remote" },
+            { UserID: 5, Name: "John Doe", Title: "Data Scientist", Skills: ["Python", "Machine Learning", "SQL"], Avatar: "https://i.pravatar.cc/150?u=5", Location: "Ho Chi Minh" },
+            { UserID: 6, Name: "Emily Clark", Title: "Marketing Lead", Skills: ["SEO", "Content", "Growth"], Avatar: "https://i.pravatar.cc/150?u=6", Location: "Ha Noi" }
+        ];
+    }
+%>
+
+<%- include('../partials/header', { title: 'Find Candidates' }) %>
+
+<body class="animate-fade-in">
+    <%- include('../partials/navbar', {activePage: 'seekers'}) %>
+
+    <section class="home-hero" style="padding: 120px 0 60px; background: #f8fafc;">
+        <div class="container text-center">
+            <h1 class="hero-title mb-3">Discover Top <span class="text-primary">Talents</span></h1>
+            <p class="text-muted mb-4" style="max-width: 600px; margin: 0 auto;">
+                Connect with thousands of professionals ready for their next challenge.
+            </p>
+            
+            <div class="search-wrapper mx-auto shadow-sm">
+                <form action="/seekers" method="GET" class="d-flex w-100 align-items-center">
+                    <div class="flex-grow-1 position-relative">
+                        <i class="fas fa-search position-absolute text-muted" style="left: 20px; top: 50%; transform: translateY(-50%);"></i>
+                        <input type="text" name="q" class="search-input" placeholder="Search by skill, title or name..." style="padding-left: 50px; width: 100%;">
+                    </div>
+                    <button type="submit" class="btn-search ml-2">Find Talent</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <section class="section bg-white pt-5 pb-5">
+        <div class="container">
+            <div class="row">
+                <% if (seekers && seekers.length > 0) { %>
+                    <% seekers.forEach(seeker => { %>
+                        <div class="col-lg-4 col-md-6 mb-4">
+                            <div class="card h-100 border-0 shadow-sm hover-scale text-center p-4" style="border-radius: 16px;">
+                                <div class="mb-3 position-relative d-inline-block">
+                                    <img src="<%= seeker.Avatar %>" class="rounded-circle shadow-sm" width="100" height="100" style="object-fit: cover; border: 3px solid #fff;">
+                                    <span class="position-absolute bg-success border border-white rounded-circle" 
+                                          style="width: 15px; height: 15px; bottom: 5px; right: 5px;" title="Available"></span>
+                                </div>
+                                
+                                <h5 class="font-weight-bold mb-1 text-dark"><%= seeker.Name %></h5>
+                                <p class="text-primary font-weight-bold small mb-2"><%= seeker.Title %></p>
+                                <p class="text-muted small mb-3"><i class="fas fa-map-marker-alt mr-1"></i> <%= seeker.Location %></p>
+
+                                <div class="mb-4">
+                                    <% seeker.Skills.slice(0, 3).forEach(skill => { %>
+                                        <span class="badge badge-soft-secondary px-2 py-1 mb-1"><%= skill %></span>
+                                    <% }) %>
+                                    <% if (seeker.Skills.length > 3) { %>
+                                        <span class="badge badge-soft-secondary px-2 py-1 mb-1">+<%= seeker.Skills.length - 3 %></span>
+                                    <% } %>
+                                </div>
+
+                                <div class="mt-auto">
+                                    <a href="/seekers/<%= seeker.UserID %>" class="btn btn-outline-primary btn-block rounded-pill font-weight-bold">View Profile</a>
+                                </div>
+                            </div>
+                        </div>
+                    <% }) %>
+                <% } else { %>
+                    <div class="col-12 text-center text-muted">No candidates found matching your criteria.</div>
+                <% } %>
+            </div>
+
+            <nav class="mt-5">
+                <ul class="pagination justify-content-center">
+                    <li class="page-item disabled"><a class="page-link border-0 shadow-sm rounded-pill px-3 mr-2" href="#">Prev</a></li>
+                    <li class="page-item active"><a class="page-link border-0 shadow-sm rounded-circle mx-1" href="#">1</a></li>
+                    <li class="page-item"><a class="page-link border-0 shadow-sm rounded-circle mx-1" href="#">2</a></li>
+                    <li class="page-item"><a class="page-link border-0 shadow-sm rounded-pill px-3 ml-2" href="#">Next</a></li>
+                </ul>
+            </nav>
+        </div>
+    </section>
+
+    <%- include('../partials/footer') %>
+</body>
