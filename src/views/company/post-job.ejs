@@ -1,4 +1,4 @@
-<%- include('../partials/header', { title: 'Post A Job' }) %>
+<%- include('../partials/header', { title: typeof isEdit !=='undefined' && isEdit ? 'Edit Job' : 'Post A Job' }) %>
 
     <body class="dashboard-page">
         <div class="dashboard-wrapper">
@@ -6,7 +6,9 @@
 
                 <main class="main-content">
                     <header class="dashboard-header">
-                        <h5 class="mb-0 font-weight-bold text-dark">Post a New Job</h5>
+                        <h5 class="mb-0 font-weight-bold text-dark">
+                            <%= typeof isEdit !=='undefined' && isEdit ? 'Edit Job' : 'Post a New Job' %>
+                        </h5>
                         <div class="d-flex align-items-center">
                             <div class="dropdown">
                                 <a href="#"
@@ -41,7 +43,9 @@
                                                 talent.</p>
                                         </div>
 
-                                        <form action="/company/jobs/create" method="POST">
+                                        <form
+                                            action="<%= typeof isEdit !== 'undefined' && isEdit ? '/company/jobs/' + job.JobID + '/edit' : '/company/jobs/create' %>"
+                                            method="POST">
 
                                             <div class="row">
                                                 <div class="col-md-8 mb-3">
@@ -50,7 +54,8 @@
                                                     <div class="input-wrapper">
                                                         <i class="fas fa-briefcase input-icon"></i>
                                                         <input type="text" class="form-control-modern" name="JobTitle"
-                                                            placeholder="e.g. Senior React Developer" required>
+                                                            placeholder="e.g. Senior React Developer" required
+                                                            value="<%= typeof job !== 'undefined' ? job.JobTitle : '' %>">
                                                     </div>
                                                 </div>
                                                 <div class="col-md-4 mb-3">
@@ -59,11 +64,21 @@
                                                     <div class="input-wrapper">
                                                         <i class="far fa-clock input-icon"></i>
                                                         <select class="form-control-modern" name="EmploymentType">
-                                                            <option value="FullTime">Full-time</option>
-                                                            <option value="PartTime">Part-time</option>
-                                                            <option value="Contract">Contract</option>
-                                                            <option value="Internship">Internship</option>
-                                                            <option value="Remote">Remote</option>
+                                                            <option value="FullTime" <%=typeof job !=='undefined' &&
+                                                                job.EmploymentType==='FullTime' ? 'selected' : '' %>
+                                                                >Full-time</option>
+                                                            <option value="PartTime" <%=typeof job !=='undefined' &&
+                                                                job.EmploymentType==='PartTime' ? 'selected' : '' %>
+                                                                >Part-time</option>
+                                                            <option value="Contract" <%=typeof job !=='undefined' &&
+                                                                job.EmploymentType==='Contract' ? 'selected' : '' %>
+                                                                >Contract</option>
+                                                            <option value="Internship" <%=typeof job !=='undefined' &&
+                                                                job.EmploymentType==='Internship' ? 'selected' : '' %>
+                                                                >Internship</option>
+                                                            <option value="Remote" <%=typeof job !=='undefined' &&
+                                                                job.EmploymentType==='Remote' ? 'selected' : '' %>
+                                                                >Remote</option>
                                                         </select>
                                                     </div>
                                                 </div>
@@ -76,7 +91,8 @@
                                                     <div class="input-wrapper">
                                                         <i class="fas fa-dollar-sign input-icon"></i>
                                                         <input type="number" class="form-control-modern"
-                                                            name="SalaryMin" placeholder="1000">
+                                                            name="SalaryMin" placeholder="1000"
+                                                            value="<%= typeof job !== 'undefined' ? job.SalaryMin : '' %>">
                                                     </div>
                                                 </div>
                                                 <div class="col-md-3 mb-3">
@@ -85,7 +101,8 @@
                                                     <div class="input-wrapper">
                                                         <i class="fas fa-dollar-sign input-icon"></i>
                                                         <input type="number" class="form-control-modern"
-                                                            name="SalaryMax" placeholder="3000">
+                                                            name="SalaryMax" placeholder="3000"
+                                                            value="<%= typeof job !== 'undefined' ? job.SalaryMax : '' %>">
                                                     </div>
                                                 </div>
                                                 <div class="col-md-3 mb-3">
@@ -94,7 +111,8 @@
                                                     <div class="input-wrapper">
                                                         <i class="fas fa-medal input-icon"></i>
                                                         <input type="number" class="form-control-modern"
-                                                            name="ExperienceRequired" placeholder="2" min="0">
+                                                            name="ExperienceRequired" placeholder="2" min="0"
+                                                            value="<%= typeof job !== 'undefined' ? job.ExperienceRequired : '' %>">
                                                     </div>
                                                 </div>
                                                 <div class="col-md-3 mb-3">
@@ -102,7 +120,8 @@
                                                     <div class="input-wrapper">
                                                         <i class="fas fa-users input-icon"></i>
                                                         <input type="number" class="form-control-modern"
-                                                            name="OpeningCount" placeholder="1" min="1" value="1">
+                                                            name="OpeningCount" placeholder="1" min="1"
+                                                            value="<%= typeof job !== 'undefined' ? job.OpeningCount : '1' %>">
                                                     </div>
                                                 </div>
                                             </div>
@@ -114,7 +133,8 @@
                                                     <div class="input-wrapper">
                                                         <i class="fas fa-map-marker-alt input-icon"></i>
                                                         <input type="text" class="form-control-modern" name="Location"
-                                                            placeholder="e.g. District 1, Ho Chi Minh City" required>
+                                                            placeholder="e.g. District 1, Ho Chi Minh City" required
+                                                            value="<%= typeof job !== 'undefined' ? job.Location : '' %>">
                                                     </div>
                                                 </div>
                                                 <div class="col-md-4 mb-3">
@@ -123,7 +143,8 @@
                                                     <div class="input-wrapper">
                                                         <i class="far fa-calendar-alt input-icon"></i>
                                                         <input type="date" class="form-control-modern"
-                                                            name="ApplicationDeadline">
+                                                            name="ApplicationDeadline"
+                                                            value="<%= typeof job !== 'undefined' && job.ApplicationDeadline ? new Date(job.ApplicationDeadline).toISOString().split('T')[0] : '' %>">
                                                     </div>
                                                 </div>
                                             </div>
@@ -134,7 +155,7 @@
                                                 <textarea class="form-control-modern h-auto py-3" name="JobDescription"
                                                     rows="8"
                                                     placeholder="Describe the role, responsibilities, and requirements..."
-                                                    required></textarea>
+                                                    required><%= typeof job !== 'undefined' ? job.JobDescription : '' %></textarea>
                                                 <small class="text-muted mt-1"><i class="fas fa-info-circle mr-1"></i>
                                                     Tip: Use bullet points for better readability.</small>
                                             </div>
@@ -155,7 +176,8 @@
                                                     class="btn btn-light mr-3 font-weight-bold text-muted">Cancel</a>
                                                 <button type="submit"
                                                     class="btn btn-primary-modern px-5 shadow-md font-weight-bold">
-                                                    Post Job Now <i class="fas fa-paper-plane ml-2"></i>
+                                                    <%= typeof isEdit !=='undefined' && isEdit ? 'Update Job'
+                                                        : 'Post Job Now' %> <i class="fas fa-paper-plane ml-2"></i>
                                                 </button>
                                             </div>
 

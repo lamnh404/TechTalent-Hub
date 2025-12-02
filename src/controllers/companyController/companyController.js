@@ -24,12 +24,18 @@ const getDashboard = async (req, res, next) => {
 const getJobs = async (req, res, next) => {
     try {
         const companyId = req.session.user.id
-        const jobs = await jobModel.getJobsByCompanyId(companyId)
+        const page = parseInt(req.query.page) || 1
+        const limit = 10
+
+        const { jobs, currentPage, totalPages, totalJobs } = await jobModel.getJobsByCompanyId(companyId, page, limit)
 
         res.render('company/job-list.ejs', {
             title: 'My Jobs Posts',
             user: req.session.user,
-            jobs
+            jobs,
+            currentPage,
+            totalPages,
+            totalJobs
         })
     } catch (error) {
         next(error)
@@ -111,6 +117,90 @@ const createJob = async (req, res, next) => {
     }
 }
 
+const deleteJob = async (req, res, next) => {
+    try {
+        const { id } = req.params
+        const companyId = req.session.user.id
+
+        await jobModel.deleteJob(id, companyId)
+
+        res.redirect('/company/jobs')
+    } catch (error) {
+        next(error)
+    }
+}
+
+const toggleJobStatus = async (req, res, next) => {
+    try {
+        const { id } = req.params
+        const { status } = req.body // 'Open' or 'Closed'
+        const companyId = req.session.user.id
+
+        await jobModel.updateJobStatus(id, companyId, status)
+
+        res.redirect('/company/jobs')
+    } catch (error) {
+        next(error)
+    }
+}
+
+const getEditJobPage = async (req, res, next) => {
+    try {
+        const { id } = req.params
+        const companyId = req.session.user.id
+
+        const job = await jobModel.getJobById(id)
+
+        if (!job || job.CompanyID !== companyId) {
+            throw new ApiError(StatusCodes.NOT_FOUND, 'Job not found or unauthorized')
+        }
+
+        res.render('company/post-job.ejs', {
+            title: 'Edit Job',
+            user: req.session.user,
+            job,
+            isEdit: true
+        })
+    } catch (error) {
+        next(error)
+    }
+}
+
+const updateJob = async (req, res, next) => {
+    try {
+        const { id } = req.params
+        const companyId = req.session.user.id
+        const { JobTitle, JobDescription, SalaryMin, SalaryMax, Location, EmploymentType, ExperienceRequired, ApplicationDeadline, OpeningCount } = req.body
+
+        await jobModel.updateJob(id, companyId, {
+            jobTitle: JobTitle,
+            jobDescription: JobDescription,
+            salaryMin: SalaryMin,
+            salaryMax: SalaryMax,
+            location: Location,
+            employmentType: EmploymentType,
+            experienceRequired: ExperienceRequired,
+            applicationDeadline: ApplicationDeadline,
+            openingCount: OpeningCount
+        })
+
+        res.redirect('/company/jobs')
+    } catch (error) {
+        console.log(error)
+        // In case of error, re-render with error message and existing data
+        // For simplicity, redirecting to edit page with error query param could be an option, 
+        // or re-rendering. Re-rendering requires fetching job data again or passing body back.
+        // Let's re-render.
+        res.render('company/post-job.ejs', {
+            title: 'Edit Job',
+            error: error.message,
+            user: req.session.user,
+            job: { ...req.body, JobID: id }, // Pass back submitted data as job object
+            isEdit: true
+        })
+    }
+}
+
 const updateApplicationStatus = async (req, res, next) => {
     try {
         const { applicationId } = req.params
@@ -132,5 +222,9 @@ export const companyController = {
     updateProfile,
     getCreateJobPage,
     createJob,
-    updateApplicationStatus
+    updateApplicationStatus,
+    deleteJob,
+    toggleJobStatus,
+    getEditJobPage,
+    updateJob
 }
