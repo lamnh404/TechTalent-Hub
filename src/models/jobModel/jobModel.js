@@ -6,76 +6,23 @@ import sql from 'mssql'
 const createJob = async (jobData) => {
     try {
         const pool = GET_SQL_POOL()
-        const { jobTitle, jobDescription, salaryMin, salaryMax, location, employmentType, companyId, experienceRequired, applicationDeadline, skills } = jobData
-
-        const transaction = new sql.Transaction(pool)
-        await transaction.begin()
-
-        try {
-            const request = new sql.Request(transaction)
-
-            // 1. Insert Job
-            const jobResult = await request
-                .input('jobTitle', sql.NVarChar, jobTitle)
-                .input('jobDescription', sql.NVarChar, jobDescription)
-                .input('salaryMin', sql.Decimal(15, 2), salaryMin)
-                .input('salaryMax', sql.Decimal(15, 2), salaryMax)
-                .input('location', sql.NVarChar, location)
-                .input('employmentType', sql.NVarChar, employmentType)
-                .input('companyId', sql.NVarChar, companyId)
-                .input('experienceRequired', sql.SmallInt, experienceRequired || 0)
-                .input('applicationDeadline', sql.DateTime2, applicationDeadline || null)
-                .query(`
-                    DECLARE @NewJobID NVARCHAR(128) = NEWID();
-                    INSERT INTO [Job] (JobID, JobTitle, JobDescription, SalaryMin, SalaryMax, Location, EmploymentType, PostedDate, CompanyID, ExperienceRequired, ApplicationDeadline, JobStatus)
-                    VALUES (@NewJobID, @jobTitle, @jobDescription, @salaryMin, @salaryMax, @location, @employmentType, GETDATE(), @companyId, @experienceRequired, @applicationDeadline, 'Open');
-                    SELECT @NewJobID AS JobID;
-                `)
-
-            const newJobId = jobResult.recordset[0].JobID
-
-            // 2. Insert JobMetrics
-            await request.query(`
-                INSERT INTO [JobMetrics] (JobMetricID, AppliedCount, LikeCount, ViewCount, LastUpdated)
-                VALUES ('${newJobId}', 0, 0, 0, GETDATE())
+        const { jobTitle, jobDescription, salaryMin, salaryMax, location, employmentType, companyId, experienceRequired, applicationDeadline, openingCount } = jobData
+        const jobResult = await pool.request()
+            .input('jobTitle', jobTitle)
+            .input('jobDescription', jobDescription)
+            .input('salaryMin', salaryMin)
+            .input('salaryMax', salaryMax)
+            .input('location', location)
+            .input('employmentType', employmentType)
+            .input('companyId', companyId)
+            .input('experienceRequired', experienceRequired)
+            .input('applicationDeadline', applicationDeadline)
+            .input('openingCount', openingCount)
+            .query(`
+                INSERT INTO [Job] ([CompanyID], [JobTitle], [JobDescription], [EmploymentType], [ExperienceRequired], [SalaryMin], [SalaryMax], [Location], [OpeningCount], [ApplicationDeadline], [JobStatus], [PostedDate])
+                VALUES (@companyId, @jobTitle, @jobDescription, @employmentType, @experienceRequired, @salaryMin, @salaryMax, @location, @openingCount, @applicationDeadline, 'Open', GETDATE());
             `)
-
-            // 3. Handle Skills
-            if (skills && typeof skills === 'string') {
-                const skillList = skills.split(',').map(s => s.trim()).filter(s => s)
-
-                for (const skillName of skillList) {
-                    // Check if skill exists
-                    let skillIdResult = await request.query(`SELECT SkillID FROM [Skill] WHERE SkillName = N'${skillName}'`)
-                    let skillId
-
-                    if (skillIdResult.recordset.length > 0) {
-                        skillId = skillIdResult.recordset[0].SkillID
-                    } else {
-                        // Create new skill
-                        const insertSkillResult = await request.query(`
-                            INSERT INTO [Skill] (SkillName, PopularityScore) VALUES (N'${skillName}', 0);
-                            SELECT SCOPE_IDENTITY() AS SkillID;
-                        `)
-                        skillId = insertSkillResult.recordset[0].SkillID
-                    }
-
-                    // Link Job and Skill
-                    await request.query(`
-                        INSERT INTO [JobRequireSkill] (JobID, SkillID, ProficiencyLevel, IsRequired)
-                        VALUES ('${newJobId}', ${skillId}, 'Intermediate', 1)
-                    `)
-                }
-            }
-
-            await transaction.commit()
-            return newJobId
-
-        } catch (err) {
-            await transaction.rollback()
-            throw err
-        }
-
+        return null
     } catch (error) {
         throw new ApiError(StatusCodes.INTERNAL_SERVER_ERROR, error.message)
     }

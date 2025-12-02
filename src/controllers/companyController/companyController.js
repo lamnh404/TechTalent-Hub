@@ -105,7 +105,7 @@ const createJob = async (req, res, next) => {
         if (!req.session.user) {
             return res.redirect('/auth/login')
         }
-        const { JobTitle, JobDescription, SalaryMin, SalaryMax, Location, EmploymentType, ExperienceRequired, ApplicationDeadline, skills } = req.body
+        const { JobTitle, JobDescription, SalaryMin, SalaryMax, Location, EmploymentType, ExperienceRequired, ApplicationDeadline, OpeningCount } = req.body
         const companyId = req.session.user.id
 
         await jobModel.createJob({
@@ -117,12 +117,13 @@ const createJob = async (req, res, next) => {
             employmentType: EmploymentType,
             experienceRequired: ExperienceRequired,
             applicationDeadline: ApplicationDeadline,
-            skills: skills,
-            companyId
+            openingCount: OpeningCount,
+            companyId: companyId
         })
 
         res.redirect('/company/jobs')
     } catch (error) {
+        console.log(error)
         res.render('company/post-job.ejs', {
             title: 'Post A Job',
             error: error.message,
