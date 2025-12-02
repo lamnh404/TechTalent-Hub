@@ -86,7 +86,6 @@ const createJob = async (req, res, next) => {
     try {
         const { JobTitle, JobDescription, SalaryMin, SalaryMax, Location, EmploymentType, ExperienceRequired, ApplicationDeadline, OpeningCount } = req.body
         const companyId = req.session.user.id
-        console.log('Company ID:', companyId)
 
         await jobModel.createJob({
             jobTitle: JobTitle,
