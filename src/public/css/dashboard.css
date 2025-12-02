@@ -265,3 +265,38 @@ body.dashboard-page {
 .menu-link:hover i {
     transform: scale(1.2); /* Icon phóng to nhẹ khi hover */
 }
+
+/* ========================================
+   RESPONSIVE FIXES (MOBILE & TABLET)
+   ======================================== */
+
+@media (max-width: 991.98px) {
+    /* 1. Ẩn Sidebar sang bên trái màn hình */
+    .sidebar {
+        transform: translateX(-100%);
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 0 0 15px rgba(0,0,0,0.1);
+    }
+    
+    /* Class để hiện Sidebar khi bấm nút (sẽ dùng JS kích hoạt) */
+    .sidebar.show {
+        transform: translateX(0);
+    }
+
+    /* 2. Mở rộng nội dung chính ra toàn màn hình */
+    .main-content {
+        margin-left: 0;
+        width: 100%;
+    }
+
+    /* 3. Điều chỉnh Header Dashboard */
+    .dashboard-header {
+        padding: 0 1.5rem;
+        width: 100%;
+    }
+
+    /* 4. Thống kê (Stats) xếp chồng lên nhau */
+    .stat-card {
+        margin-bottom: 15px;
+    }
+}

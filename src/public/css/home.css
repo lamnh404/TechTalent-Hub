@@ -207,3 +207,59 @@
     box-shadow: var(--shadow-sm);
     border: 1px solid #e5e7eb;
 }
+
+/* ========================================
+   RESPONSIVE FIXES
+   ======================================== */
+
+@media (max-width: 768px) {
+    /* 1. Giảm chiều cao Hero section */
+    .home-hero {
+        padding: 110px 0 50px;
+    }
+
+    /* 2. Giảm cỡ chữ tiêu đề */
+    .hero-title {
+        font-size: 2rem;
+    }
+
+    /* 3. Chuyển thanh tìm kiếm thành dạng dọc */
+    .search-wrapper {
+        flex-direction: column;
+        padding: 15px;
+    }
+    
+    .search-wrapper .flex-grow-1 {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+
+    .btn-search {
+        width: 100%; /* Nút tìm kiếm full chiều ngang */
+    }
+
+    /* 4. Card Job chuyển về dạng dọc và căn giữa */
+    .job-card-horizontal {
+        flex-direction: column;
+        text-align: center;
+        padding: 1.5rem;
+    }
+
+    .job-card-horizontal .company-logo-sm {
+        margin-right: 0;
+        margin-bottom: 1rem;
+    }
+
+    .job-card-horizontal .text-md-right {
+        text-align: center !important;
+        margin-top: 1rem;
+        width: 100%;
+        border-top: 1px solid #f3f4f6;
+        padding-top: 1rem;
+    }
+    
+    /* 5. Ẩn filter sidebar trên mobile (hoặc bạn có thể style lại thành nút bấm mở modal) */
+    .filter-card {
+        margin-bottom: 20px;
+    }
+}

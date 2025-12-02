@@ -18,5 +18,36 @@
 <!-- Bootstrap JS -->
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        // Chỉ chạy nếu đang ở trang Dashboard
+        if (document.querySelector('.dashboard-page')) {
+            const header = document.querySelector('.dashboard-header');
+            const sidebar = document.querySelector('.sidebar');
+            
+            // Tạo nút hamburger
+            const toggleBtn = document.createElement('button');
+            toggleBtn.className = 'btn btn-light mr-3 d-lg-none shadow-sm';
+            toggleBtn.innerHTML = '<i class="fas fa-bars"></i>';
+            toggleBtn.onclick = function() {
+                sidebar.classList.toggle('show');
+            };
+
+            // Chèn nút vào đầu header
+            if (header) {
+                header.insertBefore(toggleBtn, header.firstChild);
+            }
+
+            // Click ra ngoài để đóng sidebar
+            document.addEventListener('click', function(event) {
+                const isClickInside = sidebar.contains(event.target) || toggleBtn.contains(event.target);
+                if (!isClickInside && sidebar.classList.contains('show')) {
+                    sidebar.classList.remove('show');
+                }
+            });
+        }
+    });
+</script>
+
 </body>
 </html>

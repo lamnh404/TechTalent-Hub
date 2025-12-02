@@ -308,3 +308,61 @@ a, button, input, select, textarea, .btn, .card {
     border-color: #e0f2fe;
     box-shadow: none;
 }
+
+/* ========================================
+   NAVBAR RESPONSIVE FIX (MOBILE/TABLET)
+   ======================================== */
+
+@media (max-width: 991.98px) {
+    /* 1. Bỏ chiều cao cứng để menu có thể giãn ra */
+    .navbar-glass {
+        height: auto !important;
+        min-height: var(--header-height);
+        background: #ffffff !important; /* Dùng nền trắng đặc trên mobile cho dễ nhìn */
+        padding: 0.8rem 1rem;
+    }
+
+    /* 2. Style cho khung menu khi sổ xuống */
+    .navbar-collapse {
+        background: #ffffff;
+        margin-top: 10px;
+        padding: 1rem 0;
+        border-top: 1px solid #f3f4f6;
+        box-shadow: 0 15px 30px rgba(0,0,0,0.05); /* Bóng đổ nhẹ phía dưới */
+        max-height: 80vh; /* Giới hạn chiều cao nếu menu quá dài */
+        overflow-y: auto; /* Cho phép cuộn trong menu */
+    }
+
+    /* 3. Căn chỉnh lại các item trong menu */
+    .navbar-nav .nav-item {
+        margin: 5px 0; /* Tăng khoảng cách giữa các dòng */
+    }
+
+    .navbar-nav .nav-link {
+        padding: 12px 20px !important; /* Nút to hơn để dễ bấm cảm ứng */
+        border-radius: 10px;
+    }
+
+    .navbar-nav .nav-link:hover,
+    .navbar-nav .nav-link.active {
+        background-color: #eff6ff !important;
+        transform: translateX(5px); /* Hiệu ứng trượt nhẹ khi chạm */
+    }
+
+    /* 4. Xử lý phần User Dropdown trên mobile */
+    .navbar-nav .dropdown-menu {
+        border: none;
+        box-shadow: none;
+        padding-left: 20px; /* Thụt đầu dòng cho menu con */
+        background: #f9fafb; /* Nền xám nhẹ phân biệt với menu chính */
+        margin-top: 5px;
+    }
+
+    /* 5. Căn giữa nút Sign Up/Login nếu cần */
+    .navbar-nav .btn {
+        width: 100%;
+        margin-top: 10px;
+        text-align: center;
+        justify-content: center;
+    }
+}
