@@ -7,6 +7,10 @@ router.get('/login', (req, res) => {
     res.render('auth/login.ejs', { title: 'Login' })
 })
 
+router.get('/auth/login', (req, res) => {
+    res.render('auth/login.ejs', { title: 'Login' })
+})
+
 router.get('/register', (req, res) => {
     res.render('auth/register.ejs', { title: 'Register' })
 })

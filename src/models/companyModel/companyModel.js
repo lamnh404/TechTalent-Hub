@@ -30,8 +30,6 @@ const updateCompanyProfile = async (companyId, profileData) => {
 
         try {
             const request = new sql.Request(transaction)
-
-            // Update Company table
             await request
                 .input('companyId', companyId)
                 .input('companyName', CompanyName)
@@ -52,9 +50,6 @@ const updateCompanyProfile = async (companyId, profileData) => {
                         LogoURL = @logoUrl
                     WHERE CompanyID = @companyId
                 `)
-
-            // Update or Insert CompanyLocation
-            // First check if location exists
             const locationCheck = await request.query(`SELECT * FROM [CompanyLocation] WHERE CompanyID = '${companyId}'`)
 
             if (locationCheck.recordset.length > 0) {
