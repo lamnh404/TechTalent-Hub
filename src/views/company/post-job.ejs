@@ -1,172 +1,234 @@
-<%- include('../partials/header', { title: 'Post A Job' }) %>
+<%
+    // 1. Mock Data: Danh sách kỹ năng có sẵn trong hệ thống (để gợi ý)
+    if (typeof availableSkills === 'undefined') {
+        var availableSkills = [
+            "Java", "Python", "JavaScript", "ReactJS", "Node.js", "Spring Boot", 
+            "C#", ".NET", "SQL", "NoSQL", "AWS", "Docker", "Kubernetes", 
+            "DevOps", "CI/CD", "Figma", "UI/UX", "Scrum", "Agile", "English"
+        ];
+    }
+%>
 
-    <body class="dashboard-page">
-        <div class="dashboard-wrapper">
-            <%- include('../partials/dashboard-sidebar', { activePage: 'post-job' }) %>
+<%- include('../partials/header', { title: 'Post a New Job' }) %>
 
-                <main class="main-content">
-                    <header class="dashboard-header">
-                        <h5 class="mb-0 font-weight-bold text-dark">Post a New Job</h5>
-                        <div class="d-flex align-items-center">
-                            <div class="dropdown">
-                                <a href="#"
-                                    class="d-flex align-items-center text-decoration-none text-dark dropdown-toggle"
-                                    data-toggle="dropdown">
-                                    <img src="<%= (typeof user !== 'undefined' && user.avatarUrl) ? user.avatarUrl : '/images/default-avatar.png' %>"
-                                        class="rounded-circle mr-2" width="35" height="35"
-                                        style="object-fit: cover; border: 1px solid #dee2e6;">
-                                    <span class="font-weight-bold small mr-1">
-                                        <%= (typeof user !=='undefined' && user.email) ? user.email.split('@')[0]
-                                            : 'Company' %>
-                                    </span>
-                                </a>
-                                <div class="dropdown-menu dropdown-menu-right border-0 shadow-lg">
-                                    <a class="dropdown-item" href="/">Back Home</a>
-                                    <div class="dropdown-divider"></div>
-                                    <a class="dropdown-item text-danger" href="/auth/logout">Logout</a>
-                                </div>
-                            </div>
-                        </div>
-                    </header>
+<body class="dashboard-page">
+    <div class="dashboard-wrapper">
+        
+        <%- include('../partials/dashboard-sidebar', { activePage: 'post-job' }) %>
 
-                    <div class="p-4">
-                        <div class="row justify-content-center">
-                            <div class="col-lg-10">
-
-                                <div class="card border-0 shadow-sm rounded-lg">
-                                    <div class="card-body p-5">
-                                        <div class="mb-4 pb-3 border-bottom">
-                                            <h4 class="font-weight-bold text-primary mb-1">Job Details</h4>
-                                            <p class="text-muted small mb-0">Fill in the information to attract the best
-                                                talent.</p>
-                                        </div>
-
-                                        <form action="/company/jobs/create" method="POST">
-
-                                            <div class="row">
-                                                <div class="col-md-8 mb-3">
-                                                    <label class="font-weight-bold small text-dark">Job Title <span
-                                                            class="text-danger">*</span></label>
-                                                    <div class="input-wrapper">
-                                                        <i class="fas fa-briefcase input-icon"></i>
-                                                        <input type="text" class="form-control-modern" name="JobTitle"
-                                                            placeholder="e.g. Senior React Developer" required>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-4 mb-3">
-                                                    <label class="font-weight-bold small text-dark">Employment
-                                                        Type</label>
-                                                    <div class="input-wrapper">
-                                                        <i class="far fa-clock input-icon"></i>
-                                                        <select class="form-control-modern" name="EmploymentType">
-                                                            <option value="FullTime">Full-time</option>
-                                                            <option value="PartTime">Part-time</option>
-                                                            <option value="Contract">Contract</option>
-                                                            <option value="Internship">Internship</option>
-                                                            <option value="Remote">Remote</option>
-                                                        </select>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <div class="row">
-                                                <div class="col-md-3 mb-3">
-                                                    <label class="font-weight-bold small text-dark">Min Salary
-                                                        ($)</label>
-                                                    <div class="input-wrapper">
-                                                        <i class="fas fa-dollar-sign input-icon"></i>
-                                                        <input type="number" class="form-control-modern"
-                                                            name="SalaryMin" placeholder="1000">
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-3 mb-3">
-                                                    <label class="font-weight-bold small text-dark">Max Salary
-                                                        ($)</label>
-                                                    <div class="input-wrapper">
-                                                        <i class="fas fa-dollar-sign input-icon"></i>
-                                                        <input type="number" class="form-control-modern"
-                                                            name="SalaryMax" placeholder="3000">
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-3 mb-3">
-                                                    <label class="font-weight-bold small text-dark">Experience
-                                                        (Years)</label>
-                                                    <div class="input-wrapper">
-                                                        <i class="fas fa-medal input-icon"></i>
-                                                        <input type="number" class="form-control-modern"
-                                                            name="ExperienceRequired" placeholder="2" min="0">
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-3 mb-3">
-                                                    <label class="font-weight-bold small text-dark">Openings</label>
-                                                    <div class="input-wrapper">
-                                                        <i class="fas fa-users input-icon"></i>
-                                                        <input type="number" class="form-control-modern"
-                                                            name="OpeningCount" placeholder="1" min="1" value="1">
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <div class="row">
-                                                <div class="col-md-8 mb-3">
-                                                    <label class="font-weight-bold small text-dark">Job Location <span
-                                                            class="text-danger">*</span></label>
-                                                    <div class="input-wrapper">
-                                                        <i class="fas fa-map-marker-alt input-icon"></i>
-                                                        <input type="text" class="form-control-modern" name="Location"
-                                                            placeholder="e.g. District 1, Ho Chi Minh City" required>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-4 mb-3">
-                                                    <label class="font-weight-bold small text-dark">Application
-                                                        Deadline</label>
-                                                    <div class="input-wrapper">
-                                                        <i class="far fa-calendar-alt input-icon"></i>
-                                                        <input type="date" class="form-control-modern"
-                                                            name="ApplicationDeadline">
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <div class="form-group mb-4">
-                                                <label class="font-weight-bold small text-dark">Job Description <span
-                                                        class="text-danger">*</span></label>
-                                                <textarea class="form-control-modern h-auto py-3" name="JobDescription"
-                                                    rows="8"
-                                                    placeholder="Describe the role, responsibilities, and requirements..."
-                                                    required></textarea>
-                                                <small class="text-muted mt-1"><i class="fas fa-info-circle mr-1"></i>
-                                                    Tip: Use bullet points for better readability.</small>
-                                            </div>
-
-                                            <div class="form-group mb-4">
-                                                <label class="font-weight-bold small text-dark">Required Skills</label>
-                                                <div class="input-wrapper">
-                                                    <i class="fas fa-tags input-icon"></i>
-                                                    <input type="text" class="form-control-modern" name="skills"
-                                                        placeholder="React, Node.js, MongoDB, AWS (Comma separated)">
-                                                </div>
-                                            </div>
-
-                                            <hr class="my-4">
-
-                                            <div class="d-flex justify-content-end">
-                                                <a href="/company/dashboard"
-                                                    class="btn btn-light mr-3 font-weight-bold text-muted">Cancel</a>
-                                                <button type="submit"
-                                                    class="btn btn-primary-modern px-5 shadow-md font-weight-bold">
-                                                    Post Job Now <i class="fas fa-paper-plane ml-2"></i>
-                                                </button>
-                                            </div>
-
-                                        </form>
-                                    </div>
-                                </div>
-
-                            </div>
+        <main class="main-content">
+            
+            <header class="dashboard-header">
+                <h5 class="mb-0 font-weight-bold text-dark">Post a New Job</h5>
+                <div class="d-flex align-items-center">
+                    <div class="dropdown">
+                        <a href="#" class="d-flex align-items-center text-decoration-none text-dark dropdown-toggle" data-toggle="dropdown">
+                            <img src="<%= (typeof user !== 'undefined' && user.avatarUrl) ? user.avatarUrl : '/images/default-avatar.png' %>" class="rounded-circle mr-2" width="35" height="35" style="object-fit: cover; border: 1px solid #dee2e6;">
+                            <span class="font-weight-bold small mr-1">
+                                <%= (typeof user !== 'undefined' && user.email) ? user.email.split('@')[0] : 'Company' %>
+                            </span>
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-right border-0 shadow-lg">
+                            <a class="dropdown-item" href="/">Back Home</a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item text-danger" href="/auth/logout">Logout</a>
                         </div>
                     </div>
-                </main>
-        </div>
-        <%- include('../partials/footer') %>
-    </body>
+                </div>
+            </header>
+
+            <div class="p-4">
+                <div class="row justify-content-center">
+                    <div class="col-lg-10">
+                        
+                        <div class="card border-0 shadow-sm rounded-lg">
+                            <div class="card-body p-5">
+                                <div class="mb-4 pb-3 border-bottom">
+                                    <h4 class="font-weight-bold text-primary mb-1">Job Details</h4>
+                                    <p class="text-muted small mb-0">Fill in the information to attract the best talent.</p>
+                                </div>
+
+                                <form action="/company/jobs/create" method="POST" id="postJobForm">
+                                    
+                                    <div class="row">
+                                        <div class="col-md-8 mb-3">
+                                            <label class="font-weight-bold small text-dark">Job Title <span class="text-danger">*</span></label>
+                                            <div class="input-wrapper">
+                                                <i class="fas fa-briefcase input-icon"></i>
+                                                <input type="text" class="form-control-modern" name="JobTitle" placeholder="e.g. Senior React Developer" required>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4 mb-3">
+                                            <label class="font-weight-bold small text-dark">Employment Type</label>
+                                            <div class="input-wrapper">
+                                                <i class="far fa-clock input-icon"></i>
+                                                <select class="form-control-modern" name="EmploymentType">
+                                                    <option value="FullTime">Full-time</option>
+                                                    <option value="PartTime">Part-time</option>
+                                                    <option value="Contract">Contract</option>
+                                                    <option value="Internship">Internship</option>
+                                                    <option value="Remote">Remote</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-4 mb-3">
+                                            <label class="font-weight-bold small text-dark">Min Salary ($)</label>
+                                            <div class="input-wrapper">
+                                                <i class="fas fa-dollar-sign input-icon"></i>
+                                                <input type="number" class="form-control-modern" name="SalaryMin" placeholder="1000">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4 mb-3">
+                                            <label class="font-weight-bold small text-dark">Max Salary ($)</label>
+                                            <div class="input-wrapper">
+                                                <i class="fas fa-dollar-sign input-icon"></i>
+                                                <input type="number" class="form-control-modern" name="SalaryMax" placeholder="3000">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4 mb-3">
+                                            <label class="font-weight-bold small text-dark">Experience (Years)</label>
+                                            <div class="input-wrapper">
+                                                <i class="fas fa-medal input-icon"></i>
+                                                <input type="number" class="form-control-modern" name="ExperienceRequired" placeholder="2" min="0">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-8 mb-3">
+                                            <label class="font-weight-bold small text-dark">Job Location <span class="text-danger">*</span></label>
+                                            <div class="input-wrapper">
+                                                <i class="fas fa-map-marker-alt input-icon"></i>
+                                                <input type="text" class="form-control-modern" name="Location" placeholder="e.g. District 1, Ho Chi Minh City" required>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4 mb-3">
+                                            <label class="font-weight-bold small text-dark">Application Deadline</label>
+                                            <div class="input-wrapper">
+                                                <i class="far fa-calendar-alt input-icon"></i>
+                                                <input type="date" class="form-control-modern" name="ApplicationDeadline">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group mb-4">
+                                        <label class="font-weight-bold small text-dark">Job Description <span class="text-danger">*</span></label>
+                                        <textarea class="form-control-modern h-auto py-3" name="JobDescription" rows="8" placeholder="Describe the role, responsibilities, and requirements..." required></textarea>
+                                        <small class="text-muted mt-1"><i class="fas fa-info-circle mr-1"></i> Tip: Use bullet points for better readability.</small>
+                                    </div>
+
+                                    <div class="form-group mb-4">
+                                        <label class="font-weight-bold small text-dark">Required Skills</label>
+                                        
+                                        <div id="selectedSkillsContainer" class="d-flex flex-wrap gap-2 mb-2">
+                                            </div>
+
+                                        <div class="input-wrapper">
+                                            <i class="fas fa-tags input-icon"></i>
+                                            <input type="text" class="form-control-modern" id="skillInput" list="skillOptions" placeholder="Type to search skills (e.g. React, SQL)...">
+                                            
+                                            <datalist id="skillOptions">
+                                                <% availableSkills.forEach(skill => { %>
+                                                    <option value="<%= skill %>"></option>
+                                                <% }) %>
+                                            </datalist>
+                                        </div>
+                                        <small class="text-muted mt-1">Press <strong>Enter</strong> to add a skill.</small>
+                                        
+                                        <input type="hidden" name="skills" id="hiddenSkillsInput">
+                                    </div>
+
+                                    <hr class="my-4">
+
+                                    <div class="d-flex justify-content-end">
+                                        <a href="/company/dashboard" class="btn btn-light mr-3 font-weight-bold text-muted">Cancel</a>
+                                        <button type="button" id="submitBtn" class="btn btn-primary-modern px-5 shadow-md font-weight-bold">
+                                            Post Job Now <i class="fas fa-paper-plane ml-2"></i>
+                                        </button>
+                                    </div>
+
+                                </form>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    <%- include('../partials/footer') %>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const skillInput = document.getElementById('skillInput');
+            const selectedSkillsContainer = document.getElementById('selectedSkillsContainer');
+            const hiddenSkillsInput = document.getElementById('hiddenSkillsInput');
+            const submitBtn = document.getElementById('submitBtn');
+            const form = document.getElementById('postJobForm');
+
+            // Mảng chứa các skill đã chọn
+            let selectedSkills = [];
+
+            // 1. Hàm render lại giao diện tags
+            function renderSkills() {
+                selectedSkillsContainer.innerHTML = '';
+                selectedSkills.forEach((skill, index) => {
+                    const tag = document.createElement('span');
+                    tag.className = 'badge badge-soft-primary px-3 py-2 mr-2 mb-2 d-inline-flex align-items-center animate__animated animate__fadeIn';
+                    tag.style.fontSize = '0.9rem';
+                    tag.innerHTML = `
+                        ${skill}
+                        <i class="fas fa-times ml-2" style="cursor: pointer;" onclick="removeSkill(${index})"></i>
+                    `;
+                    selectedSkillsContainer.appendChild(tag);
+                });
+                
+                // Cập nhật input ẩn (Backend sẽ nhận chuỗi "React,Node.js,SQL")
+                hiddenSkillsInput.value = selectedSkills.join(',');
+            }
+
+            // 2. Hàm thêm skill
+            function addSkill(skillName) {
+                const cleanName = skillName.trim();
+                if (cleanName && !selectedSkills.includes(cleanName)) {
+                    selectedSkills.push(cleanName);
+                    renderSkills();
+                }
+                skillInput.value = ''; // Xóa ô nhập
+            }
+
+            // 3. Hàm xóa skill (gắn vào window để gọi được từ onclick HTML)
+            window.removeSkill = function(index) {
+                selectedSkills.splice(index, 1);
+                renderSkills();
+            };
+
+            // 4. Sự kiện khi nhấn Enter hoặc chọn từ datalist
+            skillInput.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault(); // Ngăn submit form
+                    addSkill(this.value);
+                }
+            });
+
+            // Sự kiện khi chọn từ datalist (change event)
+            skillInput.addEventListener('change', function(e) {
+                addSkill(this.value);
+            });
+
+            // 5. Xử lý submit form
+            submitBtn.addEventListener('click', function() {
+                // Kiểm tra xem đã có skill nào chưa (nếu bắt buộc)
+                if (selectedSkills.length === 0) {
+                    // Nếu không bắt buộc thì bỏ qua, nếu bắt buộc thì alert
+                    alert('Please add at least one skill.');
+                    return;
+                }
+                form.submit();
+            });
+        });
+    </script>
+</body>
