@@ -1,17 +1,16 @@
 import express from 'express'
+import { seekerController } from '~/controllers/seekerController/seekerController'
 
 const router = express.Router()
 
-router.get('/dashboard', (req, res) => {
-    res.render('company/dashboard.ejs', { title: 'Company Dashboard', user: req.session.user })
-})
+router.get('/dashboard', seekerController.viewDashboard)
 
-router.get('/profile', (req, res) => {
-    res.render('seeker/profile.ejs', { title: 'My Profile', user: req.session.user })
-})
+router.get('/profile', seekerController.viewProfile)
+router.post('/profile/update', seekerController.handleUpdateProfile)
+router.post('/profile/addskill', seekerController.addSkill)
+router.post('/profile/delete-skill', seekerController.deleteSkill)
+router.get('/profile/myskills', seekerController.getSkills)
 
-router.get('/saved-jobs', (req, res) => {
-    res.render('seeker/saved-jobs.ejs', { title: 'Saved Jobs', user: req.session.user })
-})
+router.get('/saved-jobs', seekerController.viewSavedJobs)
 
 export const seekerRouter = router

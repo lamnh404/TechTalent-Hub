@@ -9,6 +9,10 @@ router.get('/jobs/create', companyController.getCreateJobPage)
 router.post('/jobs/create', companyController.createJob)
 
 router.get('/jobs', companyController.getJobs)
+router.post('/jobs/:id/delete', companyController.deleteJob)
+router.post('/jobs/:id/status', companyController.toggleJobStatus)
+router.get('/jobs/:id/edit', companyController.getEditJobPage)
+router.post('/jobs/:id/edit', companyController.updateJob)
 
 router.get('/candidates', companyController.getCandidates)
 
