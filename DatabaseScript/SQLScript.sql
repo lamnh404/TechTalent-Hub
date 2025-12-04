@@ -22,8 +22,8 @@ CREATE TABLE [User] (
     [UserId] NVARCHAR(128) NOT NULL,
     [Email] NVARCHAR(256) NOT NULL,
     [PasswordHash] NVARCHAR(256) NOT NULL,
-    [RegistrationDate] DATETIME2 NOT NULL DEFAULT GETDATE(),
-    [LastLoginDate] DATETIME2 NOT NULL DEFAULT GETDATE(),
+    [RegistrationDate] DATETIME NOT NULL DEFAULT GETDATE(),
+    [LastLoginDate] DATETIME NOT NULL DEFAULT GETDATE(),
     [AccountStatus] NVARCHAR(10) NOT NULL DEFAULT N'Active',
     [UserType] NVARCHAR(10) NOT NULL,
     [avatarURL] NVARCHAR(512) NOT NULL DEFAULT 'https://aic.com.vn/wp-content/uploads/2024/10/avatar-fb-mac-dinh-1.jpg',
@@ -39,7 +39,7 @@ CREATE TABLE [Admin] (
     [AdminId] NVARCHAR(128) NOT NULL,
     [AdminName] NVARCHAR(128) NOT NULL,
     [AdminRole] NVARCHAR(10) NOT NULL,
-    [DateAssigned] DATETIME2 NOT NULL DEFAULT GETDATE(),
+    [DateAssigned] DATETIME NOT NULL DEFAULT GETDATE(),
     PRIMARY KEY ([AdminId]),
     CONSTRAINT [FK_Admin_AdminId_User]
         FOREIGN KEY ([AdminId]) REFERENCES [User]([UserId])
@@ -173,8 +173,8 @@ CREATE TABLE [Job] (
     [SalaryMax] DECIMAL(15,2) NULL,
     [Location] NVARCHAR(255) NULL,
     [OpeningCount] INT NOT NULL DEFAULT 1,
-    [PostedDate] DATETIME2 NOT NULL DEFAULT GETDATE(),
-    [ApplicationDeadline] DATETIME2 NULL,
+    [PostedDate] DATETIME NOT NULL DEFAULT GETDATE(),
+    [ApplicationDeadline] DATETIME NULL,
     [JobStatus] NVARCHAR(10) NOT NULL DEFAULT 'Open',
     PRIMARY KEY ([JobID]),
     CONSTRAINT [FK_Job_CompanyID_Company]
@@ -218,9 +218,9 @@ CREATE TABLE [Application] (
     [ApplicationID] INT NOT NULL IDENTITY(1,1),
     [JobSeekerID] NVARCHAR(128) NOT NULL,
     [JobID] NVARCHAR(128) NOT NULL,
-    [ApplicationDate] DATETIME2 NOT NULL DEFAULT GETDATE(),
+    [ApplicationDate] DATETIME NOT NULL DEFAULT GETDATE(),
     [CoverLetterURL] NVARCHAR(512) NULL,
-    [InterviewDate] DATETIME2 NULL,
+    [InterviewDate] DATETIME NULL,
     [InterviewNote] NVARCHAR(MAX) NULL,
     [ApplicationStatus] NVARCHAR(12) NOT NULL DEFAULT N'Submitted',
     [RejectedReason] NVARCHAR(MAX) NULL,
@@ -248,7 +248,7 @@ CREATE TABLE [ReviewCompany] (
     [JobSeekerID] NVARCHAR(128) NOT NULL,
     [CompanyID] NVARCHAR(128) NOT NULL,
     [ReviewTitle] NVARCHAR(255) NULL,
-    [ReviewDate] DATETIME2 NOT NULL DEFAULT GETDATE(),
+    [ReviewDate] DATETIME NOT NULL DEFAULT GETDATE(),
     [ReviewText] NVARCHAR(MAX) NULL,
     [Rating] TINYINT NOT NULL,
     [VerificationStatus] NVARCHAR(10) NOT NULL DEFAULT N'Pending',
@@ -275,7 +275,7 @@ CREATE TABLE [JobMetrics] (
     [AppliedCount] INT NOT NULL DEFAULT 0,
     [LikeCount] INT NOT NULL DEFAULT 0,
     [ViewCount] INT NOT NULL DEFAULT 0,
-    [LastUpdated] DATETIME2 NOT NULL DEFAULT GETDATE(),
+    [LastUpdated] DATETIME NOT NULL DEFAULT GETDATE(),
     PRIMARY KEY ([JobMetricID]),
     CONSTRAINT [FK_JobMetrics_JobMetricID_Job]
         FOREIGN KEY ([JobMetricID]) REFERENCES [Job]([JobID])
@@ -288,7 +288,7 @@ CREATE TABLE [Notification] (
     [NotificationID] INT NOT NULL IDENTITY(1,1),
     [NotificationType] NVARCHAR(12) NOT NULL,
     [NotificationContent] NVARCHAR(MAX) NOT NULL,
-    [SendDate] DATETIME2 NOT NULL DEFAULT GETDATE(),
+    [SendDate] DATETIME NOT NULL DEFAULT GETDATE(),
     [ReadStatus] BIT NOT NULL DEFAULT 0,
     [DeliveryMethod] NVARCHAR(10) NULL DEFAULT N'InApp',
     PRIMARY KEY ([NotificationID]),
@@ -319,7 +319,7 @@ GO
 CREATE TABLE [Follow] (
     [FollowerID] NVARCHAR(128) NOT NULL,
     [FolloweeID] NVARCHAR(128) NOT NULL,
-    [FollowDate] DATETIME2 NOT NULL DEFAULT GETDATE(),
+    [FollowDate] DATETIME NOT NULL DEFAULT GETDATE(),
     PRIMARY KEY ([FollowerID], [FolloweeID]),
     CONSTRAINT [FK_Follow_FollowerID_User]
         FOREIGN KEY ([FollowerID]) REFERENCES [User]([UserId])
@@ -351,7 +351,7 @@ CREATE TABLE [AuditLog] (
     [LogID] INT NOT NULL IDENTITY(1,1),
     [ActorID] NVARCHAR(128) NULL,
     [ActionType] NVARCHAR(120) NOT NULL,
-    [Timestamp] DATETIME2 NOT NULL DEFAULT GETDATE(),
+    [Timestamp] DATETIME NOT NULL DEFAULT GETDATE(),
     [Detailed] NVARCHAR(MAX) NULL,
     [IPAddress] VARCHAR(45) NULL,
     PRIMARY KEY ([LogID]),
@@ -575,8 +575,8 @@ GO
 
 -- Procedure: Get application statistics by company
 CREATE PROCEDURE dbo.sp_GetApplicationStatisticsByCompany(
-    @p_StartDate DATETIME2 = NULL,
-    @p_EndDate DATETIME2 = NULL
+    @p_StartDate DATETIME = NULL,
+    @p_EndDate DATETIME = NULL
 )
 AS
 BEGIN
@@ -684,8 +684,8 @@ BEGIN
     DECLARE @next_id INT;
     DECLARE @new_UserId NVARCHAR(128);
     
-    DECLARE @Email NVARCHAR(256), @PasswordHash NVARCHAR(256), @RegistrationDate DATETIME2, 
-            @LastLoginDate DATETIME2, @AccountStatus NVARCHAR(10), @UserType NVARCHAR(10);
+    DECLARE @Email NVARCHAR(256), @PasswordHash NVARCHAR(256), @RegistrationDate DATETIME, 
+            @LastLoginDate DATETIME, @AccountStatus NVARCHAR(10), @UserType NVARCHAR(10);
 
     DECLARE cursor_inserted CURSOR FOR
     SELECT Email, PasswordHash, ISNULL(RegistrationDate, GETDATE()), 
@@ -729,7 +729,7 @@ BEGIN
         [CompanyID] NVARCHAR(128), [JobTitle] NVARCHAR(255), [JobDescription] NVARCHAR(MAX),
         [EmploymentType] NVARCHAR(10), [ExperienceRequired] SMALLINT, [SalaryMin] DECIMAL(15,2),
         [SalaryMax] DECIMAL(15,2), [Location] NVARCHAR(255), [OpeningCount] INT,
-        [PostedDate] DATETIME2, [ApplicationDeadline] DATETIME2, [JobStatus] NVARCHAR(10)
+        [PostedDate] DATETIME, [ApplicationDeadline] DATETIME, [JobStatus] NVARCHAR(10)
     );
 
     INSERT INTO @JobData
@@ -743,7 +743,7 @@ BEGIN
     DECLARE @CompanyID NVARCHAR(128), @JobTitle NVARCHAR(255), @JobDescription NVARCHAR(MAX),
             @EmploymentType NVARCHAR(10), @ExperienceRequired SMALLINT, @SalaryMin DECIMAL(15,2),
             @SalaryMax DECIMAL(15,2), @Location NVARCHAR(255), @OpeningCount INT,
-            @PostedDate DATETIME2, @ApplicationDeadline DATETIME2, @JobStatus NVARCHAR(10);
+            @PostedDate DATETIME, @ApplicationDeadline DATETIME, @JobStatus NVARCHAR(10);
     
     DECLARE @next_id INT;
     DECLARE @new_JobID NVARCHAR(128);
