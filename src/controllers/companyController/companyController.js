@@ -1,6 +1,7 @@
 import { companyModel } from '~/models/companyModel/companyModel.js'
 import { jobModel } from '~/models/jobModel/jobModel.js'
 import { applicationModel } from '~/models/applyModel/applicationModel.js'
+import { seekerModel } from '~/models/seekerModel/seekerModel.js'
 import { StatusCodes } from 'http-status-codes'
 import { ApiError } from '~/utils/ApiError'
 
@@ -84,14 +85,26 @@ const updateProfile = async (req, res, next) => {
     }
 }
 
-const getCreateJobPage = (req, res) => {
-    res.render('company/post-job.ejs', { title: 'Post A Job', user: req.session.user })
+const getCreateJobPage = async (req, res, next) => {
+    try {
+        const availableSkills = await seekerModel.getAvailableSkills()
+        res.render('company/post-job.ejs', {
+            title: 'Post A Job',
+            user: req.session.user,
+            availableSkills
+        })
+    } catch (error) {
+        next(error)
+    }
 }
 
 const createJob = async (req, res, next) => {
     try {
-        const { JobTitle, JobDescription, SalaryMin, SalaryMax, Location, EmploymentType, ExperienceRequired, ApplicationDeadline, OpeningCount } = req.body
+        const { JobTitle, JobDescription, SalaryMin, SalaryMax, Location, EmploymentType, ExperienceRequired, ApplicationDeadline, OpeningCount, skills } = req.body
         const companyId = req.session.user.id
+
+        // Parse skills from comma-separated string if needed, or use as array if already array
+        const skillsArray = skills ? skills.split(',').filter(s => s.trim() !== '') : []
 
         await jobModel.createJob({
             jobTitle: JobTitle,
@@ -103,16 +116,20 @@ const createJob = async (req, res, next) => {
             experienceRequired: ExperienceRequired,
             applicationDeadline: ApplicationDeadline,
             openingCount: OpeningCount,
-            companyId: companyId
+            companyId: companyId,
+            skills: skillsArray
         })
 
         res.redirect('/company/jobs')
     } catch (error) {
         console.log(error)
+        const availableSkills = await seekerModel.getAvailableSkills()
         res.render('company/post-job.ejs', {
             title: 'Post A Job',
             error: error.message,
-            user: req.session.user
+            user: req.session.user,
+            availableSkills,
+            job: req.body // Pass back submitted data
         })
     }
 }
@@ -155,11 +172,14 @@ const getEditJobPage = async (req, res, next) => {
             throw new ApiError(StatusCodes.NOT_FOUND, 'Job not found or unauthorized')
         }
 
+        const availableSkills = await seekerModel.getAvailableSkills()
+
         res.render('company/post-job.ejs', {
             title: 'Edit Job',
             user: req.session.user,
             job,
-            isEdit: true
+            isEdit: true,
+            availableSkills
         })
     } catch (error) {
         next(error)
@@ -167,10 +187,14 @@ const getEditJobPage = async (req, res, next) => {
 }
 
 const updateJob = async (req, res, next) => {
+    const { id } = req.params
+    const job = await jobModel.getJobById(id)
     try {
-        const { id } = req.params
         const companyId = req.session.user.id
-        const { JobTitle, JobDescription, SalaryMin, SalaryMax, Location, EmploymentType, ExperienceRequired, ApplicationDeadline, OpeningCount } = req.body
+
+        const { JobTitle, JobDescription, SalaryMin, SalaryMax, Location, EmploymentType, ExperienceRequired, ApplicationDeadline, OpeningCount, skills } = req.body
+
+        const skillsArray = skills ? skills.split(',').filter(s => s.trim() !== '') : []
 
         await jobModel.updateJob(id, companyId, {
             jobTitle: JobTitle,
@@ -181,22 +205,21 @@ const updateJob = async (req, res, next) => {
             employmentType: EmploymentType,
             experienceRequired: ExperienceRequired,
             applicationDeadline: ApplicationDeadline,
-            openingCount: OpeningCount
+            openingCount: OpeningCount,
+            skills: skillsArray
         })
 
         res.redirect('/company/jobs')
     } catch (error) {
         console.log(error)
-        // In case of error, re-render with error message and existing data
-        // For simplicity, redirecting to edit page with error query param could be an option, 
-        // or re-rendering. Re-rendering requires fetching job data again or passing body back.
-        // Let's re-render.
+        const availableSkills = await seekerModel.getAvailableSkills()
         res.render('company/post-job.ejs', {
             title: 'Edit Job',
             error: error.message,
             user: req.session.user,
-            job: { ...req.body, JobID: id }, // Pass back submitted data as job object
-            isEdit: true
+            job,
+            isEdit: true,
+            availableSkills
         })
     }
 }
