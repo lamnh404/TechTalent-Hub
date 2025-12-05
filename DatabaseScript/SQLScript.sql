@@ -103,6 +103,7 @@ CREATE TABLE [JobSeeker] (
         ON DELETE NO ACTION,
     CONSTRAINT [CK_JobSeeker_Gender] CHECK ([Gender] IN (N'MALE',N'FEMALE',N'OTHER'))
 );
+
 GO
 
 CREATE TABLE [Skill] (
@@ -114,6 +115,7 @@ CREATE TABLE [Skill] (
     CONSTRAINT [UQ_Skill_SkillName] UNIQUE ([SkillName]),
     CONSTRAINT [CK_Skill_PopularityScore] CHECK ([PopularityScore] >= 0 AND [PopularityScore] <= 100)
 );
+
 GO
 
 CREATE TABLE [JobSeekerSkill] (
@@ -132,8 +134,11 @@ CREATE TABLE [JobSeekerSkill] (
         ON DELETE NO ACTION,
     CONSTRAINT [CK_JSS_Proficiency] CHECK ([ProficiencyLevel] IN (N'Beginner',N'Intermediate',N'Advanced',N'Expert'))
 );
+
 GO
+
 CREATE INDEX [IX_JobSeekerSkill_SkillID] ON [JobSeekerSkill]([SkillID]);
+
 GO
 
 CREATE TABLE [Experience] (
@@ -149,7 +154,7 @@ CREATE TABLE [Experience] (
     CONSTRAINT [UQ_Experience_JobSeeker_Company_JobTitle] UNIQUE ([JobSeekerID], [CompanyID], [JobTitle]),
     CONSTRAINT [FK_Experience_JobSeekerID_JobSeeker]
         FOREIGN KEY ([JobSeekerID]) REFERENCES [JobSeeker]([JobSeekerID])
-        ON UPDATE NO ACTION  -- Changed from CASCADE
+        ON UPDATE NO ACTION 
         ON DELETE CASCADE,
     CONSTRAINT [FK_Experience_CompanyID_Company]
         FOREIGN KEY ([CompanyID]) REFERENCES [Company]([CompanyID])
@@ -190,8 +195,10 @@ CREATE TABLE [Job] (
     CONSTRAINT [CK_Job_Status] CHECK ([JobStatus] IN (N'Open',N'Closed',N'OnHold',N'Filled'))
 );
 GO
+
 CREATE INDEX [IX_Job_CompanyID] ON [Job]([CompanyID]);
 GO
+
 CREATE INDEX [IX_Job_PostedDate] ON [Job]([PostedDate]);
 GO
 
@@ -316,6 +323,7 @@ CREATE TABLE [ReceiveNotification] (
         ON DELETE CASCADE
 );
 GO
+
 CREATE INDEX [IX_ReceiveNotification_ReceiverID] ON [ReceiveNotification]([ReceiverID]);
 GO
 
@@ -561,6 +569,7 @@ BEGIN
         j.[JobID],
         j.[JobTitle],
         c.[CompanyName],
+        c.[LogoURL],
         j.[Location],
         j.[EmploymentType],
         j.[SalaryMin],
