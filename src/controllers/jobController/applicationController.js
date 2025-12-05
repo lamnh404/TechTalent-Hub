@@ -1,5 +1,6 @@
 import { StatusCodes } from 'http-status-codes'
 import { applicationModel } from '~/models/applyModel/applicationModel'
+import { jobModel } from '~/models/jobModel/jobModel'
 
 const createApplication = async (req, res, next) => {
     try {
@@ -17,7 +18,15 @@ const createApplication = async (req, res, next) => {
 
         res.redirect('/seeker/applications')
     } catch (error) {
-        next(error)
+        try {
+            const job = await jobModel.getJobById(req.body.jobId)
+            if (!job) {
+                return res.redirect(`/jobs?error=${encodeURIComponent(error.message)}`)
+            }
+            return res.render('homepage/job-detail.ejs', { title: job.JobTitle || 'Job Details', job, user: req.session.user, error: error.message })
+        } catch (e) {
+            return res.redirect(`/jobs/${req.body.jobId}?error=${encodeURIComponent(error.message)}`)
+        }
     }
 }
 

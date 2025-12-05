@@ -1,7 +1,7 @@
 import sql from 'mssql';
 import { GET_SQL_POOL } from '~/config/SQLDatabase';
 
-const searchJobs = async (keyword, page = 1, limit = 10, sort = 'newest', jobTitle, company, minSalary, maxSalary) => {
+const searchJobs = async (keyword, page = 1, limit = 10, sort = 'newest', jobTitle, company, minSalary, employmentType) => {
         try {
             const pool = GET_SQL_POOL();
             const request = pool.request();
@@ -22,20 +22,15 @@ const searchJobs = async (keyword, page = 1, limit = 10, sort = 'newest', jobTit
                 extraWhere += ` AND C.CompanyName LIKE @companyFilter`;
             }
 
-            const hasMin = typeof minSalary !== 'undefined' && minSalary !== null && minSalary !== '' && !isNaN(minSalary);
-            const hasMax = typeof maxSalary !== 'undefined' && maxSalary !== null && maxSalary !== '' && !isNaN(maxSalary);
+            if (employmentType) {
+                request.input("employmentType", sql.NVarChar, employmentType);
+                extraWhere += ` AND J.EmploymentType = @employmentType`;
+            }
+
+            const hasMin = Number.isFinite(minSalary);
             if (hasMin) {
-                request.input("minSalary", sql.Int, parseInt(minSalary, 10));
-            }
-            if (hasMax) {
-                request.input("maxSalary", sql.Int, parseInt(maxSalary, 10));
-            }
-            if (hasMin && hasMax) {
-                extraWhere += ` AND NOT ( (J.SalaryMax IS NOT NULL AND J.SalaryMax < @minSalary) OR (J.SalaryMin IS NOT NULL AND J.SalaryMin > @maxSalary) )`;
-            } else if (hasMin) {
-                extraWhere += ` AND (J.SalaryMax IS NULL OR J.SalaryMax >= @minSalary)`;
-            } else if (hasMax) {
-                extraWhere += ` AND (J.SalaryMin IS NULL OR J.SalaryMin <= @maxSalary)`;
+                request.input("minSalary", sql.Decimal(15,2), minSalary);
+                extraWhere += ` AND ( J.SalaryMin IS NOT NULL AND J.SalaryMin >= @minSalary )`;
             }
 
             let orderClause = 'PostedDate DESC';
@@ -69,7 +64,18 @@ const searchJobs = async (keyword, page = 1, limit = 10, sort = 'newest', jobTit
                     ${extraWhere}
                 )
                 SELECT 
-                    *, 
+                    JobID,
+                    JobTitle,
+                    JobDescription,
+                    SalaryMin,
+                    SalaryMax,
+                    Location,
+                    EmploymentType,
+                    PostedDate,
+                    CompanyName,
+                    LogoURL,
+                    ViewCount,
+                    AppliedCount,
                     COUNT(*) OVER() as TotalCount 
                 FROM DistinctJobs
                 ORDER BY ${orderClause}
