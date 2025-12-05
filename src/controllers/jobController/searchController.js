@@ -6,8 +6,13 @@ const searchController = {
             const q = req.query.q || "";
             const page = parseInt(req.query.page) || 1;
             const limit = parseInt(req.query.limit) || 7;
+            const sort = req.query.sort || 'newest';
+            const jobTitle = req.query.jobTitle || '';
+            const company = req.query.company || '';
+            const minSalary = typeof req.query.minSalary !== 'undefined' ? req.query.minSalary : '';
+            const maxSalary = typeof req.query.maxSalary !== 'undefined' ? req.query.maxSalary : '';
 
-            const jobs = await searchModel.searchJobs(q, page, limit);
+            const jobs = await searchModel.searchJobs(q, page, limit, sort, jobTitle, company, minSalary, maxSalary);
 
             let totalJobs = 0;
             if (jobs.length > 0) {
@@ -18,6 +23,11 @@ const searchController = {
             res.render("homepage/job-listing.ejs", {
                 jobs,
                 q,
+                sort,
+                jobTitle,
+                company,
+                minSalary,
+                maxSalary,
                 user: req.session.user,
 
                 pagination: {
