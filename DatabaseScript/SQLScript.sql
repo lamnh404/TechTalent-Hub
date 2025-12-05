@@ -81,6 +81,7 @@ CREATE TABLE [CompanyLocation] (
         ON DELETE CASCADE
 );
 GO
+
 CREATE INDEX [IX_CompanyLocation_CompanyID] ON [CompanyLocation]([CompanyID]);
 GO
 
@@ -1473,13 +1474,13 @@ UNION ALL SELECT @JobSeekerId5, N'LinkedIn', N'https://linkedin.com/in/hoang-van
 UNION ALL SELECT @JobSeekerId5, N'GitHub', N'https://github.com/hoangvane'
 UNION ALL SELECT @JobSeekerId5, N'Portfolio', N'https://hoangvane.com'
 UNION ALL SELECT @CompanyId1, N'LinkedIn', N'https://linkedin.com/company/fpt-software'
-UNION ALL SELECT @CompanyId1, N'Facebook', N'https://facebook.com/fptsoftware'
+UNION ALL SELECT @CompanyId1, N'Facebook', N'https://www.facebook.com/fptsoftware.official'
 UNION ALL SELECT @CompanyId2, N'LinkedIn', N'https://linkedin.com/company/vng-corporation'
-UNION ALL SELECT @CompanyId2, N'Facebook', N'https://facebook.com/vngcorp'
+UNION ALL SELECT @CompanyId2, N'Facebook', N'https://www.facebook.com/VNGGroup.Official'
 UNION ALL SELECT @CompanyId3, N'LinkedIn', N'https://linkedin.com/company/techcombank'
 UNION ALL SELECT @CompanyId3, N'Facebook', N'https://facebook.com/techcombank'
 UNION ALL SELECT @CompanyId4, N'LinkedIn', N'https://linkedin.com/company/viettel-group'
-UNION ALL SELECT @CompanyId4, N'Facebook', N'https://facebook.com/viettelgroup';
+UNION ALL SELECT @CompanyId4, N'Facebook', N'https://www.facebook.com/vietteltelecom';
 GO
 
 
