@@ -30,13 +30,16 @@ const createJob = async (jobData) => {
                 INSERT INTO [Job] ([CompanyID], [JobTitle], [JobDescription], [EmploymentType], [ExperienceRequired], [SalaryMin], [SalaryMax], [Location], [OpeningCount], [ApplicationDeadline], [JobStatus], [PostedDate])
                 VALUES (@companyId, @jobTitle, @jobDescription, @employmentType, @experienceRequired, @salaryMin, @salaryMax, @location, @openingCount, @applicationDeadline, @jobStatus, @postedDate);
             `)
-        console.log(jobTitle, companyId, time)
+
         const jobId = await findJobID(jobTitle, companyId, time)
-        // Khong biet tai sao 
-        console.log('hello this is insertedJob', jobId, 'end')
+        console.log('Created Job ID:', jobId)
 
         if (skills && skills.length > 0) {
-            for (const skillName of skills) {
+            for (const skill of skills) {
+                const skillName = skill.SkillName
+                const proficiencyLevel = skill.ProficiencyLevel
+                const isRequired = skill.IsRequired || 0
+
                 let skillId
                 const skillCheck = await pool.request()
                     .input('SkillName', sql.NVarChar, skillName)
@@ -48,9 +51,8 @@ const createJob = async (jobData) => {
                     const createSkill = await pool.request()
                         .input('SkillName', sql.NVarChar, skillName)
                         .query(`
-                            INSERT INTO [Skill] (SkillName, PopularityScore) 
-                            OUTPUT INSERTED.SkillID
-                            VALUES (@SkillName, 0);
+                            INSERT INTO [Skill] (SkillName) 
+                            VALUES (@SkillName);
                         `)
                     skillId = createSkill.recordset[0].SkillID
                 }
@@ -58,8 +60,8 @@ const createJob = async (jobData) => {
                 await pool.request()
                     .input('JobID', jobId)
                     .input('SkillID', skillId)
-                    .input('ProficiencyLevel', 'Intermediate')
-                    .input('IsRequired', true)
+                    .input('ProficiencyLevel', proficiencyLevel)
+                    .input('IsRequired', isRequired)
                     .query(`
                         INSERT INTO [JobRequireSkill] (JobID, SkillID, ProficiencyLevel, IsRequired)
                         VALUES (@JobID, @SkillID, @ProficiencyLevel, @IsRequired);
@@ -90,18 +92,20 @@ const getJobById = async (jobId) => {
         if (result.recordset.length === 0) return null
 
         const job = result.recordset[0]
-
-        // Get skills
         const skillsResult = await pool.request()
             .input('jobId', jobId)
             .query(`
-                SELECT S.SkillName
+                SELECT S.SkillName, JRS.ProficiencyLevel, JRS.IsRequired
                 FROM [JobRequireSkill] JRS
                 JOIN [Skill] S ON JRS.SkillID = S.SkillID
                 WHERE JRS.JobID = @jobId
             `)
 
-        job.Skills = skillsResult.recordset.map(r => r.SkillName)
+        job.Skills = skillsResult.recordset.map(r => ({
+            SkillName: r.SkillName,
+            ProficiencyLevel: r.ProficiencyLevel,
+            IsRequired: r.IsRequired
+        }))
 
         return job
     } catch (error) {
@@ -113,8 +117,6 @@ const getJobsByCompanyId = async (companyId, page = 1, limit = 10) => {
     try {
         const pool = GET_SQL_POOL()
         const offset = (page - 1) * limit
-
-        // Get total count for pagination
         const countResult = await pool.request()
             .input('companyId', companyId)
             .query(`
@@ -153,7 +155,6 @@ const getJobsByCompanyId = async (companyId, page = 1, limit = 10) => {
 const deleteJob = async (jobId, companyId) => {
     try {
         const pool = GET_SQL_POOL()
-        // Verify ownership before deleting
         const result = await pool.request()
             .input('jobId', jobId)
             .input('companyId', companyId)
@@ -234,7 +235,11 @@ const updateJob = async (jobId, companyId, jobData) => {
                 .input('JobID', jobId)
                 .query(`DELETE FROM [JobRequireSkill] WHERE JobID = @JobID`)
 
-            for (const skillName of skills) {
+            for (const skill of skills) {
+                const skillName = skill.SkillName
+                const proficiencyLevel = skill.ProficiencyLevel
+                const isRequired = skill.IsRequired !== undefined ? skill.IsRequired : true
+
                 let skillId
                 const skillCheck = await pool.request()
                     .input('SkillName', sql.NVarChar, skillName)
@@ -256,8 +261,8 @@ const updateJob = async (jobId, companyId, jobData) => {
                 await pool.request()
                     .input('JobID', jobId)
                     .input('SkillID', skillId)
-                    .input('ProficiencyLevel', 'Intermediate')
-                    .input('IsRequired', true)
+                    .input('ProficiencyLevel', proficiencyLevel)
+                    .input('IsRequired', isRequired)
                     .query(`
                         INSERT INTO [JobRequireSkill] (JobID, SkillID, ProficiencyLevel, IsRequired)
                         VALUES (@JobID, @SkillID, @ProficiencyLevel, @IsRequired)
