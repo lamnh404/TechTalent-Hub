@@ -6,7 +6,6 @@ import { GET_SQL_POOL } from '~/config/SQLDatabase.js'
 
 const login = async (email, password) => {
     try {
-        console.log(email, password, 'hello im login')
         const pool = GET_SQL_POOL()
         const result = await pool.request()
             .input('email', email)

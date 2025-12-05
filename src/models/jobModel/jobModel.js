@@ -30,9 +30,9 @@ const createJob = async (jobData) => {
                 INSERT INTO [Job] ([CompanyID], [JobTitle], [JobDescription], [EmploymentType], [ExperienceRequired], [SalaryMin], [SalaryMax], [Location], [OpeningCount], [ApplicationDeadline], [JobStatus], [PostedDate])
                 VALUES (@companyId, @jobTitle, @jobDescription, @employmentType, @experienceRequired, @salaryMin, @salaryMax, @location, @openingCount, @applicationDeadline, @jobStatus, @postedDate);
             `)
+        console.log(jobResult)
 
-        const jobId = await findJobID(jobTitle, companyId, time)
-        console.log('Created Job ID:', jobId)
+        const jobId = jobResult.recordset[0].JobID
 
         if (skills && skills.length > 0) {
             for (const skill of skills) {
