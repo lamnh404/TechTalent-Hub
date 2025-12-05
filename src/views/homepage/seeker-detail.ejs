@@ -1,0 +1,113 @@
+<%
+    // Mock Data: Chi tiết ứng viên
+    if (typeof seeker === 'undefined') {
+        var seeker = {
+            Name: "Nguyen Van A",
+            Title: "Senior Frontend Developer",
+            Avatar: "https://i.pravatar.cc/150?u=1",
+            Location: "Ho Chi Minh City, Vietnam",
+            Email: "nguyenvana@email.com",
+            Phone: "(+84) 901 234 567",
+            Website: "nguyenvana.dev",
+            Bio: "Passionate Frontend Developer with 5 years of experience in building high-performance web applications. I specialize in React ecosystem and UI/UX implementation. Looking for opportunities to work with innovative teams.",
+            Skills: ["ReactJS", "TypeScript", "Next.js", "Tailwind CSS", "Redux", "Figma", "Git"],
+            Experience: [
+                { Role: "Senior Frontend Dev", Company: "TechStart Inc.", Duration: "2021 - Present", Desc: "Led the frontend team of 5. Migrated legacy code to Next.js." },
+                { Role: "Web Developer", Company: "Creative Agency", Duration: "2019 - 2021", Desc: "Developed responsive websites for 20+ clients using React and Vue." }
+            ],
+            Education: [
+                { Degree: "Bachelor of Computer Science", School: "HCMC University of Technology", Year: "2015 - 2019" }
+            ]
+        };
+    }
+%>
+
+<%- include('../partials/header', { title: seeker.Name + ' - Profile' }) %>
+
+<body class="animate-fade-in" style="background-color: #f8fafc;">
+    <%- include('../partials/navbar', {activePage: 'seekers'}) %>
+
+    <div class="container" style="padding-top: 100px; padding-bottom: 50px;">
+        <div class="row">
+            
+            <div class="col-lg-4 mb-4">
+                <div class="card border-0 shadow-sm rounded-lg p-4 text-center mb-4">
+                    <img src="<%= seeker.Avatar %>" class="rounded-circle shadow-lg mb-3 mx-auto d-block border-white border" width="150" height="150" style="object-fit: cover; border-width: 5px !important;">
+                    <h3 class="font-weight-bold text-dark mb-1"><%= seeker.Name %></h3>
+                    <p class="text-primary font-weight-bold mb-3"><%= seeker.Title %></p>
+                    
+                    <div class="text-left mt-4 px-2">
+                        <p class="text-muted mb-2"><i class="fas fa-map-marker-alt fa-fw mr-2 text-primary"></i> <%= seeker.Location %></p>
+                        <p class="text-muted mb-2"><i class="fas fa-envelope fa-fw mr-2 text-primary"></i> <%= seeker.Email %></p>
+                        <p class="text-muted mb-2"><i class="fas fa-phone fa-fw mr-2 text-primary"></i> <%= seeker.Phone %></p>
+                        <p class="text-muted mb-0"><i class="fas fa-globe fa-fw mr-2 text-primary"></i> <a href="#" class="text-muted"><%= seeker.Website %></a></p>
+                    </div>
+
+                    <div class="mt-4">
+                        <button class="btn btn-primary-modern btn-block shadow-md mb-2">
+                            <i class="fas fa-download mr-2"></i> Download CV
+                        </button>
+                        <button class="btn btn-outline-primary btn-block font-weight-bold">
+                            <i class="fas fa-paper-plane mr-2"></i> Send Message
+                        </button>
+                    </div>
+                </div>
+
+                <div class="card border-0 shadow-sm rounded-lg p-4">
+                    <h6 class="font-weight-bold text-dark mb-3">Skills</h6>
+                    <div class="d-flex flex-wrap gap-2">
+                        <% seeker.Skills.forEach(skill => { %>
+                            <span class="badge badge-soft-primary px-3 py-2 mr-1 mb-2"><%= skill %></span>
+                        <% }) %>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-8">
+                
+                <div class="card border-0 shadow-sm rounded-lg p-4 mb-4">
+                    <h5 class="font-weight-bold text-dark mb-3 border-bottom pb-2">About Me</h5>
+                    <p class="text-muted" style="line-height: 1.7;"><%= seeker.Bio %></p>
+                </div>
+
+                <div class="card border-0 shadow-sm rounded-lg p-4 mb-4">
+                    <h5 class="font-weight-bold text-dark mb-4 border-bottom pb-2">Experience</h5>
+                    
+                    <% seeker.Experience.forEach(exp => { %>
+                        <div class="media mb-4">
+                            <div class="bg-soft-primary text-primary rounded-circle d-flex align-items-center justify-content-center mr-3" style="width: 50px; height: 50px;">
+                                <i class="fas fa-briefcase"></i>
+                            </div>
+                            <div class="media-body">
+                                <h6 class="mt-0 font-weight-bold text-dark mb-0"><%= exp.Role %></h6>
+                                <p class="text-primary small font-weight-bold mb-1"><%= exp.Company %></p>
+                                <p class="text-muted small mb-2"><i class="far fa-calendar-alt mr-1"></i> <%= exp.Duration %></p>
+                                <p class="text-muted small"><%= exp.Desc %></p>
+                            </div>
+                        </div>
+                    <% }) %>
+                </div>
+
+                <div class="card border-0 shadow-sm rounded-lg p-4">
+                    <h5 class="font-weight-bold text-dark mb-4 border-bottom pb-2">Education</h5>
+                    
+                    <% seeker.Education.forEach(edu => { %>
+                        <div class="media mb-3">
+                            <div class="bg-soft-success text-success rounded-circle d-flex align-items-center justify-content-center mr-3" style="width: 50px; height: 50px;">
+                                <i class="fas fa-graduation-cap"></i>
+                            </div>
+                            <div class="media-body">
+                                <h6 class="mt-0 font-weight-bold text-dark mb-0"><%= edu.Degree %></h6>
+                                <p class="text-muted mb-1"><%= edu.School %></p>
+                                <p class="text-muted small"><i class="far fa-calendar-alt mr-1"></i> <%= edu.Year %></p>
+                            </div>
+                        </div>
+                    <% }) %>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <%- include('../partials/footer') %>
+</body>

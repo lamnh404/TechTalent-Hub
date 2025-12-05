@@ -1,0 +1,380 @@
+<%- include('../partials/header', { title: typeof isEdit !=='undefined' && isEdit ? 'Edit Job' : 'Post a New Job' }) %>
+
+    <body class="dashboard-page">
+        <div class="dashboard-wrapper">
+
+            <%- include('../partials/dashboard-sidebar', { activePage: 'post-job' }) %>
+
+                <main class="main-content">
+
+                    <header class="dashboard-header">
+                        <h5 class="mb-0 font-weight-bold text-dark">
+                            <%= typeof isEdit !=='undefined' && isEdit ? 'Edit Job' : 'Post a New Job' %>
+                        </h5>
+                        <div class="d-flex align-items-center">
+                            <div class="dropdown">
+                                <a href="#"
+                                    class="d-flex align-items-center text-decoration-none text-dark dropdown-toggle"
+                                    data-toggle="dropdown">
+                                    <img src="<%= (typeof user !== 'undefined' && user.avatarUrl) ? user.avatarUrl : '/images/default-avatar.png' %>"
+                                        class="rounded-circle mr-2" width="35" height="35"
+                                        style="object-fit: cover; border: 1px solid #dee2e6;">
+                                    <span class="font-weight-bold small mr-1">
+                                        <%= (typeof user !=='undefined' && user.email) ? user.email.split('@')[0]
+                                            : 'Company' %>
+                                    </span>
+                                </a>
+                                <div class="dropdown-menu dropdown-menu-right border-0 shadow-lg">
+                                    <a class="dropdown-item" href="/">Back Home</a>
+                                    <div class="dropdown-divider"></div>
+                                    <a class="dropdown-item text-danger" href="/auth/logout">Logout</a>
+                                </div>
+                            </div>
+                        </div>
+                    </header>
+
+                    <div class="p-4">
+                        <div class="row justify-content-center">
+                            <div class="col-lg-10">
+
+                                <div class="card border-0 shadow-sm rounded-lg">
+                                    <div class="card-body p-5">
+                                        <div class="mb-4 pb-3 border-bottom">
+                                            <h4 class="font-weight-bold text-primary mb-1">Job Details</h4>
+                                            <p class="text-muted small mb-0">Fill in the information to attract the best
+                                                talent.</p>
+                                        </div>
+
+                                        <% if (typeof error !=='undefined' && error) { %>
+                                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                                <strong>Error!</strong>
+                                                <%= error %>
+                                                    <button type="button" class="close" data-dismiss="alert"
+                                                        aria-label="Close">
+                                                        <span aria-hidden="true">&times;</span>
+                                                    </button>
+                                            </div>
+                                            <% } %>
+
+                                                <form
+                                                    action="<%= typeof isEdit !== 'undefined' && isEdit ? '/company/jobs/' + job.JobID + '/edit' : '/company/jobs/create' %>"
+                                                    method="POST" id="postJobForm">
+
+                                                    <div class="row">
+                                                        <div class="col-md-8 mb-3">
+                                                            <label class="font-weight-bold small text-dark">Job Title
+                                                                <span class="text-danger">*</span></label>
+                                                            <div class="input-wrapper">
+                                                                <i class="fas fa-briefcase input-icon"></i>
+                                                                <input type="text" class="form-control-modern"
+                                                                    name="JobTitle"
+                                                                    placeholder="e.g. Senior React Developer" required
+                                                                    value="<%= job.JobTitle %>">
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-4 mb-3">
+                                                            <label class="font-weight-bold small text-dark">Employment
+                                                                Type</label>
+                                                            <div class="input-wrapper">
+                                                                <i class="far fa-clock input-icon"></i>
+                                                                <select class="form-control-modern"
+                                                                    name="EmploymentType">
+                                                                    <option value="FullTime"
+                                                                        <%=job.EmploymentType==='FullTime' ? 'selected'
+                                                                        : '' %>>Full-time</option>
+                                                                    <option value="PartTime"
+                                                                        <%=job.EmploymentType==='PartTime' ? 'selected'
+                                                                        : '' %>>Part-time</option>
+                                                                    <option value="Contract"
+                                                                        <%=job.EmploymentType==='Contract' ? 'selected'
+                                                                        : '' %>>Contract</option>
+                                                                    <option value="Internship"
+                                                                        <%=job.EmploymentType==='Internship'
+                                                                        ? 'selected' : '' %>>Internship</option>
+                                                                    <option value="Remote"
+                                                                        <%=job.EmploymentType==='Remote' ? 'selected'
+                                                                        : '' %>>Remote</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="row">
+                                                        <div class="col-md-3 mb-3">
+                                                            <label class="font-weight-bold small text-dark">Min Salary
+                                                                ($)</label>
+                                                            <div class="input-wrapper">
+                                                                <i class="fas fa-dollar-sign input-icon"></i>
+                                                                <input type="number" class="form-control-modern"
+                                                                    name="SalaryMin" placeholder="1000"
+                                                                    value="<%= job.SalaryMin %>">
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-3 mb-3">
+                                                            <label class="font-weight-bold small text-dark">Max Salary
+                                                                ($)</label>
+                                                            <div class="input-wrapper">
+                                                                <i class="fas fa-dollar-sign input-icon"></i>
+                                                                <input type="number" class="form-control-modern"
+                                                                    name="SalaryMax" placeholder="3000"
+                                                                    value="<%= job.SalaryMax %>">
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-3 mb-3">
+                                                            <label class="font-weight-bold small text-dark">Experience
+                                                                (Years)</label>
+                                                            <div class="input-wrapper">
+                                                                <i class="fas fa-medal input-icon"></i>
+                                                                <input type="number" class="form-control-modern"
+                                                                    name="ExperienceRequired" placeholder="2" min="0"
+                                                                    value="<%= job.ExperienceRequired %>">
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-3 mb-3">
+                                                            <label
+                                                                class="font-weight-bold small text-dark">Openings</label>
+                                                            <div class="input-wrapper">
+                                                                <i class="fas fa-users input-icon"></i>
+                                                                <input type="number" class="form-control-modern"
+                                                                    name="OpeningCount" placeholder="1" min="1"
+                                                                    value="<%= job.OpeningCount || '1' %>">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="row">
+                                                        <div class="col-md-8 mb-3">
+                                                            <label class="font-weight-bold small text-dark">Job Location
+                                                                <span class="text-danger">*</span></label>
+                                                            <div class="input-wrapper">
+                                                                <i class="fas fa-map-marker-alt input-icon"></i>
+                                                                <input type="text" class="form-control-modern"
+                                                                    name="Location"
+                                                                    placeholder="e.g. District 1, Ho Chi Minh City"
+                                                                    required value="<%= job.Location %>">
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-4 mb-3">
+                                                            <label class="font-weight-bold small text-dark">Application
+                                                                Deadline</label>
+                                                            <div class="input-wrapper">
+                                                                <i class="far fa-calendar-alt input-icon"></i>
+                                                                <input type="date" class="form-control-modern"
+                                                                    name="ApplicationDeadline"
+                                                                    value="<%= job.ApplicationDeadline ? new Date(job.ApplicationDeadline).toISOString().split('T')[0] : '' %>">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="form-group mb-4">
+                                                        <label class="font-weight-bold small text-dark">Job Description
+                                                            <span class="text-danger">*</span></label>
+                                                        <textarea class="form-control-modern h-auto py-3"
+                                                            name="JobDescription" rows="8"
+                                                            placeholder="Describe the role, responsibilities, and requirements..."
+                                                            required><%= job.JobDescription %></textarea>
+                                                        <small class="text-muted mt-1"><i
+                                                                class="fas fa-info-circle mr-1"></i> Tip: Use bullet
+                                                            points for better readability.</small>
+                                                    </div>
+
+                                                    <div class="form-group mb-4">
+                                                        <div
+                                                            class="d-flex justify-content-between align-items-center mb-2">
+                                                            <label
+                                                                class="font-weight-bold small text-dark mb-0">Required
+                                                                Skills</label>
+                                                            <button type="button"
+                                                                class="btn btn-sm btn-outline-primary rounded-pill font-weight-bold"
+                                                                data-toggle="modal" data-target="#addSkillModal">
+                                                                <i class="fas fa-plus mr-1"></i> Add Requirement
+                                                            </button>
+                                                        </div>
+
+                                                        <div id="skillsContainer"
+                                                            class="d-flex flex-wrap gap-2 p-3 bg-light rounded border border-light"
+                                                            style="min-height: 60px;"></div>
+                                                        <div id="noSkillsMsg" class="text-muted small mt-2">No specific
+                                                            skills required yet.</div>
+
+                                                        <input type="hidden" name="skills" id="skillsInput"
+                                                            value='<%= JSON.stringify(job.Skills || []) %>'>
+                                                    </div>
+
+                                                    <hr class="my-4">
+
+                                                    <div class="d-flex justify-content-end">
+                                                        <a href="/company/dashboard"
+                                                            class="btn btn-light mr-3 font-weight-bold text-muted">Cancel</a>
+                                                        <button type="submit" id="submitBtn"
+                                                            class="btn btn-primary-modern px-5 shadow-md font-weight-bold">
+                                                            <%= typeof isEdit !=='undefined' && isEdit ? 'Update Job'
+                                                                : 'Post Job Now' %> <i
+                                                                    class="fas fa-paper-plane ml-2"></i>
+                                                        </button>
+                                                    </div>
+
+                                                </form>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </main>
+        </div>
+
+        <div class="modal fade" id="addSkillModal" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content border-0 shadow-lg rounded-lg">
+                    <div class="modal-header border-0 pb-0">
+                        <h5 class="modal-title font-weight-bold">Add Job Requirement</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body p-4">
+                        <form id="skillForm">
+                            <div class="form-group mb-3">
+                                <label class="small font-weight-bold text-dark">Skill Name</label>
+                                <div class="input-wrapper">
+                                    <i class="fas fa-code input-icon"></i>
+                                    <input type="text" class="form-control-modern" list="availableSkillsList"
+                                        id="skillNameInput" placeholder="Ex: React, English..." autocomplete="off">
+                                    <datalist id="availableSkillsList">
+                                        <% if (typeof availableSkills !=='undefined' ) { %>
+                                            <% availableSkills.forEach(s=> { %>
+                                                <option value="<%= s.SkillName %>"></option>
+                                                <% }) %>
+                                                    <% } %>
+                                    </datalist>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="small font-weight-bold text-dark">Minimum Level</label>
+                                    <div class="input-wrapper">
+                                        <i class="fas fa-layer-group input-icon"></i>
+                                        <select class="form-control-modern" id="skillLevelInput">
+                                            <option value="Beginner">Beginner</option>
+                                            <option value="Intermediate" selected>Intermediate</option>
+                                            <option value="Advanced">Advanced</option>
+                                            <option value="Expert">Expert</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mb-3 d-flex align-items-center">
+                                    <div class="custom-control custom-checkbox w-100 pt-4">
+                                        <input type="checkbox" class="custom-control-input" id="skillRequiredInput"
+                                            checked>
+                                        <label class="custom-control-label font-weight-bold text-dark"
+                                            for="skillRequiredInput">Is Required?</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer border-0 bg-light rounded-bottom p-3">
+                        <button type="button" class="btn btn-light" data-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-primary-modern shadow-sm" id="saveSkillBtn">Add
+                            Requirement</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <%- include('../partials/footer') %>
+
+            <script>
+                let mySkills = [];
+                try {
+                    const rawData = document.getElementById('skillsInput').value;
+                    if (rawData && rawData.trim().startsWith('[')) {
+                        mySkills = JSON.parse(rawData);
+                    } else if (rawData) {
+                        mySkills = rawData.split(',').map(s => ({
+                            SkillName: s.trim(),
+                            ProficiencyLevel: 'Intermediate',
+                            IsRequired: true
+                        }));
+                    }
+                } catch (e) {
+                    console.error("Error parsing skills", e);
+                    mySkills = [];
+                }
+
+                const skillsContainer = document.getElementById('skillsContainer');
+                const noSkillsMsg = document.getElementById('noSkillsMsg');
+                const skillsInput = document.getElementById('skillsInput');
+
+                function renderSkills() {
+                    skillsContainer.innerHTML = '';
+
+                    if (mySkills.length === 0) {
+                        noSkillsMsg.style.display = 'block';
+                        skillsContainer.style.display = 'none';
+                    } else {
+                        noSkillsMsg.style.display = 'none';
+                        skillsContainer.style.display = 'flex';
+
+                        mySkills.forEach((skill, index) => {
+                            let badgeColor = 'primary';
+                            if (skill.ProficiencyLevel === 'Expert') badgeColor = 'success';
+                            if (skill.ProficiencyLevel === 'Beginner') badgeColor = 'secondary';
+
+                            const html = `
+                    <div class="d-inline-flex align-items-center bg-white border shadow-sm rounded-pill pr-2 pl-3 py-2 animate__animated animate__fadeIn">
+                        <div class="mr-3">
+                            <span class="font-weight-bold text-dark d-block" style="line-height:1.2">${skill.SkillName}</span>
+                            <small class="text-muted" style="font-size: 0.75rem;">
+                                ${skill.ProficiencyLevel} • ${skill.IsRequired ? '<span class="text-danger">Required</span>' : '<span class="text-success">Optional</span>'}
+                            </small>
+                        </div>
+                        <button type="button" class="btn btn-sm btn-light text-danger rounded-circle hover-bg-danger-soft" 
+                                onclick="removeSkill(${index})" style="width: 28px; height: 28px; padding: 0; display:flex; align-items:center; justify-content:center;">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                `;
+                            skillsContainer.insertAdjacentHTML('beforeend', html);
+                        });
+                    }
+                    skillsInput.value = JSON.stringify(mySkills);
+                }
+
+                document.getElementById('saveSkillBtn').addEventListener('click', function () {
+                    const name = document.getElementById('skillNameInput').value;
+                    const level = document.getElementById('skillLevelInput').value;
+                    const isRequired = document.getElementById('skillRequiredInput').checked;
+
+                    if (!name) {
+                        alert("Please enter a skill name");
+                        return;
+                    }
+
+                    if (mySkills.some(s => s.SkillName.toLowerCase() === name.toLowerCase())) {
+                        alert("This requirement is already added!");
+                        return;
+                    }
+
+                    mySkills.push({
+                        SkillName: name,
+                        ProficiencyLevel: level,
+                        IsRequired: isRequired
+                    });
+
+                    renderSkills();
+
+                    document.getElementById('skillForm').reset();
+                    $('#addSkillModal').modal('hide');
+                });
+
+                window.removeSkill = function (index) {
+                    mySkills.splice(index, 1);
+                    renderSkills();
+                };
+
+                renderSkills();
+            </script>
+    </body>

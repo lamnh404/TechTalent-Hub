@@ -30,22 +30,12 @@
                                     <form action="/auth/setup-company" method="POST" id="companyForm" novalidate>
 
                                         <div class="form-group mb-3">
-                                            <label class="font-weight-bold small text-dark">Recruiter Name <span
-                                                    class="text-danger">*</span></label>
-                                            <div class="input-wrapper">
-                                                <i class="far fa-user input-icon"></i>
-                                                <input type="text" class="form-control-modern" name="contactName"
-                                                    placeholder="Your Full Name" required>
-                                            </div>
-                                        </div>
-
-                                        <div class="form-group mb-3">
                                             <label class="font-weight-bold small text-dark">Company Name <span
                                                     class="text-danger">*</span></label>
                                             <div class="input-wrapper">
                                                 <i class="far fa-building input-icon"></i>
-                                                <input type="text" class="form-control-modern" name="companyName"
-                                                    placeholder="e.g. TechTalent Inc." required>
+                                                <input type="text" class="form-control-modern" name="CompanyName"
+                                                    placeholder="TechTalent Inc." required>
                                             </div>
                                         </div>
 
@@ -54,12 +44,9 @@
                                                 <label class="font-weight-bold small text-dark">Industry</label>
                                                 <div class="input-wrapper">
                                                     <i class="fas fa-globe input-icon"></i>
-                                                    <select class="form-control-modern" name="industry">
+                                                    <select class="form-control-modern" name="Industry">
                                                         <option value="Software">IT / Software</option>
                                                         <option value="Fintech">Fintech</option>
-                                                        <option value="E-commerce">E-commerce</option>
-                                                        <option value="Education">EdTech</option>
-                                                        <option value="Consulting">Consulting</option>
                                                     </select>
                                                 </div>
                                             </div>
@@ -67,7 +54,7 @@
                                                 <label class="font-weight-bold small text-dark">Size</label>
                                                 <div class="input-wrapper">
                                                     <i class="fas fa-users input-icon"></i>
-                                                    <select class="form-control-modern" name="size">
+                                                    <select class="form-control-modern" name="CompanySize">
                                                         <option value="Small">Startup (1-10)</option>
                                                         <option value="Medium">Growing (11-50)</option>
                                                         <option value="Large">Established (51-200)</option>
@@ -79,21 +66,19 @@
 
                                         <div class="row">
                                             <div class="col-md-6 mb-3">
-                                                <label class="font-weight-bold small text-dark">Website <span
-                                                        class="text-danger">*</span></label>
+                                                <label class="font-weight-bold small text-dark">Website</label>
                                                 <div class="input-wrapper">
                                                     <i class="fas fa-link input-icon"></i>
                                                     <input type="url" class="form-control-modern https-input"
-                                                        name="website" placeholder="https://company.com" required>
+                                                        name="CompanyWebsite" placeholder="https://company.com"
+                                                        required>
                                                 </div>
-                                                <small class="text-danger error-msg d-none mt-1">Must start with
-                                                    https://</small>
                                             </div>
                                             <div class="col-md-6 mb-3">
                                                 <label class="font-weight-bold small text-dark">Founded Year</label>
                                                 <div class="input-wrapper">
                                                     <i class="far fa-calendar-alt input-icon"></i>
-                                                    <input type="number" class="form-control-modern" name="foundedYear"
+                                                    <input type="number" class="form-control-modern" name="FounderYear"
                                                         placeholder="2015">
                                                 </div>
                                             </div>
@@ -104,9 +89,15 @@
                                                 Location</label>
                                             <div class="input-wrapper">
                                                 <i class="fas fa-map-marked-alt input-icon"></i>
-                                                <input type="text" class="form-control-modern" name="location"
-                                                    placeholder="e.g. District 1, Ho Chi Minh City" required>
+                                                <input type="text" class="form-control-modern" name="CompanyAddress"
+                                                    placeholder="District 1, Ho Chi Minh City" required>
                                             </div>
+                                        </div>
+
+                                        <div class="form-group mb-3">
+                                            <label class="font-weight-bold small text-dark">Description</label>
+                                            <textarea class="form-control-modern pt-3 h-auto" name="CompanyDescription"
+                                                rows="3" placeholder="Briefly describe your company..."></textarea>
                                         </div>
 
                                         <div class="form-group mb-4">
@@ -114,13 +105,9 @@
                                                     class="text-danger">*</span></label>
                                             <div class="input-wrapper">
                                                 <i class="far fa-image input-icon"></i>
-                                                <input type="url" class="form-control-modern https-input" name="logoUrl"
+                                                <input type="url" class="form-control-modern https-input" name="LogoURL"
                                                     placeholder="https://example.com/logo.png" required>
                                             </div>
-                                            <small class="text-muted">Direct link to logo image (https
-                                                required).</small>
-                                            <small class="text-danger error-msg d-none d-block mt-1">Must start with
-                                                https://</small>
                                         </div>
 
                                         <button type="submit"
@@ -140,15 +127,46 @@
 
         <script>
             const form = document.getElementById('companyForm');
+            const submitBtn = form.querySelector('button[type="submit"]');
             const httpsInputs = document.querySelectorAll('.https-input');
+            const requiredInputs = form.querySelectorAll('[required]');
 
+            // 1. Hàm kiểm tra toàn bộ form
+            function checkFormValidity() {
+                let isValid = true;
+
+                // Check HTTPS inputs
+                httpsInputs.forEach(input => {
+                    // Nếu có nhập thì phải bắt đầu bằng https://
+                    if (input.value && !input.value.startsWith('https://')) isValid = false;
+                });
+
+                // Check các trường required khác (không được rỗng)
+                requiredInputs.forEach(input => {
+                    if (!input.value.trim()) isValid = false;
+                });
+
+                // Toggle nút Submit
+                if (isValid) {
+                    submitBtn.removeAttribute('disabled');
+                    submitBtn.style.opacity = '1';
+                    submitBtn.style.cursor = 'pointer';
+                } else {
+                    submitBtn.setAttribute('disabled', 'true');
+                    submitBtn.style.opacity = '0.6';
+                    submitBtn.style.cursor = 'not-allowed';
+                }
+            }
+
+            // 2. Validate HTTPS (Real-time UI Feedback)
             httpsInputs.forEach(input => {
                 input.addEventListener('input', function () {
                     const value = this.value.trim();
-                    // Tìm thẻ báo lỗi (thường là thẻ small nằm ngay sau div input-wrapper)
-                    const errorDisplay = this.parentElement.nextElementSibling.tagName === 'SMALL' && this.parentElement.nextElementSibling.classList.contains('error-msg')
-                        ? this.parentElement.nextElementSibling
-                        : this.parentElement.nextElementSibling.nextElementSibling; // Bỏ qua text muted nếu có
+                    // Logic tìm thẻ lỗi: Bỏ qua thẻ text-muted nếu có
+                    let errorDisplay = this.parentElement.nextElementSibling;
+                    if (errorDisplay && !errorDisplay.classList.contains('error-msg')) {
+                        errorDisplay = errorDisplay.nextElementSibling;
+                    }
 
                     if (value && !value.startsWith('https://')) {
                         if (errorDisplay) errorDisplay.classList.remove('d-none');
@@ -157,27 +175,18 @@
                         if (errorDisplay) errorDisplay.classList.add('d-none');
                         this.classList.remove('is-invalid');
                     }
+
+                    checkFormValidity();
                 });
             });
 
-            form.addEventListener('submit', function (e) {
-                let isValid = true;
-                httpsInputs.forEach(input => {
-                    const value = input.value.trim();
-                    if (value && !value.startsWith('https://')) {
-                        isValid = false;
-                        input.classList.add('is-invalid');
-                        // Logic tìm thẻ lỗi tương tự
-                        const errorDisplay = input.parentElement.nextElementSibling.tagName === 'SMALL' && input.parentElement.nextElementSibling.classList.contains('error-msg')
-                            ? input.parentElement.nextElementSibling
-                            : input.parentElement.nextElementSibling.nextElementSibling;
-                        if (errorDisplay) errorDisplay.classList.remove('d-none');
-                    }
-                });
-
-                if (!isValid) {
-                    e.preventDefault();
-                }
+            // 3. Lắng nghe sự kiện cho các trường còn lại
+            requiredInputs.forEach(input => {
+                input.addEventListener('input', checkFormValidity);
+                input.addEventListener('change', checkFormValidity);
             });
+
+            // Chạy lần đầu để khóa nút
+            checkFormValidity();
         </script>
     </body>

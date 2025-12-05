@@ -1,0 +1,287 @@
+<% 
+    // 1. Mock Data: Thông tin Seeker (Chỉ dùng khi chưa có Backend gửi xuống)
+    if (typeof seeker === 'undefined') {
+        var seeker = {
+            FirstName: "Nguyen",
+            LastName: "Van A",
+            Email: "nguyenvana@gmail.com",
+            PhoneNumber: "0901234567",
+            ProfessionalTitle: "Senior Frontend Developer",
+            CurrentLocation: "Ho Chi Minh City",
+            ProfileSummary: "Experienced developer with 5+ years in React...",
+            // Quan trọng: Skill phải là Array để JS xử lý
+            Skills: [
+                { SkillID: 1, SkillName: "React", ProficiencyLevel: "Expert", YearOfExperience: 5 },
+                { SkillID: 2, SkillName: "Node.js", ProficiencyLevel: "Advanced", YearOfExperience: 3 }
+            ]
+        };
+    }
+
+    // 2. Mock Data: Danh sách Skill gợi ý
+    if (typeof availableSkills === 'undefined') {
+        var availableSkills = [
+            { SkillID: 1, SkillName: 'Java' }, { SkillID: 2, SkillName: 'Python' },
+            { SkillID: 3, SkillName: 'JavaScript' }, { SkillID: 4, SkillName: 'React' },
+            { SkillID: 5, SkillName: 'Node.js' }, { SkillID: 6, SkillName: 'SQL' },
+            { SkillID: 7, SkillName: 'AWS' }, { SkillID: 8, SkillName: 'Docker' }
+        ];
+    }
+%>
+
+<%- include('../partials/header', { title: 'My Profile' }) %>
+
+<body class="dashboard-page">
+    <div class="dashboard-wrapper">
+        <%- include('../partials/dashboard-sidebar', { activePage: 'profile' }) %>
+
+        <main class="main-content">
+            <header class="dashboard-header">
+                <h5 class="mb-0 font-weight-bold text-dark">My Profile</h5>
+                <div class="d-flex align-items-center">
+                    <div class="dropdown">
+                        <a href="#" class="d-flex align-items-center text-decoration-none text-dark dropdown-toggle" data-toggle="dropdown">
+                            <img src="<%= (typeof user !== 'undefined' && user.avatarUrl) ? user.avatarUrl : '/images/default-avatar.png' %>" class="rounded-circle mr-2" width="35" height="35" style="object-fit: cover; border: 1px solid #dee2e6;">
+                            <span class="font-weight-bold small mr-1"><%= (typeof user !== 'undefined' && user.email) ? user.email.split('@')[0] : 'Seeker' %></span>
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-right border-0 shadow-lg">
+                            <a class="dropdown-item" href="/">Back Home</a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item text-danger" href="/auth/logout">Logout</a>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <div class="p-4">
+                <div class="row justify-content-center">
+                    <div class="col-lg-10">
+                        
+                        <div class="card border-0 shadow-sm rounded-lg mb-4">
+                            <div class="card-body p-5">
+                                <h5 class="font-weight-bold text-primary mb-4">Personal Information</h5>
+                                <hr class="mb-4">
+                                
+                                <form action="/seeker/profile/update" method="POST" id="profileForm">
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label class="font-weight-bold small text-dark">First Name</label>
+                                            <input type="text" class="form-control-modern" name="FirstName" value="<%= seeker.FirstName %>">
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label class="font-weight-bold small text-dark">Last Name</label>
+                                            <input type="text" class="form-control-modern" name="LastName" value="<%= seeker.LastName %>">
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label class="font-weight-bold small text-dark">Email</label>
+                                            <input type="email" class="form-control-modern" value="<%= seeker.Email %>" disabled style="background-color: #f8f9fa;">
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label class="font-weight-bold small text-dark">Phone</label>
+                                            <input type="tel" class="form-control-modern" name="PhoneNumber" value="<%= seeker.PhoneNumber %>">
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label class="font-weight-bold small text-dark">Professional Title</label>
+                                            <input type="text" class="form-control-modern" name="ProfessionalTitle" value="<%= seeker.ProfessionalTitle %>">
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label class="font-weight-bold small text-dark">Location</label>
+                                            <input type="text" class="form-control-modern" name="CurrentLocation" value="<%= seeker.CurrentLocation %>">
+                                        </div>
+                                    </div>
+                                    <div class="form-group mb-3">
+                                        <label class="font-weight-bold small text-dark">Summary</label>
+                                        <textarea class="form-control-modern h-auto py-3" name="ProfileSummary" rows="3"><%= seeker.ProfileSummary %></textarea>
+                                    </div>
+                                    
+                                    <input type="hidden" name="Skills" id="skillsInput" value='<%= JSON.stringify(seeker.Skills) %>'>
+                                    
+                                    <div class="text-right mt-4">
+                                        <button type="submit" class="btn btn-primary-modern px-4 shadow-sm font-weight-bold">
+                                            <i class="fas fa-save mr-2"></i> Save Changes
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+
+                        <div class="card border-0 shadow-sm rounded-lg mb-4">
+                            <div class="card-body p-5">
+                                <div class="d-flex justify-content-between align-items-center mb-4">
+                                    <h5 class="font-weight-bold text-primary mb-0">Professional Skills</h5>
+                                    <button class="btn btn-sm btn-outline-primary rounded-pill font-weight-bold" data-toggle="modal" data-target="#addSkillModal">
+                                        <i class="fas fa-plus mr-1"></i> Add Skill
+                                    </button>
+                                </div>
+                                <hr class="mb-4">
+
+                                <div id="skillsContainer" class="d-flex flex-wrap gap-2">
+                                    </div>
+                                
+                                <div id="noSkillsMsg" class="text-center text-muted py-3" style="display: none;">
+                                    <small>No skills added yet.</small>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div class="modal fade" id="addSkillModal" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content border-0 shadow-lg rounded-lg">
+                <div class="modal-header border-0 pb-0">
+                    <h5 class="modal-title font-weight-bold">Add New Skill</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body p-4">
+                    <form id="skillForm">
+                        <div class="form-group mb-3">
+                            <label class="small font-weight-bold text-dark">Select Skill</label>
+                            <div class="input-wrapper">
+                                <i class="fas fa-code input-icon"></i>
+                                <input type="text" class="form-control-modern" list="availableSkillsList" id="skillNameInput" placeholder="Type to search..." autocomplete="off">
+                                <datalist id="availableSkillsList">
+                                    <% availableSkills.forEach(s => { %>
+                                        <option value="<%= s.SkillName %>"></option>
+                                    <% }) %>
+                                </datalist>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="small font-weight-bold text-dark">Proficiency</label>
+                                <div class="input-wrapper">
+                                    <i class="fas fa-layer-group input-icon"></i>
+                                    <select class="form-control-modern" id="skillLevelInput">
+                                        <option value="Beginner">Beginner</option>
+                                        <option value="Intermediate" selected>Intermediate</option>
+                                        <option value="Advanced">Advanced</option>
+                                        <option value="Expert">Expert</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="small font-weight-bold text-dark">Experience (Years)</label>
+                                <div class="input-wrapper">
+                                    <i class="fas fa-history input-icon"></i>
+                                    <input type="number" class="form-control-modern" id="skillExpInput" value="1" min="0" step="0.5">
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer border-0 bg-light rounded-bottom p-3">
+                    <button type="button" class="btn btn-light" data-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary-modern shadow-sm" id="saveSkillBtn">Add</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <%- include('../partials/footer') %>
+
+    <script>
+        // 1. Lấy dữ liệu từ Mock Data hoặc từ Server (thông qua value của input ẩn)
+        let mySkills = [];
+        try {
+            const rawData = document.getElementById('skillsInput').value;
+            mySkills = rawData ? JSON.parse(rawData) : [];
+        } catch (e) {
+            console.error("Error parsing skills", e);
+            mySkills = [];
+        }
+
+        const skillsContainer = document.getElementById('skillsContainer');
+        const noSkillsMsg = document.getElementById('noSkillsMsg');
+        const skillsInput = document.getElementById('skillsInput');
+
+        // 2. Hàm vẽ lại danh sách Skill ra màn hình
+        function renderSkills() {
+            skillsContainer.innerHTML = '';
+            
+            if (mySkills.length === 0) {
+                noSkillsMsg.style.display = 'block';
+            } else {
+                noSkillsMsg.style.display = 'none';
+                
+                mySkills.forEach((skill, index) => {
+                    // Chọn màu badge
+                    let badgeColor = 'badge-soft-primary';
+                    if(skill.ProficiencyLevel === 'Expert') badgeColor = 'badge-soft-success';
+                    if(skill.ProficiencyLevel === 'Beginner') badgeColor = 'badge-soft-secondary';
+
+                    const html = `
+                        <div class="d-inline-flex align-items-center bg-white border shadow-sm rounded-pill pr-2 pl-3 py-2 mr-2 mb-2 animate__animated animate__fadeIn">
+                            <div class="mr-3">
+                                <span class="font-weight-bold text-dark d-block" style="line-height:1.2">${skill.SkillName}</span>
+                                <small class="text-muted" style="font-size: 0.75rem;">
+                                    ${skill.ProficiencyLevel} • ${skill.YearOfExperience} year(s)
+                                </small>
+                            </div>
+                            <button type="button" class="btn btn-sm btn-light text-danger rounded-circle" 
+                                    onclick="removeSkill(${index})" style="width: 30px; height: 30px; padding: 0; display:flex; align-items:center; justify-content:center;">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    `;
+                    skillsContainer.insertAdjacentHTML('beforeend', html);
+                });
+            }
+            
+            // Cập nhật lại input ẩn để chuẩn bị gửi form
+            skillsInput.value = JSON.stringify(mySkills);
+        }
+
+        // 3. Xử lý nút Add Skill (Trong Modal)
+        document.getElementById('saveSkillBtn').addEventListener('click', function() {
+            const name = document.getElementById('skillNameInput').value;
+            const level = document.getElementById('skillLevelInput').value;
+            const exp = document.getElementById('skillExpInput').value;
+
+            if (!name) {
+                alert("Please enter a skill name");
+                return;
+            }
+
+            // Check trùng
+            if (mySkills.some(s => s.SkillName.toLowerCase() === name.toLowerCase())) {
+                alert("This skill is already added!");
+                return;
+            }
+
+            // Thêm vào mảng
+            mySkills.push({
+                SkillName: name,
+                ProficiencyLevel: level,
+                YearOfExperience: parseFloat(exp) || 0
+            });
+
+            renderSkills(); // Vẽ lại giao diện
+            
+            // Đóng modal và reset form
+            document.getElementById('skillForm').reset();
+            $('#addSkillModal').modal('hide');
+        });
+
+        // 4. Hàm xóa skill (gắn vào window để gọi từ HTML)
+        window.removeSkill = function(index) {
+            if (confirm('Remove this skill?')) {
+                mySkills.splice(index, 1);
+                renderSkills();
+            }
+        };
+
+        // Chạy lần đầu
+        renderSkills();
+    </script>
+</body>

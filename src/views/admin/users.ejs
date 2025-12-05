@@ -1,0 +1,155 @@
+<%
+    // Mock Data cho User Management
+    if (typeof userList === 'undefined') {
+        var userList = [
+            { id: 101, name: "Nguyen Van A", email: "nguyenvana@gmail.com", role: "JobSeeker", status: "Active", joinDate: "2023-01-15", avatar: "https://i.pravatar.cc/150?u=1" },
+            { id: 102, name: "Google Inc.", email: "hr@google.com", role: "Company", status: "Active", joinDate: "2023-02-20", avatar: "https://logo.clearbit.com/google.com" },
+            { id: 103, name: "Tran Thi C", email: "tranc@outlook.com", role: "JobSeeker", status: "Inactive", joinDate: "2023-03-10", avatar: "https://i.pravatar.cc/150?u=3" },
+            { id: 104, name: "TechStart LLC", email: "contact@techstart.io", role: "Company", status: "Pending", joinDate: "2023-11-05", avatar: "" },
+            { id: 105, name: "Le Van D", email: "levand@gmail.com", role: "JobSeeker", status: "Banned", joinDate: "2022-12-01", avatar: "https://i.pravatar.cc/150?u=5" }
+        ];
+    }
+%>
+
+<%- include('../partials/header', { title: 'Quản lý Người dùng' }) %>
+
+<body class="dashboard-page">
+    <div class="dashboard-wrapper">
+        <%- include('../partials/dashboard-sidebar', { activePage: 'users' }) %>
+
+        <main class="main-content">
+            <header class="dashboard-header">
+                <h5 class="mb-0 font-weight-bold text-dark">User Management</h5>
+                <div class="d-flex align-items-center">
+                    <div class="dropdown">
+                        <a href="#" class="d-flex align-items-center text-decoration-none text-dark dropdown-toggle" data-toggle="dropdown">
+                            <img src="/images/admin-avatar.png" onerror="this.src='/images/default-avatar.png'" class="rounded-circle mr-2 shadow-sm" width="35" height="35" style="border: 2px solid #fff;">
+                            <span class="font-weight-bold small mr-1">Administrator</span>
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-right border-0 shadow-lg">
+                            <a class="dropdown-item text-danger" href="/auth/logout">Logout</a>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <div class="p-4">
+                
+                <div class="card border-0 shadow-sm rounded-lg mb-4">
+                    <div class="card-body p-3">
+                        <div class="row align-items-center">
+                            <div class="col-md-4 mb-2 mb-md-0">
+                                <div class="position-relative">
+                                    <i class="fas fa-search position-absolute text-muted" style="left: 15px; top: 50%; transform: translateY(-50%);"></i>
+                                    <input type="text" class="form-control-modern pl-5" placeholder="Search user by name or email..." style="height: 45px;">
+                                </div>
+                            </div>
+                            <div class="col-md-3 mb-2 mb-md-0">
+                                <select class="form-control-modern" style="height: 45px; padding-left: 15px;">
+                                    <option value="">All Roles</option>
+                                    <option value="JobSeeker">Job Seekers</option>
+                                    <option value="Company">Companies</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3 mb-2 mb-md-0">
+                                <select class="form-control-modern" style="height: 45px; padding-left: 15px;">
+                                    <option value="">All Status</option>
+                                    <option value="Active">Active</option>
+                                    <option value="Banned">Banned</option>
+                                    <option value="Pending">Pending</option>
+                                </select>
+                            </div>
+                            <div class="col-md-2 text-right">
+                                <button class="btn btn-primary-modern shadow-sm w-100" style="height: 45px;">
+                                    <i class="fas fa-filter mr-2"></i> Filter
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card border-0 shadow-sm rounded-lg overflow-hidden">
+                    <div class="table-responsive">
+                        <table class="table custom-table table-hover mb-0">
+                            <thead class="bg-light">
+                                <tr>
+                                    <th class="pl-4 py-3 border-top-0">User Info</th>
+                                    <th class="py-3 border-top-0">Role</th>
+                                    <th class="py-3 border-top-0">Join Date</th>
+                                    <th class="py-3 border-top-0 text-center">Status</th>
+                                    <th class="py-3 border-top-0 text-right pr-4">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% if (userList && userList.length > 0) { %>
+                                    <% userList.forEach(u => { %>
+                                        <tr>
+                                            <td class="pl-4 align-middle">
+                                                <div class="d-flex align-items-center">
+                                                    <img src="<%= u.avatar || '/images/default-avatar.png' %>" class="rounded-circle mr-3 border bg-white" width="40" height="40" style="object-fit: cover;">
+                                                    <div>
+                                                        <h6 class="mb-0 font-weight-bold text-dark"><%= u.name %></h6>
+                                                        <small class="text-muted"><%= u.email %></small>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td class="align-middle">
+                                                <% if (u.role === 'Company') { %>
+                                                    <span class="badge badge-soft-primary px-3"><i class="fas fa-building mr-1"></i> Company</span>
+                                                <% } else { %>
+                                                    <span class="badge badge-soft-info px-3"><i class="fas fa-user mr-1"></i> Seeker</span>
+                                                <% } %>
+                                            </td>
+                                            <td class="align-middle text-muted">
+                                                <%= new Date(u.joinDate).toLocaleDateString() %>
+                                            </td>
+                                            <td class="align-middle text-center">
+                                                <% 
+                                                    let statusClass = 'badge-soft-secondary';
+                                                    if (u.status === 'Active') statusClass = 'badge-soft-success';
+                                                    else if (u.status === 'Banned') statusClass = 'badge-soft-danger';
+                                                    else if (u.status === 'Pending') statusClass = 'badge-soft-warning';
+                                                %>
+                                                <span class="badge <%= statusClass %> px-3 py-2"><%= u.status %></span>
+                                            </td>
+                                            <td class="align-middle text-right pr-4">
+                                                <div class="dropdown">
+                                                    <button class="btn btn-sm btn-light shadow-sm" type="button" data-toggle="dropdown">
+                                                        <i class="fas fa-ellipsis-v text-muted"></i>
+                                                    </button>
+                                                    <div class="dropdown-menu dropdown-menu-right border-0 shadow">
+                                                        <a class="dropdown-item" href="#"><i class="fas fa-edit mr-2 text-primary"></i> Edit</a>
+                                                        <a class="dropdown-item" href="#"><i class="fas fa-envelope mr-2 text-info"></i> Send Email</a>
+                                                        <div class="dropdown-divider"></div>
+                                                        <% if (u.status === 'Banned') { %>
+                                                            <a class="dropdown-item text-success" href="#"><i class="fas fa-unlock mr-2"></i> Unban User</a>
+                                                        <% } else { %>
+                                                            <a class="dropdown-item text-danger" href="#"><i class="fas fa-ban mr-2"></i> Ban User</a>
+                                                        <% } %>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    <% }) %>
+                                <% } else { %>
+                                    <tr><td colspan="5" class="text-center py-5 text-muted">No users found.</td></tr>
+                                <% } %>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <div class="card-footer bg-white border-0 py-3">
+                        <nav>
+                            <ul class="pagination justify-content-end mb-0">
+                                <li class="page-item disabled"><a class="page-link border-0 text-muted" href="#">Previous</a></li>
+                                <li class="page-item active"><a class="page-link border-0 rounded-circle shadow-sm mx-1" href="#">1</a></li>
+                                <li class="page-item"><a class="page-link border-0 rounded-circle bg-transparent mx-1" href="#">2</a></li>
+                                <li class="page-item"><a class="page-link border-0 text-muted" href="#">Next</a></li>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    <%- include('../partials/footer') %>

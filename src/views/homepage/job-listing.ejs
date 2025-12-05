@@ -1,0 +1,404 @@
+<%- include('../partials/header', { title: 'Tìm việc làm IT' }) %>
+
+<style>
+    /* --- CSS CHO FILTER (Giữ nguyên fix lỗi cũ) --- */
+    .filter-sidebar {
+        position: -webkit-sticky;
+        position: sticky;
+        top: 100px;
+        z-index: 10;
+    }
+    .salary-input {
+        padding-left: 10px !important;
+        padding-right: 10px !important;
+        text-align: center;
+        font-size: 0.9rem;
+    }
+    .filter-title {
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        color: #64748b;
+        margin-bottom: 0.5rem;
+    }
+    .btn-reset {
+        font-size: 0.85rem;
+        color: #94a3b8;
+        text-decoration: none;
+    }
+    .btn-reset:hover { color: var(--primary-color); }
+
+    /* --- CSS MỚI CHO JOB CARD (WIDE LAYOUT) --- */
+    .job-card-wide {
+        background: #fff;
+        border: 1px solid #e5e7eb;
+        border-radius: 12px;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .job-card-wide:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+        border-color: #bfdbfe; /* Viền xanh nhạt khi hover */
+    }
+
+    /* Logo Box */
+    .job-logo-box {
+        width: 85px;
+        height: 85px;
+        flex-shrink: 0;
+        border: 1px solid #f3f4f6;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #fff;
+        padding: 5px;
+    }
+    .job-logo-box img {
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain;
+    }
+
+    /* Typography */
+    .job-title-link {
+        font-size: 1.15rem;
+        font-weight: 700;
+        color: #1f2937;
+        text-decoration: none;
+        line-height: 1.4;
+        display: block;
+        margin-bottom: 4px;
+    }
+    .job-title-link:hover { color: var(--primary-color); text-decoration: none; }
+    
+    .job-meta {
+        font-size: 0.9rem;
+        color: #6b7280;
+        margin-bottom: 12px;
+    }
+
+    .job-salary {
+        font-weight: 600;
+        color: #059669; /* Màu xanh lá cho tiền */
+        font-size: 1rem;
+    }
+
+    .tag-item {
+        background-color: #f3f4f6;
+        color: #4b5563;
+        padding: 4px 12px;
+        border-radius: 6px;
+        font-size: 0.8rem;
+        font-weight: 500;
+        display: inline-block;
+    }
+
+    /* Nút Apply */
+    .btn-apply {
+        border-radius: 50px;
+        padding: 8px 24px;
+        font-weight: 600;
+        font-size: 0.9rem;
+        transition: all 0.2s;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .job-card-body {
+            flex-direction: column;
+            text-align: left;
+        }
+        .job-logo-box {
+            margin-bottom: 15px;
+            width: 60px; height: 60px;
+        }
+        .job-actions {
+            margin-top: 15px;
+            text-align: left !important;
+            border-top: 1px solid #f3f4f6;
+            padding-top: 15px;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+    }
+</style>
+
+<body class="animate-fade-in bg-light">
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const jobContainer = document.getElementById('job-list-container');
+            const filterForm = document.getElementById('filterForm');
+            const sortSelect = document.getElementById('sortSelect');
+
+            function loadJobList(url) {
+                if (!jobContainer) return;
+                jobContainer.style.opacity = '0.6';
+                jobContainer.style.pointerEvents = 'none';
+
+                fetch(url)
+                    .then(response => response.text())
+                    .then(html => {
+                        const parser = new DOMParser();
+                        const doc = parser.parseFromString(html, 'text/html');
+                        const newContent = doc.getElementById('job-list-container').innerHTML;
+
+                        jobContainer.innerHTML = newContent;
+                        jobContainer.style.opacity = '1';
+                        jobContainer.style.pointerEvents = 'auto';
+                        window.history.pushState({}, '', url);
+                        
+                        // Scroll nhẹ
+                        const y = jobContainer.getBoundingClientRect().top + window.scrollY - 100;
+                        window.scrollTo({top: y, behavior: 'smooth'});
+                    })
+                    .catch(err => {
+                        console.error('Lỗi tải:', err);
+                        window.location.href = url;
+                    });
+            }
+
+            if (jobContainer) {
+                jobContainer.addEventListener('click', function (e) {
+                    const link = e.target.closest('.page-link');
+                    if (link && !link.parentElement.classList.contains('disabled')) {
+                        e.preventDefault();
+                        loadJobList(link.href);
+                    }
+                });
+            }
+
+            if (filterForm) {
+                filterForm.addEventListener('submit', function (e) {
+                    e.preventDefault();
+                    const formData = new FormData(filterForm);
+                    const params = new URLSearchParams(formData);
+                    const url = `/jobs?${params.toString()}`;
+                    loadJobList(url);
+                });
+            }
+
+            if (sortSelect) {
+                sortSelect.addEventListener('change', function() {
+                    filterForm.dispatchEvent(new Event('submit'));
+                });
+            }
+        });
+    </script>
+
+    <%- include('../partials/navbar', {activePage: 'jobs' }) %>
+
+    <section class="home-hero" style="padding: 120px 0 60px; background: linear-gradient(180deg, #ffffff 0%, #f3f4f6 100%);">
+        <div class="container position-relative" style="z-index: 2;">
+            <div class="text-center">
+                <span class="badge badge-soft-primary px-3 py-2 mb-3 rounded-pill animate__animated animate__fadeInDown">
+                    🚀 <%= (typeof pagination !== 'undefined' && pagination.totalJobs) ? pagination.totalJobs : '0' %> Jobs Available
+                </span>
+                <h1 class="hero-title mb-3 animate__animated animate__fadeInUp">Find Your Next <span class="text-primary">Tech Job</span></h1>
+                
+                <div class="search-wrapper shadow-sm animate__animated animate__fadeInUp animate__delay-1s mx-auto bg-white p-1 rounded-pill border" style="max-width: 600px;">
+                    <form action="/jobs" method="GET" class="d-flex w-100 align-items-center">
+                        <div class="flex-grow-1 position-relative">
+                            <i class="fas fa-search position-absolute text-muted" style="left: 20px; top: 50%; transform: translateY(-50%); z-index: 5;"></i>
+                            <input type="text" name="q" class="form-control border-0 shadow-none pl-5" 
+                                   placeholder="Search by keyword..." 
+                                   style="height: 50px; background: transparent; border-radius: 30px;" 
+                                   value="<%= typeof q !== 'undefined' ? q : '' %>">
+                        </div>
+                        <button type="submit" class="btn btn-primary-modern rounded-pill px-4 py-2 mr-1" style="height: 44px;">Search</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section pt-5 pb-5">
+        <div class="container">
+            <div class="row">
+
+                <div class="col-lg-3 mb-4">
+                    <div class="card border-0 shadow-sm rounded-lg filter-sidebar">
+                        <div class="card-body p-4">
+                            <div class="d-flex justify-content-between align-items-center mb-4">
+                                <h5 class="font-weight-bold mb-0 text-dark">
+                                    <i class="fas fa-filter text-primary mr-2"></i>Filters
+                                </h5>
+                                <a href="/jobs" class="btn-reset">Reset</a>
+                            </div>
+
+                            <form action="/jobs" method="GET" id="filterForm">
+                                <input type="hidden" name="q" value="<%= typeof q !== 'undefined' ? q : '' %>">
+
+                                <div class="mb-4">
+                                    <label class="filter-title">Sort By</label>
+                                    <select class="form-control-modern" name="sort" id="sortSelect" style="height: 45px; padding-left: 15px;">
+                                        <option value="newest" <%= (typeof sort !== 'undefined' && sort === 'newest') ? 'selected' : '' %>>Newest First</option>
+                                        <option value="oldest" <%= (typeof sort !== 'undefined' && sort === 'oldest') ? 'selected' : '' %>>Oldest First</option>
+                                    </select>
+                                </div>
+
+                                <div class="mb-4">
+                                    <label class="filter-title">Job Name</label>
+                                    <div class="input-wrapper">
+                                        <i class="fas fa-briefcase input-icon" style="font-size: 0.9rem;"></i>
+                                        <input type="text" class="form-control-modern" name="jobTitle" 
+                                               value="<%= typeof jobTitle !== 'undefined' ? jobTitle : '' %>" 
+                                               placeholder="e.g. Backend Dev">
+                                    </div>
+                                </div>
+
+                                <div class="mb-4">
+                                    <label class="filter-title">Company</label>
+                                    <div class="input-wrapper">
+                                        <i class="far fa-building input-icon" style="font-size: 0.9rem;"></i>
+                                        <input type="text" class="form-control-modern" name="company" 
+                                               value="<%= typeof company !== 'undefined' ? company : '' %>" 
+                                               placeholder="e.g. Google">
+                                    </div>
+                                </div>
+
+                                <div class="mb-4">
+                                    <label class="filter-title">Salary Range ($)</label>
+                                    <div class="d-flex align-items-center">
+                                        <input type="number" class="form-control-modern salary-input" name="minSalary" 
+                                               value="<%= typeof minSalary !== 'undefined' ? minSalary : '' %>" 
+                                               placeholder="Min">
+                                        <span class="mx-2 text-muted font-weight-bold">-</span>
+                                        <input type="number" class="form-control-modern salary-input" name="maxSalary" 
+                                               value="<%= typeof maxSalary !== 'undefined' ? maxSalary : '' %>" 
+                                               placeholder="Max">
+                                    </div>
+                                </div>
+
+                                <button type="submit" class="btn btn-primary-modern w-100 shadow-md font-weight-bold py-3">
+                                    Apply Filters
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-9" id="job-list-container">
+                    
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <p class="text-muted mb-0">
+                            Showing <span class="font-weight-bold text-dark"><%= (typeof pagination !== 'undefined' && pagination.totalJobs) ? pagination.totalJobs : 0 %></span> jobs
+                        </p>
+                    </div>
+
+                    <% if (typeof jobs !== 'undefined' && jobs && jobs.length > 0) { %>
+                        <% jobs.forEach(job => { %>
+                            
+                            <div class="job-card-wide mb-3">
+                                <div class="card-body p-4 d-flex flex-row job-card-body align-items-start">
+                                    
+                                    <div class="job-logo-box mr-4">
+                                        <img src="<%= job.LogoURL ? job.LogoURL : '/images/default-company.png' %>" 
+                                             alt="<%= job.CompanyName %>"
+                                             onerror="this.src='/images/default-company.png'">
+                                    </div>
+
+                                    <div class="flex-grow-1">
+                                        <a href="/jobs/<%= job.JobID %>" class="job-title-link stretched-link">
+                                            <%= job.JobTitle %>
+                                        </a>
+                                        
+                                        <div class="job-meta">
+                                            <span class="font-weight-bold text-dark"><%= job.CompanyName %></span>
+                                            <span class="mx-2">•</span>
+                                            <span><i class="fas fa-map-marker-alt mr-1 text-muted"></i> <%= job.Location %></span>
+                                        </div>
+
+                                        <div class="d-flex align-items-center flex-wrap">
+                                            <span class="tag-item mr-2 mb-2"><%= job.EmploymentType %></span>
+                                            
+                                            <% if (job.SalaryMin) { %>
+                                                <span class="job-salary mb-2">
+                                                    $<%= job.SalaryMin.toLocaleString() %> - $<%= job.SalaryMax ? job.SalaryMax.toLocaleString() : '...' %>
+                                                </span>
+                                            <% } %>
+                                        </div>
+                                    </div>
+
+                                    <div class="job-actions text-right ml-4 d-flex flex-column justify-content-between" style="min-width: 140px; align-self: stretch;">
+                                        
+                                        <div class="text-muted small">
+                                            <i class="far fa-clock mr-1"></i> <%= new Date(job.PostedDate).toLocaleDateString('vi-VN') %>
+                                        </div>
+
+                                        <div class="mt-auto">
+                                            <a href="/jobs/<%= job.JobID %>" class="btn btn-outline-primary btn-apply w-100">Apply Now</a>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                            <% }) %>
+                    <% } else { %>
+                        <div class="text-center py-5 bg-white rounded-lg shadow-sm">
+                            <div class="mb-4">
+                                <div class="bg-soft-primary rounded-circle d-inline-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
+                                    <i class="fas fa-search fa-2x text-primary"></i>
+                                </div>
+                            </div>
+                            <h4 class="text-dark font-weight-bold">No jobs found</h4>
+                            <p class="text-muted mb-4">We couldn't find any jobs matching your filters.</p>
+                            <a href="/jobs" class="btn btn-primary-modern shadow-sm px-4 rounded-pill">Clear All Filters</a>
+                        </div>
+                    <% } %>
+
+                    <% if (typeof pagination !== 'undefined' && pagination.totalPages > 1) { %>
+                        <nav class="mt-5">
+                            <ul class="pagination justify-content-center">
+                                <% 
+                                    let baseQuery = `q=${typeof q !== 'undefined' ? q : ''}`;
+                                    if(typeof jobTitle !== 'undefined' && jobTitle) baseQuery += `&jobTitle=${jobTitle}`;
+                                    if(typeof company !== 'undefined' && company) baseQuery += `&company=${company}`;
+                                    if(typeof minSalary !== 'undefined' && minSalary) baseQuery += `&minSalary=${minSalary}`;
+                                    if(typeof maxSalary !== 'undefined' && maxSalary) baseQuery += `&maxSalary=${maxSalary}`;
+                                    if(typeof sort !== 'undefined' && sort) baseQuery += `&sort=${sort}`;
+                                %>
+
+                                <li class="page-item <%= pagination.currentPage === 1 ? 'disabled' : '' %>">
+                                    <a class="page-link border-0 shadow-sm rounded-circle mx-1 d-flex align-items-center justify-content-center" 
+                                       style="width: 40px; height: 40px;"
+                                       href="/jobs?<%= baseQuery %>&page=<%= pagination.currentPage - 1 %>">
+                                        <i class="fas fa-chevron-left"></i>
+                                    </a>
+                                </li>
+
+                                <% for(let i = 1; i <= pagination.totalPages; i++) { %>
+                                    <li class="page-item <%= pagination.currentPage === i ? 'active' : '' %>">
+                                        <a class="page-link border-0 shadow-sm rounded-circle mx-1 d-flex align-items-center justify-content-center" 
+                                           style="width: 40px; height: 40px;"
+                                           href="/jobs?<%= baseQuery %>&page=<%= i %>">
+                                            <%= i %>
+                                        </a>
+                                    </li>
+                                <% } %>
+
+                                <li class="page-item <%= pagination.currentPage === pagination.totalPages ? 'disabled' : '' %>">
+                                    <a class="page-link border-0 shadow-sm rounded-circle mx-1 d-flex align-items-center justify-content-center" 
+                                       style="width: 40px; height: 40px;"
+                                       href="/jobs?<%= baseQuery %>&page=<%= pagination.currentPage + 1 %>">
+                                        <i class="fas fa-chevron-right"></i>
+                                    </a>
+                                </li>
+                            </ul>
+                        </nav>
+                    <% } %>
+
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <%- include('../partials/footer') %>
+</body>

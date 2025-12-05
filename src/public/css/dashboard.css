@@ -1,0 +1,302 @@
+/* ========================================
+   Dashboard Styles (Company/Admin)
+   ======================================== */
+
+/* Override body padding for dashboard */
+body.dashboard-page {
+    background-color: var(--bg-body);
+    padding-top: 0 !important; /* Dashboard tự lo header, không cần padding global */
+}
+
+.dashboard-wrapper {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* --- Sidebar (Fixed Left) --- */
+.sidebar {
+    width: var(--sidebar-width);
+    background: white;
+    border-right: 1px solid #e5e7eb;
+    position: fixed;
+    height: 100vh;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+    overflow-y: auto;
+}
+
+.sidebar-brand {
+    height: var(--header-height); /* 80px bằng với Navbar */
+    display: flex;
+    align-items: center;
+    padding: 0 1.5rem;
+    border-bottom: 1px solid #f3f4f6;
+}
+
+.sidebar-menu {
+    padding: 1.5rem 1rem;
+    list-style: none;
+}
+
+.menu-header {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin: 1.5rem 0 0.5rem 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.menu-link {
+    display: flex;
+    align-items: center;
+    padding: 0.75rem 1rem;
+    color: #4b5563;
+    text-decoration: none;
+    border-radius: 10px;
+    font-weight: 500;
+    font-size: 0.95rem;
+    transition: all 0.2s;
+    margin-bottom: 4px;
+}
+
+.menu-link:hover, .menu-link.active {
+    background-color: #eff6ff;
+    color: var(--primary-color);
+}
+
+.menu-link i {
+    width: 24px;
+    margin-right: 12px;
+    text-align: center;
+    font-size: 1.1rem;
+}
+
+/* --- Main Content Area --- */
+.main-content {
+    margin-left: var(--sidebar-width);
+    width: calc(100% - var(--sidebar-width));
+    flex: 1;
+}
+
+/* --- Dashboard Sticky Header --- */
+.dashboard-header {
+    height: var(--header-height);
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid #e5e7eb;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 2rem;
+    position: sticky;
+    top: 0;
+    z-index: 900;
+}
+
+/* --- Stats Cards --- */
+.stat-card {
+    background: white;
+    border-radius: 16px;
+    padding: 1.5rem;
+    box-shadow: var(--shadow-sm);
+    border: 1px solid #f3f4f6;
+    height: 100%;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-md);
+}
+
+.stat-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+.stat-icon.blue { background: #eff6ff; color: var(--primary-color); }
+.stat-icon.green { background: #dcfce7; color: #10b981; }
+.stat-icon.purple { background: #f3e8ff; color: #7c3aed; }
+
+/* --- Tables --- */
+.custom-table-wrapper {
+    background: white;
+    border-radius: 16px;
+    box-shadow: var(--shadow-sm);
+    border: 1px solid #e5e7eb;
+    overflow: hidden;
+}
+
+.custom-table th {
+    background: #f9fafb;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.custom-table td {
+    padding: 1rem 1.5rem;
+    vertical-align: middle;
+    color: var(--text-dark);
+    border-bottom: 1px solid #f3f4f6;
+}
+
+/* Thêm vào dashboard.css */
+
+/* 1. Reset Card Style */
+.card {
+    border: none !important; /* Bỏ viền cứng */
+    border-radius: 20px !important; /* Bo góc mạnh hơn */
+    background: #ffffff;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04); /* Shadow rất nhẹ lúc bình thường */
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    overflow: hidden; /* Để nội dung con không bị lòi ra khỏi bo góc */
+}
+
+/* 2. Hiệu ứng Hover "Nhấc lên" */
+.card.hover-scale:hover, .job-card:hover {
+    transform: translateY(-8px) !important; /* Bay lên cao hơn chút */
+    box-shadow: 0 15px 35px rgba(0, 99, 255, 0.1) !important; /* Shadow màu xanh nhạt lan tỏa */
+}
+
+/* 3. Hiệu ứng viền phát sáng nhẹ khi hover */
+.card::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 20px;
+    padding: 2px;
+    background: linear-gradient(45deg, transparent, rgba(0, 99, 255, 0.3), transparent);
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+}
+.card:hover::after {
+    opacity: 1;
+}
+
+/* Thêm vào global.css hoặc dashboard.css */
+
+.form-control-modern {
+    background-color: #f8fafc; /* Nền xám xanh cực nhạt */
+    border: 1px solid #e2e8f0;
+    color: #334155;
+    font-weight: 500;
+    padding-left: 50px !important; /* Chừa chỗ cho Icon */
+    height: 55px; /* Cao hơn chút cho thoáng */
+}
+
+/* Khi click vào ô input */
+.form-control-modern:focus {
+    background-color: #ffffff;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 4px rgba(0, 99, 255, 0.15); /* Shadow lan tỏa thay vì viền xanh mặc định */
+    transform: translateY(0); /* Reset transform cũ nếu có */
+}
+
+/* Icon trong input */
+.input-wrapper .input-icon {
+    color: #94a3b8; /* Màu icon nhạt */
+    transition: color 0.3s;
+}
+
+/* Khi focus vào input thì icon cũng đổi màu */
+.input-wrapper:focus-within .input-icon {
+    color: var(--primary-color);
+}
+
+/* Thêm vào dashboard.css */
+
+.rounded-circle {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Avatar trong header hoặc profile */
+.dashboard-header img.rounded-circle, 
+.card-body img.rounded-circle {
+    border: 2px solid #ffffff;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.dashboard-header img.rounded-circle:hover {
+    transform: scale(1.1);
+    box-shadow: 0 0 0 3px rgba(0, 99, 255, 0.2);
+}
+
+/* Thêm vào dashboard.css */
+
+.sidebar {
+    background: #ffffff;
+    border-right: none !important; /* Bỏ đường kẻ dọc xấu xí */
+    box-shadow: 4px 0 20px rgba(0, 0, 0, 0.02); /* Dùng shadow thay cho border */
+}
+
+.menu-link {
+    border-radius: 12px !important;
+    margin-bottom: 8px !important;
+    font-weight: 600 !important;
+    color: #64748b !important;
+}
+
+.menu-link:hover, .menu-link.active {
+    background: #eff6ff !important;
+    color: var(--primary-color) !important;
+    transform: translateX(5px); /* Hiệu ứng trượt nhẹ sang phải */
+}
+
+.menu-link i {
+    transition: transform 0.3s;
+}
+
+.menu-link:hover i {
+    transform: scale(1.2); /* Icon phóng to nhẹ khi hover */
+}
+
+/* ========================================
+   RESPONSIVE FIXES (MOBILE & TABLET)
+   ======================================== */
+
+@media (max-width: 991.98px) {
+    /* 1. Ẩn Sidebar sang bên trái màn hình */
+    .sidebar {
+        transform: translateX(-100%);
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 0 0 15px rgba(0,0,0,0.1);
+    }
+    
+    /* Class để hiện Sidebar khi bấm nút (sẽ dùng JS kích hoạt) */
+    .sidebar.show {
+        transform: translateX(0);
+    }
+
+    /* 2. Mở rộng nội dung chính ra toàn màn hình */
+    .main-content {
+        margin-left: 0;
+        width: 100%;
+    }
+
+    /* 3. Điều chỉnh Header Dashboard */
+    .dashboard-header {
+        padding: 0 1.5rem;
+        width: 100%;
+    }
+
+    /* 4. Thống kê (Stats) xếp chồng lên nhau */
+    .stat-card {
+        margin-bottom: 15px;
+    }
+}
