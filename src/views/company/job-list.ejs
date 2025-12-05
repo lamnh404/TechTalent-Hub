@@ -80,11 +80,12 @@
                                                         </div>
                                                     </td>
                                                     <td class="align-middle text-muted">
-                                                        <%= new Date(job.PostedDate).toLocaleDateString() %>
+                                                        <% const _pd = job.PostedDate ? new Date(job.PostedDate) : null; %>
+                                                        <%= _pd ? _pd.toLocaleDateString('vi-VN') : '' %>
                                                     </td>
                                                     <td class="align-middle text-muted">
-                                                        <%= job.Deadline ? new Date(job.Deadline).toLocaleDateString()
-                                                            : 'N/A' %>
+                                                        <% const _dl = job.Deadline ? new Date(job.Deadline) : null; %>
+                                                        <%= _dl ? _dl.toLocaleDateString('vi-VN') : 'N/A' %>
                                                     </td>
                                                     <td class="align-middle text-center">
                                                         <a href="/company/candidates?jobId=<%= job.JobID %>"

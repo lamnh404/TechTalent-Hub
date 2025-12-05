@@ -174,3 +174,30 @@ export const authModel = {
     setupCompany,
     setupSeeker
 }
+
+// Change password helper
+authModel.changePassword = async (userId, currentPassword, newPassword) => {
+    try {
+        const pool = GET_SQL_POOL()
+        const result = await pool.request()
+            .input('userId', userId)
+            .query('SELECT userId, PasswordHash FROM [User] WHERE userId = @userId')
+
+        const user = result.recordset[0]
+        if (!user) throw new ApiError(StatusCodes.NOT_FOUND, 'User not found')
+
+        const isMatch = await compare(currentPassword, user.PasswordHash)
+        if (!isMatch) throw new ApiError(StatusCodes.UNAUTHORIZED, 'Current password is incorrect')
+
+        const newHash = await hash(newPassword, 12)
+        await pool.request()
+            .input('userId', userId)
+            .input('passwordHash', newHash)
+            .query('UPDATE [User] SET PasswordHash = @passwordHash WHERE userId = @userId')
+
+        return true
+    } catch (err) {
+        if (err instanceof ApiError) throw err
+        throw new ApiError(StatusCodes.INTERNAL_SERVER_ERROR, err.message)
+    }
+}

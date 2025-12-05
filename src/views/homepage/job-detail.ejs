@@ -68,25 +68,26 @@
                                         $<%= job.SalaryMax ? job.SalaryMax.toLocaleString() : 'N/A' %>
                                 </h3>
 
-                                <% if (typeof user !=='undefined' && user && user.userType==='JobSeeker' ) { %>
-                                    <form action="/applications" method="POST" class="d-inline">
-                                        <input type="hidden" name="jobId" value="<%= job.JobID %>">
-                                        <button type="submit" class="btn btn-primary-modern btn-lg px-5 shadow-md mb-2">
-                                            Apply Now <i class="fas fa-paper-plane ml-2"></i>
+                                <% if (typeof user !== 'undefined' && user && user.userType === 'JobSeeker') { %>
+                                    <% if (typeof hasApplied !== 'undefined' && hasApplied) { %>
+                                        <button class="btn btn-outline-secondary btn-lg px-5 shadow-md mb-2" disabled>
+                                            Submitted
                                         </button>
-                                    </form>
-                                    <% } else if (!user) { %>
-                                        <a href="/login?redirect=/jobs/<%= job.JobID %>"
-                                            class="btn btn-primary-modern btn-lg px-5 shadow-md mb-2">
-                                            Login to Apply
-                                        </a>
-                                        <% } %>
-
-                                            <br>
-                                            <button
-                                                class="btn btn-outline-secondary btn-sm rounded-pill px-3 mt-2 border-0 bg-white shadow-sm">
-                                                <i class="far fa-heart mr-1 text-danger"></i> Save Job
+                                    <% } else { %>
+                                        <form action="/applications" method="POST" class="d-inline">
+                                            <input type="hidden" name="jobId" value="<%= job.JobID %>">
+                                            <button type="submit" class="btn btn-primary-modern btn-lg px-5 shadow-md mb-2">
+                                                Apply Now <i class="fas fa-paper-plane ml-2"></i>
                                             </button>
+                                        </form>
+                                    <% } %>
+                                <% } else if (!user) { %>
+                                    <a href="/login?redirect=/jobs/<%= job.JobID %>"
+                                        class="btn btn-primary-modern btn-lg px-5 shadow-md mb-2">
+                                        Login to Apply
+                                    </a>
+                                <% } %>
+
                             </div>
                         </div>
                     </div>

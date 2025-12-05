@@ -57,6 +57,11 @@
                     <i class="fas fa-building"></i> Company Profile
                 </a>
             </li>
+            <li>
+                <a href="/settings" class="menu-link <%= (activePage === 'settings') ? 'active' : '' %>">
+                    <i class="fas fa-cog"></i> Settings
+                </a>
+            </li>
         <% } %>
 
         <% if (currentRole === 'Admin') { %>
@@ -96,8 +101,8 @@
                 </a>
             </li>
             <li>
-                <a href="/seeker/saved-jobs" class="menu-link <%= (activePage === 'saved') ? 'active' : '' %>">
-                    <i class="far fa-heart"></i> Saved Jobs
+                <a href="/settings" class="menu-link <%= (activePage === 'settings') ? 'active' : '' %>">
+                    <i class="fas fa-cog"></i> Settings
                 </a>
             </li>
         <% } %>

@@ -1,13 +1,12 @@
 import { StatusCodes } from 'http-status-codes'
 import { seekerModel } from '~/models/seekerModel/seekerModel'
+import { authModel } from '~/models/authModel/authModel'
 
 const viewDashboard = (req, res) => {
     res.render('seeker/dashboard.ejs', { title: 'Seeker Dashboard', user: req.session.user })
 }
 
-const viewSavedJobs = (req, res) => {
-    res.render('seeker/saved-jobs.ejs', { title: 'Saved Jobs', user: req.session.user })
-}
+
 
 const viewProfile = async (req, res, next) => {
     try {
@@ -33,16 +32,17 @@ const viewProfile = async (req, res, next) => {
 const handleUpdateProfile = async (req, res, next) => {
     try {
         const userId = req.session.user.id
-        const { FirstName, LastName, PhoneNumber, ProfessionalTitle, CurrentLocation, ProfileSummary, Skills } = req.body
+            const { FirstName, LastName, PhoneNumber, ExperienceLevel, CurrentLocation, ProfileSummary, DateOfBirth, Skills } = req.body
 
-        const profileData = {
-            FirstName,
-            LastName,
-            PhoneNumber,
-            CurrentLocation,
-            ProfileSummary,
-            ExperienceLevel: ProfessionalTitle
-        }
+            const profileData = {
+                FirstName,
+                LastName,
+                PhoneNumber,
+                CurrentLocation,
+                ProfileSummary,
+                ExperienceLevel: ExperienceLevel,
+                DateOfBirth: DateOfBirth || null
+            }
 
         await seekerModel.updateProfile(userId, profileData)
 
@@ -97,23 +97,12 @@ const deleteSkill = async (req, res, next) => {
     }
 }
 
-const recalculateSkills = async (req, res, next) => {
-    try {
-        const userId = req.session.user.id
-        const result = await seekerModel.recalcSkillPopularity(userId)
-        res.status(StatusCodes.OK).json({ success: true, skills: result.skills, totalScore: result.totalScore })
-    } catch (err) {
-        next(err)
-    }
-}
 
 export const seekerController = {
     viewDashboard,
-    viewSavedJobs,
     viewProfile,
     handleUpdateProfile,
     getSkills,
     addSkill,
     deleteSkill
-    ,recalculateSkills
 }

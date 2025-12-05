@@ -4,6 +4,7 @@ import { authRouter } from '~/routes/auth/authRouter'
 import { pagesRouter } from '~/routes/pages/pages'
 import { companyRouter } from './company/company'
 import { seekerRouter } from './seeker/seeker'
+import { settingsRouter } from './settings/settings'
 import { adminRouter } from "~/routes/admin/admin";
 import { jobRouter } from "~/routes/job/jobRouter";
 import isAuthorized from '~/middlewares/authorizedMiddleware'
@@ -20,6 +21,8 @@ router.use('/', pagesRouter)
 router.use('/company', isAuthorized, companyRouter)
 
 router.use('/seeker', isAuthorized, seekerRouter)
+
+router.use('/settings', isAuthorized, settingsRouter)
 
 router.use('/admin', isAuthorized, adminRouter)
 

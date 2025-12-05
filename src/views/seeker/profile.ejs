@@ -84,12 +84,18 @@
                                     </div>
                                     <div class="row">
                                         <div class="col-md-6 mb-3">
-                                            <label class="font-weight-bold small text-dark">Professional Title</label>
-                                            <input type="text" class="form-control-modern" name="ProfessionalTitle" value="<%= seeker.ProfessionalTitle %>">
+                                            <label class="font-weight-bold small text-dark">Experience Level</label>
+                                            <input type="text" class="form-control-modern" name="ExperienceLevel" value="<%= seeker.ExperienceLevel || '' %>">
                                         </div>
                                         <div class="col-md-6 mb-3">
                                             <label class="font-weight-bold small text-dark">Location</label>
                                             <input type="text" class="form-control-modern" name="CurrentLocation" value="<%= seeker.CurrentLocation %>">
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label class="font-weight-bold small text-dark">Date of Birth</label>
+                                            <input type="date" class="form-control-modern" name="DateOfBirth" value="<% if (seeker.DateOfBirth) { const d = new Date(seeker.DateOfBirth); const yyyy = d.getFullYear(); const mm = String(d.getMonth()+1).padStart(2,'0'); const dd = String(d.getDate()).padStart(2,'0'); %><%= `${yyyy}-${mm}-${dd}` %><% } %>">
                                         </div>
                                     </div>
                                     <div class="form-group mb-3">
@@ -117,7 +123,6 @@
                                             <small class="text-muted">Total Skill Score</small>
                                             <div><strong id="totalSkillScore"><%= typeof totalSkillScore !== 'undefined' ? totalSkillScore : 0 %></strong></div>
                                         </div>
-                                        <button id="recalcBtn" class="btn btn-sm btn-primary mr-2" type="button" style="background-color:#007bff;color:#fff;border-color:#007bff;">Recalculate</button>
                                         <button class="btn btn-sm btn-outline-primary rounded-pill font-weight-bold" data-toggle="modal" data-target="#addSkillModal">
                                             <i class="fas fa-plus mr-1"></i> Add Skill
                                         </button>
@@ -212,7 +217,6 @@
         const noSkillsMsg = document.getElementById('noSkillsMsg');
         const skillsInput = document.getElementById('skillsInput');
         const totalSkillScoreEl = document.getElementById('totalSkillScore');
-        const recalcBtn = document.getElementById('recalcBtn');
 
         // 2. Hàm vẽ lại danh sách Skill ra màn hình
         function renderSkills() {
@@ -260,35 +264,7 @@
             skillsInput.value = JSON.stringify(mySkills);
         }
 
-        // Recalculate button handler
-        recalcBtn && recalcBtn.addEventListener('click', async function () {
-            if (!confirm('Recalculate popularity scores for your skills?')) return;
-            try {
-                recalcBtn.disabled = true;
-                recalcBtn.textContent = 'Recalculating...';
-                const resp = await fetch('/seeker/profile/skills/recalculate', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    credentials: 'same-origin'
-                });
-                if (!resp.ok) throw new Error('Server error');
-                const data = await resp.json();
-                if (data && data.success) {
-                    mySkills = data.skills || mySkills;
-                    totalSkillScoreEl.textContent = data.totalScore || 0;
-                    renderSkills();
-                    alert('Recalculation completed');
-                } else {
-                    throw new Error(data && data.message ? data.message : 'Unknown response');
-                }
-            } catch (err) {
-                console.error(err);
-                alert('Failed to recalculate.');
-            } finally {
-                recalcBtn.disabled = false;
-                recalcBtn.textContent = 'Recalculate';
-            }
-        });
+        // Recalculate functionality removed — server-side recalculation not needed
 
         // 3. Xử lý nút Add Skill (Trong Modal)
         document.getElementById('saveSkillBtn').addEventListener('click', function() {

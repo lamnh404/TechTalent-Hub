@@ -130,7 +130,8 @@
                                                     <span class="text-dark font-weight-bold"><%= candidate.JobTitle %></span>
                                                 </td>
                                                 <td class="align-middle text-muted">
-                                                    <%= new Date(candidate.ApplicationDate).toLocaleDateString() %>
+                                                    <% const _ad = candidate.ApplicationDate ? new Date(candidate.ApplicationDate) : null; %>
+                                                    <%= _ad ? _ad.toLocaleDateString('vi-VN') : '' %>
                                                 </td>
                                                 <td class="align-middle">
                                                     <% 
@@ -224,7 +225,8 @@
                                                                             </div>
                                                                             <div class="col-md-6 mb-2">
                                                                                 <small class="text-muted d-block">Applied Date</small>
-                                                                                <span class="font-weight-bold text-dark"><%= new Date(candidate.ApplicationDate).toLocaleDateString() %></span>
+                                                                                <% const _ad2 = candidate.ApplicationDate ? new Date(candidate.ApplicationDate) : null; %>
+                                                                                <span class="font-weight-bold text-dark"><%= _ad2 ? _ad2.toLocaleDateString('vi-VN') : '' %></span>
                                                                             </div>
                                                                             <div class="col-md-6">
                                                                                 <small class="text-muted d-block">Current Status</small>
