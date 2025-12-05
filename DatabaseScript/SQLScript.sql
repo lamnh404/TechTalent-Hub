@@ -51,7 +51,7 @@ GO
 
 CREATE TABLE [Company] (
     [CompanyID] NVARCHAR(128) NOT NULL,
-    [FounderYear] SMALLINT NULL,
+    [FoundedYear] SMALLINT NULL,
     [VerificationStatus] NVARCHAR(10) NOT NULL DEFAULT N'PENDING',
     [LogoURL] NVARCHAR(512) NULL,
     [CompanySize] NVARCHAR(10) NULL,
@@ -110,10 +110,8 @@ CREATE TABLE [Skill] (
     [SkillID] INT NOT NULL IDENTITY(1,1),
     [SkillName] NVARCHAR(160) NOT NULL,
     [SkillCategory] NVARCHAR(120) NULL,
-    [PopularityScore] INT NULL DEFAULT 0,
     PRIMARY KEY ([SkillID]),
-    CONSTRAINT [UQ_Skill_SkillName] UNIQUE ([SkillName]),
-    CONSTRAINT [CK_Skill_PopularityScore] CHECK ([PopularityScore] >= 0 AND [PopularityScore] <= 100)
+    CONSTRAINT [UQ_Skill_SkillName] UNIQUE ([SkillName])
 );
 
 GO
@@ -219,6 +217,7 @@ CREATE TABLE [JobRequireSkill] (
     CONSTRAINT [CK_JRS_Proficiency] CHECK ([ProficiencyLevel] IN (N'Beginner',N'Intermediate',N'Advanced',N'Expert'))
 );
 GO
+
 CREATE INDEX [IX_JobRequireSkill_SkillID] ON [JobRequireSkill]([SkillID]);
 GO
 
@@ -234,6 +233,7 @@ CREATE TABLE [Application] (
     [RejectedReason] NVARCHAR(MAX) NULL,
     [OfferDetails] NVARCHAR(MAX) NULL,
     [isActive] BIT NOT NULL DEFAULT 1,
+    [LastUpdated] DATETIME NOT NULL DEFAULT GETDATE(),
     PRIMARY KEY ([ApplicationID]),
     CONSTRAINT [UQ_Application_JobSeeker_Job] UNIQUE ([JobSeekerID], [JobID]),
     CONSTRAINT [FK_Application_JobSeekerID_JobSeeker]
@@ -472,50 +472,111 @@ BEGIN
 END
 GO
 
--- =============================================
--- STORED PROCEDURES (Create before triggers that use them)
--- =============================================
+-- Function to calculate skill popularity score
 
--- Procedure: Update all skill popularity scores
 
-DROP PROCEDURE IF EXISTS [dbo.sp_UpdateAllSkillPopularityScores];
+DROP FUNCTION IF EXISTS dbo.fn_GetSkillPopularityScore;
 GO
 
-CREATE PROCEDURE dbo.sp_UpdateAllSkillPopularityScores
+CREATE FUNCTION dbo.fn_GetSkillPopularityScore(
+    @SkillID INT
+)
+RETURNS DECIMAL(5,2)
 AS
 BEGIN
-    SET NOCOUNT ON;
-    
-    DECLARE @TotalOpenJobs INT;
+    DECLARE @PopularityScore DECIMAL(5,2) = 0;
+    DECLARE @TotalOpenJobs INT = 0;
+    DECLARE @JobsRequiringSkill INT = 0;
     
     SELECT @TotalOpenJobs = COUNT(*)
     FROM [Job]
     WHERE [JobStatus] = N'Open';
     
     IF @TotalOpenJobs = 0
-    BEGIN
-        UPDATE [Skill] SET [PopularityScore] = 0;
-        RETURN;
-    END
+        RETURN 0;
     
 
-    UPDATE s
-    SET s.[PopularityScore] = FLOOR(
-        (CAST(ISNULL(job_count.cnt, 0) AS DECIMAL(10,2)) / @TotalOpenJobs) * 100
-    )
-    FROM [Skill] s
-    LEFT JOIN (
-        SELECT 
-            jrs.SkillID,
-            COUNT(DISTINCT jrs.JobID) AS cnt
-        FROM [JobRequireSkill] jrs
-        INNER JOIN [Job] j ON jrs.JobID = j.JobID
-        WHERE j.JobStatus = N'Open'
-        GROUP BY jrs.SkillID
-    ) job_count ON s.SkillID = job_count.SkillID;
+    SELECT @JobsRequiringSkill = COUNT(DISTINCT jrs.JobID)
+    FROM [JobRequireSkill] jrs
+    INNER JOIN [Job] j ON jrs.JobID = j.JobID
+    WHERE jrs.SkillID = @SkillID
+      AND j.JobStatus = N'Open';
+    
+    SET @PopularityScore = (CAST(@JobsRequiringSkill AS DECIMAL(10,2)) / @TotalOpenJobs) * 100;
+    
+    RETURN @PopularityScore;
 END
 GO
 
+
+
+-- ===========================================
+-- VIEWS
+-- ===========================================
+
+DROP VIEW IF EXISTS vw_SkillsWithPopularity;
+GO
+
+CREATE VIEW vw_SkillsWithPopularity
+AS
+SELECT 
+    s.SkillID,
+    s.SkillName,
+    s.SkillCategory,
+    CAST(
+        CASE 
+            WHEN total_jobs.cnt = 0 THEN 0
+            ELSE (CAST(ISNULL(job_count.cnt, 0) AS DECIMAL(10,2)) / total_jobs.cnt) * 100
+        END 
+    AS DECIMAL(5,2)) AS PopularityScore,
+    ISNULL(job_count.cnt, 0) AS JobsRequiringSkill,
+    total_jobs.cnt AS TotalOpenJobs
+FROM [Skill] s
+CROSS JOIN (
+    SELECT COUNT(*) AS cnt
+    FROM [Job]
+    WHERE [JobStatus] = N'Open'
+) total_jobs
+LEFT JOIN (
+    SELECT 
+        jrs.SkillID,
+        COUNT(DISTINCT jrs.JobID) AS cnt
+    FROM [JobRequireSkill] jrs
+    INNER JOIN [Job] j ON jrs.JobID = j.JobID
+    WHERE j.JobStatus = N'Open'
+    GROUP BY jrs.SkillID
+) job_count ON s.SkillID = job_count.SkillID;
+
+GO
+
+
+-- =============================================
+-- STORED PROCEDURES (Create before triggers that use them)
+-- =============================================
+
+
+-- Procedure: Get top N popular skills
+
+DROP PROCEDURE IF EXISTS dbo.sp_GetTopPopularSkills;
+GO
+
+CREATE PROCEDURE dbo.sp_GetTopPopularSkills
+    @TopN INT = 10
+AS
+BEGIN
+    SET NOCOUNT ON;
+    
+    SELECT TOP (@TopN)
+        SkillID,
+        SkillName,
+        SkillCategory,
+        PopularityScore,
+        JobsRequiringSkill,
+        TotalOpenJobs
+    FROM vw_SkillsWithPopularity
+    ORDER BY PopularityScore DESC, SkillName ASC;
+END
+GO
 
 -- Procedure: Get top matching jobs for a job seeker
 
@@ -775,7 +836,7 @@ END
 GO
 
 
--- Trigger: Validate FounderYear on Company insert
+-- Trigger: Validate FoundedYear on Company insert
 CREATE TRIGGER [trg_Company_BeforeInsert]
 ON [Company]
 AFTER INSERT
@@ -783,16 +844,16 @@ AS
 BEGIN
     SET NOCOUNT ON;
     
-    IF EXISTS (SELECT 1 FROM inserted WHERE FounderYear IS NOT NULL AND FounderYear > YEAR(GETDATE()))
+    IF EXISTS (SELECT 1 FROM inserted WHERE FoundedYear IS NOT NULL AND FoundedYear > YEAR(GETDATE()))
     BEGIN
-        RAISERROR(N'FounderYear cannot be in the future', 16, 1);
+        RAISERROR(N'FoundedYear cannot be in the future', 16, 1);
         ROLLBACK TRANSACTION;
         RETURN;
     END
 END
 GO
 
--- Trigger: Validate FounderYear on Company update
+-- Trigger: Validate FoundedYear on Company update
 
 DROP TRIGGER IF EXISTS [trg_Company_BeforeUpdate];
 GO
@@ -804,9 +865,9 @@ AS
 BEGIN
     SET NOCOUNT ON;
     
-    IF EXISTS (SELECT 1 FROM inserted WHERE FounderYear IS NOT NULL AND FounderYear > YEAR(GETDATE()))
+    IF EXISTS (SELECT 1 FROM inserted WHERE FoundedYear IS NOT NULL AND FoundedYear > YEAR(GETDATE()))
     BEGIN
-        RAISERROR(N'FounderYear cannot be in the future', 16, 1);
+        RAISERROR(N'FoundedYear cannot be in the future', 16, 1);
         ROLLBACK TRANSACTION;
         RETURN;
     END
@@ -1095,7 +1156,7 @@ DECLARE @CompanyId4 NVARCHAR(128) = (SELECT UserId FROM [User] WHERE Email = N'h
 -- Insert sample companies
 -- =============================================
 
-INSERT INTO [Company] ([CompanyID], [CompanyName], [FounderYear], [CompanySize], [Industry], [CompanyDescription], [CompanyWebsite], [VerificationStatus], [LogoURL])
+INSERT INTO [Company] ([CompanyID], [CompanyName], [FoundedYear], [CompanySize], [Industry], [CompanyDescription], [CompanyWebsite], [VerificationStatus], [LogoURL])
 SELECT @CompanyId1, N'FPT Software', 1999, N'Enterprise', N'Information Technology', 
  N'Leading software outsourcing company in Vietnam with over 30,000 employees worldwide. Specializing in digital transformation, AI, cloud computing, and enterprise solutions.',
  N'https://fptsoftware.com', N'ACCEPTED', N'https://cdn.haitrieu.com/wp-content/uploads/2022/01/Logo-FPT.png'
