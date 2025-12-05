@@ -3,6 +3,23 @@
     <body>
         <%- include('../partials/navbar', {activePage: 'jobs' }) %>
 
+            <% if (typeof error !== 'undefined' && error) { %>
+                <div class="container">
+                    <div class="alert alert-danger auth-alert shadow-sm mt-3" role="alert">
+                        <i class="fas fa-exclamation-circle mr-2"></i>
+                        <%= error %>
+                    </div>
+                </div>
+            <% } %>
+            <% if (typeof success !== 'undefined' && success) { %>
+                <div class="container">
+                    <div class="alert alert-success auth-alert shadow-sm mt-3" role="alert">
+                        <i class="fas fa-check-circle mr-2"></i>
+                        <%= success %>
+                    </div>
+                </div>
+            <% } %>
+
             <section class="home-hero" style="padding: 140px 0 60px; text-align: left;">
                 <div class="container position-relative" style="z-index: 2;">
 
@@ -136,6 +153,23 @@
                                 </ul>
                             </div>
 
+                            <div class="card border-0 shadow-sm rounded-lg p-4 mt-4">
+                                <h6 class="font-weight-bold text-dark mb-3">Skills Required</h6>
+                                <% if (job.Skills && job.Skills.length > 0) { %>
+                                    <div class="d-flex flex-wrap">
+                                        <% job.Skills.forEach(skill => { %>
+                                            <span class="tag-item mr-2 mb-2"><%= skill.SkillName %>
+                                                <% if (skill.ProficiencyLevel) { %>
+                                                    <small class="text-muted"> • <%= skill.ProficiencyLevel %></small>
+                                                <% } %>
+                                            </span>
+                                        <% }) %>
+                                    </div>
+                                <% } else { %>
+                                    <p class="small text-muted mb-0">No specific skills listed for this job.</p>
+                                <% } %>
+                            </div>
+
                         </div>
                     </div>
                 </div>
@@ -143,3 +177,29 @@
 
             <%- include('../partials/footer') %>
     </body>
+
+    <script>
+        const errorMessage = "<%= typeof error !== 'undefined' ? error : '' %>";
+        if (errorMessage) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: errorMessage,
+                confirmButtonColor: '#0063FF',
+                background: 'rgba(255, 255, 255, 0.95)',
+                backdrop: `rgba(0,0,123,0.1)`
+            });
+        }
+
+        const successMessage = "<%= typeof success !== 'undefined' ? success : '' %>";
+        if (successMessage) {
+            Swal.fire({
+                icon: 'success',
+                title: 'Success',
+                text: successMessage,
+                confirmButtonColor: '#0063FF',
+                background: 'rgba(255, 255, 255, 0.95)',
+                backdrop: `rgba(0,0,123,0.06)`
+            });
+        }
+    </script>

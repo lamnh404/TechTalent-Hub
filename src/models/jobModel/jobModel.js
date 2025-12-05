@@ -33,6 +33,18 @@ const createJob = async (jobData) => {
         console.log(jobResult)
 
         const jobId = jobResult.recordset[0].JobID
+        try {
+            await pool.request()
+                .input('JobMetricID', jobId)
+                .input('lastUpdated', time)
+                .query(`
+                    IF NOT EXISTS (SELECT 1 FROM [JobMetrics] WHERE JobMetricID = @JobMetricID)
+                    INSERT INTO [JobMetrics] (JobMetricID, AppliedCount, LikeCount, ViewCount, LastUpdated)
+                    VALUES (@JobMetricID, 0, 0, 0, @lastUpdated)
+                `)
+        } catch (mErr) {
+            console.warn('Failed to create JobMetrics for job', jobId, mErr.message)
+        }
 
         if (skills && skills.length > 0) {
             for (const skill of skills) {
@@ -82,7 +94,20 @@ const getJobById = async (jobId) => {
         const result = await pool.request()
             .input('jobId', jobId)
             .query(`
-                SELECT J.*, C.CompanyName, C.LogoURL, JM.ViewCount, JM.AppliedCount
+                SELECT
+                    J.JobID,
+                    J.CompanyID,
+                    J.JobTitle,
+                    J.JobDescription,
+                    J.SalaryMin,
+                    J.SalaryMax,
+                    J.Location,
+                    J.EmploymentType,
+                    J.PostedDate,
+                    C.CompanyName,
+                    C.LogoURL AS LogoURL,
+                    JM.ViewCount,
+                    JM.AppliedCount
                 FROM [Job] J
                 JOIN [Company] C ON J.CompanyID = C.CompanyID
                 LEFT JOIN [JobMetrics] JM ON J.JobID = JM.JobMetricID
@@ -113,33 +138,67 @@ const getJobById = async (jobId) => {
     }
 }
 
-const getJobsByCompanyId = async (companyId, page = 1, limit = 10) => {
+const getJobsByCompanyId = async (companyId, page = 1, limit = 10, titleFilter = '', statusFilter = 'all') => {
     try {
         const pool = GET_SQL_POOL()
         const offset = (page - 1) * limit
-        const countResult = await pool.request()
-            .input('companyId', companyId)
-            .query(`
-                SELECT COUNT(*) as total
-                FROM [Job]
-                WHERE CompanyID = @companyId
-            `)
+
+        // Build filters
+        let whereClauses = ['J.CompanyID = @companyId']
+        const request = pool.request().input('companyId', companyId)
+
+        if (titleFilter && titleFilter.length > 0) {
+            whereClauses.push('J.JobTitle LIKE @title')
+            request.input('title', sql.NVarChar, `%${titleFilter}%`)
+        }
+
+        if (statusFilter && statusFilter !== 'all') {
+            // Map friendly values to DB values if necessary
+            let dbStatus = statusFilter
+            if (statusFilter.toLowerCase() === 'active') dbStatus = 'Open'
+            if (statusFilter.toLowerCase() === 'closed') dbStatus = 'Closed'
+            whereClauses.push('J.JobStatus = @status')
+            request.input('status', sql.NVarChar, dbStatus)
+        }
+
+        const whereSql = whereClauses.length > 0 ? 'WHERE ' + whereClauses.join(' AND ') : ''
+
+        // Count total with filters
+        const countQuery = `SELECT COUNT(*) as total FROM [Job] J ${whereSql}`
+        const countResult = await request.query(countQuery)
         const totalJobs = countResult.recordset[0].total
         const totalPages = Math.ceil(totalJobs / limit)
 
-        const result = await pool.request()
+        // Fetch paged jobs including details and applicant count
+        const dataRequest = pool.request()
             .input('companyId', companyId)
             .input('offset', offset)
             .input('limit', limit)
-            .query(`
-                SELECT J.*, JM.AppliedCount as Applicants, J.ApplicationDeadline as Deadline, J.JobStatus as Status
-                FROM [Job] J
-                LEFT JOIN [JobMetrics] JM ON J.JobID = JM.JobMetricID
-                WHERE J.CompanyID = @companyId
-                ORDER BY J.PostedDate DESC
-                OFFSET @offset ROWS
-                FETCH NEXT @limit ROWS ONLY
-            `)
+
+        if (titleFilter && titleFilter.length > 0) dataRequest.input('title', sql.NVarChar, `%${titleFilter}%`)
+        if (statusFilter && statusFilter !== 'all') {
+            let dbStatus = statusFilter
+            if (statusFilter.toLowerCase() === 'active') dbStatus = 'Open'
+            if (statusFilter.toLowerCase() === 'closed') dbStatus = 'Closed'
+            dataRequest.input('status', sql.NVarChar, dbStatus)
+        }
+
+        const dataWhereSql = whereSql
+
+        const result = await dataRequest.query(`
+            SELECT 
+                J.JobID, J.JobTitle, J.PostedDate, J.JobStatus as Status, 
+                J.ApplicationDeadline AS Deadline, J.EmploymentType, J.Location,
+                C.LogoURL AS LogoURL,
+                ISNULL((SELECT COUNT(1) FROM [Application] A WHERE A.JobID = J.JobID), 0) AS Applicants
+            FROM [Job] J
+            LEFT JOIN [JobMetrics] JM ON J.JobID = JM.JobMetricID
+            JOIN [Company] C ON J.CompanyID = C.CompanyID
+            ${dataWhereSql}
+            ORDER BY J.PostedDate DESC
+            OFFSET @offset ROWS
+            FETCH NEXT @limit ROWS ONLY
+        `)
 
         return {
             jobs: result.recordset,

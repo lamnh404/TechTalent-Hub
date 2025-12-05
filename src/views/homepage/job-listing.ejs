@@ -265,15 +265,23 @@
                                 </div>
 
                                 <div class="mb-4">
-                                    <label class="filter-title">Salary Range ($)</label>
-                                    <div class="d-flex align-items-center">
-                                        <input type="number" class="form-control-modern salary-input" name="minSalary" 
-                                               value="<%= typeof minSalary !== 'undefined' ? minSalary : '' %>" 
+                                    <label class="filter-title">Employment Type</label>
+                                    <select class="form-control-modern" name="employmentType" style="height:45px; padding-left:12px;">
+                                        <option value="" <%= (typeof employmentType === 'undefined' || !employmentType) ? 'selected' : '' %>>Any</option>
+                                        <option value="FullTime" <%= (typeof employmentType !== 'undefined' && employmentType === 'FullTime') ? 'selected' : '' %>>Full-time</option>
+                                        <option value="PartTime" <%= (typeof employmentType !== 'undefined' && employmentType === 'PartTime') ? 'selected' : '' %>>Part-time</option>
+                                        <option value="Internship" <%= (typeof employmentType !== 'undefined' && employmentType === 'Internship') ? 'selected' : '' %>>Internship</option>
+                                        <option value="Contract" <%= (typeof employmentType !== 'undefined' && employmentType === 'Contract') ? 'selected' : '' %>>Contract</option>
+                                        <option value="Remote" <%= (typeof employmentType !== 'undefined' && employmentType === 'Remote') ? 'selected' : '' %>>Remote</option>
+                                    </select>
+                                </div>
+
+                                <div class="mb-4">
+                                    <label class="filter-title">Minimum Salary ($)</label>
+                                    <div>
+                                        <input type="number" class="form-control-modern salary-input w-100" name="minSalary" 
+                                               value="<%= (typeof minSalary !== 'undefined' && minSalary !== null) ? minSalary : '' %>" 
                                                placeholder="Min">
-                                        <span class="mx-2 text-muted font-weight-bold">-</span>
-                                        <input type="number" class="form-control-modern salary-input" name="maxSalary" 
-                                               value="<%= typeof maxSalary !== 'undefined' ? maxSalary : '' %>" 
-                                               placeholder="Max">
                                     </div>
                                 </div>
 
@@ -317,7 +325,15 @@
                                         </div>
 
                                         <div class="d-flex align-items-center flex-wrap">
-                                            <span class="tag-item mr-2 mb-2"><%= job.EmploymentType %></span>
+                                                          <% let et = job.EmploymentType || ''; 
+                                                              let etLabel = et;
+                                                              if (et === 'FullTime') etLabel = 'Full-time';
+                                                              else if (et === 'PartTime') etLabel = 'Part-time';
+                                                              else if (et === 'Remote') etLabel = 'Remote';
+                                                              else if (et === 'Internship') etLabel = 'Internship';
+                                                              else if (et === 'Contract') etLabel = 'Contract';
+                                                          %>
+                                                          <span class="tag-item mr-2 mb-2"><%= etLabel %></span>
                                             
                                             <% if (job.SalaryMin) { %>
                                                 <span class="job-salary mb-2">
@@ -361,8 +377,8 @@
                                     let baseQuery = `q=${typeof q !== 'undefined' ? q : ''}`;
                                     if(typeof jobTitle !== 'undefined' && jobTitle) baseQuery += `&jobTitle=${jobTitle}`;
                                     if(typeof company !== 'undefined' && company) baseQuery += `&company=${company}`;
-                                    if(typeof minSalary !== 'undefined' && minSalary) baseQuery += `&minSalary=${minSalary}`;
-                                    if(typeof maxSalary !== 'undefined' && maxSalary) baseQuery += `&maxSalary=${maxSalary}`;
+                                    if(typeof minSalary !== 'undefined' && minSalary !== null) baseQuery += `&minSalary=${minSalary}`;
+                                    if(typeof employmentType !== 'undefined' && employmentType) baseQuery += `&employmentType=${employmentType}`;
                                     if(typeof sort !== 'undefined' && sort) baseQuery += `&sort=${sort}`;
                                 %>
 

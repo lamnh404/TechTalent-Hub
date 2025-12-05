@@ -28,7 +28,10 @@ const getJobs = async (req, res, next) => {
         const page = parseInt(req.query.page) || 1
         const limit = 10
 
-        const { jobs, currentPage, totalPages, totalJobs } = await jobModel.getJobsByCompanyId(companyId, page, limit)
+        const search = req.query.search ? String(req.query.search).trim() : ''
+        const status = req.query.status ? String(req.query.status).trim() : 'all'
+
+        const { jobs, currentPage, totalPages, totalJobs } = await jobModel.getJobsByCompanyId(companyId, page, limit, search, status)
 
         res.render('company/job-list.ejs', {
             title: 'My Jobs Posts',
@@ -36,7 +39,9 @@ const getJobs = async (req, res, next) => {
             jobs,
             currentPage,
             totalPages,
-            totalJobs
+            totalJobs,
+            search,
+            status
         })
     } catch (error) {
         next(error)

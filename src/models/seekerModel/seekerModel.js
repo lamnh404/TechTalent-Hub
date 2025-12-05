@@ -42,7 +42,8 @@ const getProfile = async (userId) => {
                     s.SkillID,
                     s.SkillName,
                     jss.ProficiencyLevel,
-                    jss.YearOfExperience
+                    jss.YearOfExperience,
+                    s.PopularityScore
                 FROM [JobSeekerSkill] jss
                 JOIN [Skill] s ON jss.SkillID = s.SkillID
                 WHERE jss.JobSeekerID = @JobSeekerID
@@ -149,12 +150,47 @@ const getSkills = async (userId) => {
                     s.SkillID,
                     s.SkillName,
                     jss.ProficiencyLevel,
-                    jss.YearOfExperience
+                    jss.YearOfExperience,
+                    s.PopularityScore
                 FROM [JobSeekerSkill] jss
                 JOIN [Skill] s ON jss.SkillID = s.SkillID
                 WHERE jss.JobSeekerID = @JobSeekerID
             `)
         return result.recordset
+    } catch (err) {
+        throw new ApiError(StatusCodes.INTERNAL_SERVER_ERROR, err.message)
+    }
+}
+
+const recalcSkillPopularity = async (userId) => {
+    try {
+        const pool = GET_SQL_POOL()
+
+        const skillIdsResult = await pool.request()
+            .input('JobSeekerID', sql.NVarChar, userId)
+            .query(`SELECT SkillID FROM [JobSeekerSkill] WHERE JobSeekerID = @JobSeekerID`)
+
+        const skillIds = skillIdsResult.recordset.map(r => r.SkillID)
+
+        for (const id of skillIds) {
+            await pool.request()
+                .input('p_SkillID', sql.Int, id)
+                .execute('dbo.sp_UpdateSkillPopularityScores')
+        }
+
+        const updated = await pool.request()
+            .input('JobSeekerID', sql.NVarChar, userId)
+            .query(`
+                SELECT s.SkillID, s.SkillName, s.PopularityScore, jss.ProficiencyLevel, jss.YearOfExperience
+                FROM [JobSeekerSkill] jss
+                JOIN [Skill] s ON jss.SkillID = s.SkillID
+                WHERE jss.JobSeekerID = @JobSeekerID
+            `)
+
+        const skills = updated.recordset
+        const totalScore = skills.reduce((acc, s) => acc + (s.PopularityScore || 0), 0)
+
+        return { skills, totalScore }
     } catch (err) {
         throw new ApiError(StatusCodes.INTERNAL_SERVER_ERROR, err.message)
     }
@@ -255,6 +291,7 @@ export const seekerModel = {
     updateProfile,
     updateSkills,
     getSkills,
+    recalcSkillPopularity,
     addSkill,
     deleteSkill,
     getAvailableSkills

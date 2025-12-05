@@ -9,10 +9,10 @@ const searchController = {
             const sort = req.query.sort || 'newest';
             const jobTitle = req.query.jobTitle || '';
             const company = req.query.company || '';
-            const minSalary = typeof req.query.minSalary !== 'undefined' ? req.query.minSalary : '';
-            const maxSalary = typeof req.query.maxSalary !== 'undefined' ? req.query.maxSalary : '';
+            const employmentType = req.query.employmentType || '';
+                const minSalary = (typeof req.query.minSalary !== 'undefined' && req.query.minSalary !== '') ? parseFloat(req.query.minSalary) : null;
 
-            const jobs = await searchModel.searchJobs(q, page, limit, sort, jobTitle, company, minSalary, maxSalary);
+                const jobs = await searchModel.searchJobs(q, page, limit, sort, jobTitle, company, minSalary, employmentType);
 
             let totalJobs = 0;
             if (jobs.length > 0) {
@@ -26,8 +26,8 @@ const searchController = {
                 sort,
                 jobTitle,
                 company,
+                employmentType,
                 minSalary,
-                maxSalary,
                 user: req.session.user,
 
                 pagination: {

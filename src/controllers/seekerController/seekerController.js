@@ -97,6 +97,16 @@ const deleteSkill = async (req, res, next) => {
     }
 }
 
+const recalculateSkills = async (req, res, next) => {
+    try {
+        const userId = req.session.user.id
+        const result = await seekerModel.recalcSkillPopularity(userId)
+        res.status(StatusCodes.OK).json({ success: true, skills: result.skills, totalScore: result.totalScore })
+    } catch (err) {
+        next(err)
+    }
+}
+
 export const seekerController = {
     viewDashboard,
     viewSavedJobs,
@@ -105,4 +115,5 @@ export const seekerController = {
     getSkills,
     addSkill,
     deleteSkill
+    ,recalculateSkills
 }

@@ -112,9 +112,16 @@
                             <div class="card-body p-5">
                                 <div class="d-flex justify-content-between align-items-center mb-4">
                                     <h5 class="font-weight-bold text-primary mb-0">Professional Skills</h5>
-                                    <button class="btn btn-sm btn-outline-primary rounded-pill font-weight-bold" data-toggle="modal" data-target="#addSkillModal">
-                                        <i class="fas fa-plus mr-1"></i> Add Skill
-                                    </button>
+                                    <div class="d-flex align-items-center">
+                                        <div class="mr-3 text-right d-none d-sm-block">
+                                            <small class="text-muted">Total Skill Score</small>
+                                            <div><strong id="totalSkillScore"><%= typeof totalSkillScore !== 'undefined' ? totalSkillScore : 0 %></strong></div>
+                                        </div>
+                                        <button id="recalcBtn" class="btn btn-sm btn-primary mr-2" type="button" style="background-color:#007bff;color:#fff;border-color:#007bff;">Recalculate</button>
+                                        <button class="btn btn-sm btn-outline-primary rounded-pill font-weight-bold" data-toggle="modal" data-target="#addSkillModal">
+                                            <i class="fas fa-plus mr-1"></i> Add Skill
+                                        </button>
+                                    </div>
                                 </div>
                                 <hr class="mb-4">
 
@@ -204,6 +211,8 @@
         const skillsContainer = document.getElementById('skillsContainer');
         const noSkillsMsg = document.getElementById('noSkillsMsg');
         const skillsInput = document.getElementById('skillsInput');
+        const totalSkillScoreEl = document.getElementById('totalSkillScore');
+        const recalcBtn = document.getElementById('recalcBtn');
 
         // 2. Hàm vẽ lại danh sách Skill ra màn hình
         function renderSkills() {
@@ -211,23 +220,30 @@
             
             if (mySkills.length === 0) {
                 noSkillsMsg.style.display = 'block';
+                totalSkillScoreEl.textContent = 0;
             } else {
                 noSkillsMsg.style.display = 'none';
-                
+                let total = 0;
                 mySkills.forEach((skill, index) => {
                     // Chọn màu badge
                     let badgeColor = 'badge-soft-primary';
-                    if(skill.ProficiencyLevel === 'Expert') badgeColor = 'badge-soft-success';
-                    if(skill.ProficiencyLevel === 'Beginner') badgeColor = 'badge-soft-secondary';
+                    if (skill.ProficiencyLevel === 'Expert') badgeColor = 'badge-soft-success';
+                    if (skill.ProficiencyLevel === 'Beginner') badgeColor = 'badge-soft-secondary';
+
+                    const popularity = (typeof skill.PopularityScore !== 'undefined') ? skill.PopularityScore : 0;
+                    total += Number(popularity) || 0;
 
                     const html = `
                         <div class="d-inline-flex align-items-center bg-white border shadow-sm rounded-pill pr-2 pl-3 py-2 mr-2 mb-2 animate__animated animate__fadeIn">
                             <div class="mr-3">
                                 <span class="font-weight-bold text-dark d-block" style="line-height:1.2">${skill.SkillName}</span>
                                 <small class="text-muted" style="font-size: 0.75rem;">
-                                    ${skill.ProficiencyLevel} • ${skill.YearOfExperience} year(s)
+                                    ${skill.ProficiencyLevel} • ${skill.YearOfExperience || 0} year(s)
                                 </small>
                             </div>
+                            <div class="mr-2 d-flex align-items-center">
+                                        <span class="badge badge-primary" style="background-color:#007bff;color:#fff;">Popularity: ${popularity}</span>
+                                    </div>
                             <button type="button" class="btn btn-sm btn-light text-danger rounded-circle" 
                                     onclick="removeSkill(${index})" style="width: 30px; height: 30px; padding: 0; display:flex; align-items:center; justify-content:center;">
                                 <i class="fas fa-times"></i>
@@ -236,11 +252,43 @@
                     `;
                     skillsContainer.insertAdjacentHTML('beforeend', html);
                 });
+
+                totalSkillScoreEl.textContent = Math.round(total);
             }
             
             // Cập nhật lại input ẩn để chuẩn bị gửi form
             skillsInput.value = JSON.stringify(mySkills);
         }
+
+        // Recalculate button handler
+        recalcBtn && recalcBtn.addEventListener('click', async function () {
+            if (!confirm('Recalculate popularity scores for your skills?')) return;
+            try {
+                recalcBtn.disabled = true;
+                recalcBtn.textContent = 'Recalculating...';
+                const resp = await fetch('/seeker/profile/skills/recalculate', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'same-origin'
+                });
+                if (!resp.ok) throw new Error('Server error');
+                const data = await resp.json();
+                if (data && data.success) {
+                    mySkills = data.skills || mySkills;
+                    totalSkillScoreEl.textContent = data.totalScore || 0;
+                    renderSkills();
+                    alert('Recalculation completed');
+                } else {
+                    throw new Error(data && data.message ? data.message : 'Unknown response');
+                }
+            } catch (err) {
+                console.error(err);
+                alert('Failed to recalculate.');
+            } finally {
+                recalcBtn.disabled = false;
+                recalcBtn.textContent = 'Recalculate';
+            }
+        });
 
         // 3. Xử lý nút Add Skill (Trong Modal)
         document.getElementById('saveSkillBtn').addEventListener('click', function() {
