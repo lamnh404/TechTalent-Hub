@@ -22,6 +22,33 @@ const getDashboard = async (req, res, next) => {
     }
 }
 
+    const getApplicationStatistics = async (req, res, next) => {
+        try {
+            const companyId = req.session.user.id
+            const { startDate, endDate } = req.body
+
+            const stats = await companyModel.getDashboardStats(companyId)
+            const recentJobs = await companyModel.getRecentJobs(companyId)
+            const appStats = await companyModel.getApplicationStatisticsByCompany(companyId, startDate || null, endDate || null)
+
+            // if appStats is null it means no applications in given date range
+            const noApplicationsInRange = appStats === null
+
+            res.render('company/dashboard.ejs', {
+                title: 'Company Dashboard',
+                user: req.session.user,
+                stats,
+                recentJobs,
+                appStats,
+                noApplicationsInRange,
+                startDate,
+                endDate
+            })
+        } catch (error) {
+            next(error)
+        }
+    }
+
 const getJobs = async (req, res, next) => {
     try {
         const companyId = req.session.user.id
@@ -324,6 +351,7 @@ const updateApplicationStatus = async (req, res, next) => {
 
 export const companyController = {
     getDashboard,
+    getApplicationStatistics,
     getJobs,
     getCandidates,
     getProfile,

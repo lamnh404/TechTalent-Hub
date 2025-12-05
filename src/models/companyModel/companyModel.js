@@ -116,9 +116,30 @@ const getRecentJobs = async (companyId) => {
     }
 }
 
+const getApplicationStatisticsByCompany = async (companyId, startDate = null, endDate = null) => {
+    try {
+        const pool = GET_SQL_POOL()
+        const request = pool.request()
+        // use proper SQL types; accept null to let proc use defaults
+        request.input('p_StartDate', sql.DateTime, startDate || null)
+        request.input('p_EndDate', sql.DateTime, endDate || null)
+
+        const result = await request.execute('dbo.sp_GetApplicationStatisticsByCompany')
+
+        const rows = result.recordset || []
+        // stored proc returns aggregated rows for companies with applications in range
+        const match = rows.find(r => String(r.CompanyID) === String(companyId))
+        // if no row found, return null to indicate no applications in the range
+        return match || null
+    } catch (error) {
+        throw new ApiError(StatusCodes.INTERNAL_SERVER_ERROR, error.message)
+    }
+}
+
 export const companyModel = {
     getCompanyProfile,
     updateCompanyProfile,
     getDashboardStats,
     getRecentJobs
+    ,getApplicationStatisticsByCompany
 }

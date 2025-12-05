@@ -94,9 +94,23 @@ const updateApplicationStatus = async (applicationId, status) => {
     }
 }
 
+const hasApplied = async (seekerId, jobId) => {
+    try {
+        const pool = GET_SQL_POOL()
+        const result = await pool.request()
+            .input('seekerId', seekerId)
+            .input('jobId', jobId)
+            .query(`SELECT 1 AS Applied FROM [Application] WHERE JobSeekerID = @seekerId AND JobID = @jobId`)
+        return result.recordset.length > 0
+    } catch (error) {
+        throw new ApiError(StatusCodes.INTERNAL_SERVER_ERROR, error.message)
+    }
+}
+
 export const applicationModel = {
     createApplication,
     getApplicationsBySeekerId,
     getCandidatesByCompanyId,
     updateApplicationStatus
+    ,hasApplied
 }
