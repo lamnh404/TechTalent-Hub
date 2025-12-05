@@ -64,7 +64,7 @@ const setupCompany = async (req, res, next) => {
 
         req.session.save((err) => {
             if (err) return next(err)
-            res.redirect('/')
+            res.redirect('/login')
         })
     } catch (error) {
         res.render('auth/setup-company.ejs', { title: 'Setup Company', error: error.message })
@@ -85,7 +85,7 @@ const setupSeeker = async (req, res, next) => {
 
         req.session.save((err) => {
             if (err) return next(err)
-            res.redirect('/')
+            res.redirect('/login')
         })
     } catch (error) {
         res.render('auth/setup-seeker.ejs', { title: 'Setup Seeker', error: error.message })

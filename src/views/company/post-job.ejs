@@ -1,4 +1,4 @@
-<%- include('../partials/header', { title: typeof isEdit !=='undefined' && isEdit ? 'Edit Job' : 'Post A Job' }) %>
+<%- include('../partials/header', { title: typeof isEdit !=='undefined' && isEdit ? 'Edit Job' : 'Post a New Job' }) %>
 
     <body class="dashboard-page">
         <div class="dashboard-wrapper">
@@ -6,6 +6,7 @@
             <%- include('../partials/dashboard-sidebar', { activePage: 'post-job' }) %>
 
                 <main class="main-content">
+
                     <header class="dashboard-header">
                         <h5 class="mb-0 font-weight-bold text-dark">
                             <%= typeof isEdit !=='undefined' && isEdit ? 'Edit Job' : 'Post a New Job' %>
@@ -68,7 +69,7 @@
                                                                 <input type="text" class="form-control-modern"
                                                                     name="JobTitle"
                                                                     placeholder="e.g. Senior React Developer" required
-                                                                    value="<%= typeof job !== 'undefined' ? job.JobTitle : '' %>">
+                                                                    value="<%= job.JobTitle %>">
                                                             </div>
                                                         </div>
                                                         <div class="col-md-4 mb-3">
@@ -78,30 +79,21 @@
                                                                 <i class="far fa-clock input-icon"></i>
                                                                 <select class="form-control-modern"
                                                                     name="EmploymentType">
-                                                                    <option value="FullTime" <%=typeof job
-                                                                        !=='undefined' &&
-                                                                        job.EmploymentType==='FullTime' ? 'selected'
-                                                                        : '' %>
-                                                                        >Full-time</option>
-                                                                    <option value="PartTime" <%=typeof job
-                                                                        !=='undefined' &&
-                                                                        job.EmploymentType==='PartTime' ? 'selected'
-                                                                        : '' %>
-                                                                        >Part-time</option>
-                                                                    <option value="Contract" <%=typeof job
-                                                                        !=='undefined' &&
-                                                                        job.EmploymentType==='Contract' ? 'selected'
-                                                                        : '' %>
-                                                                        >Contract</option>
-                                                                    <option value="Internship" <%=typeof job
-                                                                        !=='undefined' &&
-                                                                        job.EmploymentType==='Internship' ? 'selected'
-                                                                        : '' %>
-                                                                        >Internship</option>
-                                                                    <option value="Remote" <%=typeof job !=='undefined'
-                                                                        && job.EmploymentType==='Remote' ? 'selected'
-                                                                        : '' %>
-                                                                        >Remote</option>
+                                                                    <option value="FullTime"
+                                                                        <%=job.EmploymentType==='FullTime' ? 'selected'
+                                                                        : '' %>>Full-time</option>
+                                                                    <option value="PartTime"
+                                                                        <%=job.EmploymentType==='PartTime' ? 'selected'
+                                                                        : '' %>>Part-time</option>
+                                                                    <option value="Contract"
+                                                                        <%=job.EmploymentType==='Contract' ? 'selected'
+                                                                        : '' %>>Contract</option>
+                                                                    <option value="Internship"
+                                                                        <%=job.EmploymentType==='Internship'
+                                                                        ? 'selected' : '' %>>Internship</option>
+                                                                    <option value="Remote"
+                                                                        <%=job.EmploymentType==='Remote' ? 'selected'
+                                                                        : '' %>>Remote</option>
                                                                 </select>
                                                             </div>
                                                         </div>
@@ -115,7 +107,7 @@
                                                                 <i class="fas fa-dollar-sign input-icon"></i>
                                                                 <input type="number" class="form-control-modern"
                                                                     name="SalaryMin" placeholder="1000"
-                                                                    value="<%= typeof job !== 'undefined' ? job.SalaryMin : '' %>">
+                                                                    value="<%= job.SalaryMin %>">
                                                             </div>
                                                         </div>
                                                         <div class="col-md-3 mb-3">
@@ -125,7 +117,7 @@
                                                                 <i class="fas fa-dollar-sign input-icon"></i>
                                                                 <input type="number" class="form-control-modern"
                                                                     name="SalaryMax" placeholder="3000"
-                                                                    value="<%= typeof job !== 'undefined' ? job.SalaryMax : '' %>">
+                                                                    value="<%= job.SalaryMax %>">
                                                             </div>
                                                         </div>
                                                         <div class="col-md-3 mb-3">
@@ -135,7 +127,7 @@
                                                                 <i class="fas fa-medal input-icon"></i>
                                                                 <input type="number" class="form-control-modern"
                                                                     name="ExperienceRequired" placeholder="2" min="0"
-                                                                    value="<%= typeof job !== 'undefined' ? job.ExperienceRequired : '' %>">
+                                                                    value="<%= job.ExperienceRequired %>">
                                                             </div>
                                                         </div>
                                                         <div class="col-md-3 mb-3">
@@ -145,7 +137,7 @@
                                                                 <i class="fas fa-users input-icon"></i>
                                                                 <input type="number" class="form-control-modern"
                                                                     name="OpeningCount" placeholder="1" min="1"
-                                                                    value="<%= typeof job !== 'undefined' ? job.OpeningCount : '1' %>">
+                                                                    value="<%= job.OpeningCount || '1' %>">
                                                             </div>
                                                         </div>
                                                     </div>
@@ -159,8 +151,7 @@
                                                                 <input type="text" class="form-control-modern"
                                                                     name="Location"
                                                                     placeholder="e.g. District 1, Ho Chi Minh City"
-                                                                    required
-                                                                    value="<%= typeof job !== 'undefined' ? job.Location : '' %>">
+                                                                    required value="<%= job.Location %>">
                                                             </div>
                                                         </div>
                                                         <div class="col-md-4 mb-3">
@@ -170,7 +161,7 @@
                                                                 <i class="far fa-calendar-alt input-icon"></i>
                                                                 <input type="date" class="form-control-modern"
                                                                     name="ApplicationDeadline"
-                                                                    value="<%= typeof job !== 'undefined' && job.ApplicationDeadline ? new Date(job.ApplicationDeadline).toISOString().split('T')[0] : '' %>">
+                                                                    value="<%= job.ApplicationDeadline ? new Date(job.ApplicationDeadline).toISOString().split('T')[0] : '' %>">
                                                             </div>
                                                         </div>
                                                     </div>
@@ -181,38 +172,33 @@
                                                         <textarea class="form-control-modern h-auto py-3"
                                                             name="JobDescription" rows="8"
                                                             placeholder="Describe the role, responsibilities, and requirements..."
-                                                            required><%= typeof job !== 'undefined' ? job.JobDescription : '' %></textarea>
+                                                            required><%= job.JobDescription %></textarea>
                                                         <small class="text-muted mt-1"><i
-                                                                class="fas fa-info-circle mr-1"></i>
-                                                            Tip: Use bullet points for better readability.</small>
+                                                                class="fas fa-info-circle mr-1"></i> Tip: Use bullet
+                                                            points for better readability.</small>
                                                     </div>
 
                                                     <div class="form-group mb-4">
-                                                        <label class="font-weight-bold small text-dark">Required
-                                                            Skills</label>
-
-                                                        <div id="selectedSkillsContainer"
-                                                            class="d-flex flex-wrap gap-2 mb-2">
+                                                        <div
+                                                            class="d-flex justify-content-between align-items-center mb-2">
+                                                            <label
+                                                                class="font-weight-bold small text-dark mb-0">Required
+                                                                Skills</label>
+                                                            <button type="button"
+                                                                class="btn btn-sm btn-outline-primary rounded-pill font-weight-bold"
+                                                                data-toggle="modal" data-target="#addSkillModal">
+                                                                <i class="fas fa-plus mr-1"></i> Add Requirement
+                                                            </button>
                                                         </div>
 
-                                                        <div class="input-wrapper">
-                                                            <i class="fas fa-tags input-icon"></i>
-                                                            <input type="text" class="form-control-modern"
-                                                                id="skillInput" list="skillOptions"
-                                                                placeholder="Type to search skills (e.g. React, SQL)...">
+                                                        <div id="skillsContainer"
+                                                            class="d-flex flex-wrap gap-2 p-3 bg-light rounded border border-light"
+                                                            style="min-height: 60px;"></div>
+                                                        <div id="noSkillsMsg" class="text-muted small mt-2">No specific
+                                                            skills required yet.</div>
 
-                                                            <datalist id="skillOptions">
-                                                                <% if (typeof availableSkills !=='undefined' ) { %>
-                                                                    <% availableSkills.forEach(skill=> { %>
-                                                                        <option value="<%= skill.SkillName %>"></option>
-                                                                        <% }) %>
-                                                                            <% } %>
-                                                            </datalist>
-                                                        </div>
-                                                        <small class="text-muted mt-1">Press <strong>Enter</strong> to
-                                                            add a skill.</small>
-
-                                                        <input type="hidden" name="skills" id="hiddenSkillsInput">
+                                                        <input type="hidden" name="skills" id="skillsInput"
+                                                            value='<%= JSON.stringify(job.Skills || []) %>'>
                                                     </div>
 
                                                     <hr class="my-4">
@@ -220,7 +206,7 @@
                                                     <div class="d-flex justify-content-end">
                                                         <a href="/company/dashboard"
                                                             class="btn btn-light mr-3 font-weight-bold text-muted">Cancel</a>
-                                                        <button type="button" id="submitBtn"
+                                                        <button type="submit" id="submitBtn"
                                                             class="btn btn-primary-modern px-5 shadow-md font-weight-bold">
                                                             <%= typeof isEdit !=='undefined' && isEdit ? 'Update Job'
                                                                 : 'Post Job Now' %> <i
@@ -237,96 +223,158 @@
                     </div>
                 </main>
         </div>
+
+        <div class="modal fade" id="addSkillModal" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content border-0 shadow-lg rounded-lg">
+                    <div class="modal-header border-0 pb-0">
+                        <h5 class="modal-title font-weight-bold">Add Job Requirement</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body p-4">
+                        <form id="skillForm">
+                            <div class="form-group mb-3">
+                                <label class="small font-weight-bold text-dark">Skill Name</label>
+                                <div class="input-wrapper">
+                                    <i class="fas fa-code input-icon"></i>
+                                    <input type="text" class="form-control-modern" list="availableSkillsList"
+                                        id="skillNameInput" placeholder="Ex: React, English..." autocomplete="off">
+                                    <datalist id="availableSkillsList">
+                                        <% if (typeof availableSkills !=='undefined' ) { %>
+                                            <% availableSkills.forEach(s=> { %>
+                                                <option value="<%= s.SkillName %>"></option>
+                                                <% }) %>
+                                                    <% } %>
+                                    </datalist>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="small font-weight-bold text-dark">Minimum Level</label>
+                                    <div class="input-wrapper">
+                                        <i class="fas fa-layer-group input-icon"></i>
+                                        <select class="form-control-modern" id="skillLevelInput">
+                                            <option value="Beginner">Beginner</option>
+                                            <option value="Intermediate" selected>Intermediate</option>
+                                            <option value="Advanced">Advanced</option>
+                                            <option value="Expert">Expert</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mb-3 d-flex align-items-center">
+                                    <div class="custom-control custom-checkbox w-100 pt-4">
+                                        <input type="checkbox" class="custom-control-input" id="skillRequiredInput"
+                                            checked>
+                                        <label class="custom-control-label font-weight-bold text-dark"
+                                            for="skillRequiredInput">Is Required?</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer border-0 bg-light rounded-bottom p-3">
+                        <button type="button" class="btn btn-light" data-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-primary-modern shadow-sm" id="saveSkillBtn">Add
+                            Requirement</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <%- include('../partials/footer') %>
 
             <script>
-                document.addEventListener('DOMContentLoaded', function () {
-                    const skillInput = document.getElementById('skillInput');
-                    const selectedSkillsContainer = document.getElementById('selectedSkillsContainer');
-                    const hiddenSkillsInput = document.getElementById('hiddenSkillsInput');
-                    const submitBtn = document.getElementById('submitBtn');
-                    const form = document.getElementById('postJobForm');
+                let mySkills = [];
+                try {
+                    const rawData = document.getElementById('skillsInput').value;
+                    if (rawData && rawData.trim().startsWith('[')) {
+                        mySkills = JSON.parse(rawData);
+                    } else if (rawData) {
+                        mySkills = rawData.split(',').map(s => ({
+                            SkillName: s.trim(),
+                            ProficiencyLevel: 'Intermediate',
+                            IsRequired: true
+                        }));
+                    }
+                } catch (e) {
+                    console.error("Error parsing skills", e);
+                    mySkills = [];
+                }
 
-                    // Mảng chứa các skill đã chọn
-                    let selectedSkills = [];
+                const skillsContainer = document.getElementById('skillsContainer');
+                const noSkillsMsg = document.getElementById('noSkillsMsg');
+                const skillsInput = document.getElementById('skillsInput');
 
-            // Initialize skills if editing or if there was an error
-            <% if (typeof job !== 'undefined' && job.Skills) { %>
-                <% job.Skills.forEach(skill => { %>
-                        selectedSkills.push('<%= skill %>');
-                <% }) %>
-            <% } else if (typeof job !== 'undefined' && job.skills) { %>
-                // Handle case where skills come from body (array or string)
-                <% if (Array.isArray(job.skills)) { %>
-                    <% job.skills.forEach(skill => { %>
-                            selectedSkills.push('<%= skill %>');
-                    <% }) %>
-                <% } else if (typeof job.skills === 'string') { %>
-                    const initialSkills = '<%= job.skills %>'.split(',').filter(s => s.trim() !== '');
-                            selectedSkills.push(...initialSkills);
-                <% } %>
-            <% } %>
+                function renderSkills() {
+                    skillsContainer.innerHTML = '';
 
-                        // 1. Hàm render lại giao diện tags
-                        function renderSkills() {
-                            selectedSkillsContainer.innerHTML = '';
-                            selectedSkills.forEach((skill, index) => {
-                                const tag = document.createElement('span');
-                                tag.className = 'badge badge-soft-primary px-3 py-2 mr-2 mb-2 d-inline-flex align-items-center animate__animated animate__fadeIn';
-                                tag.style.fontSize = '0.9rem';
-                                tag.innerHTML = `
-                        ${skill}
-                        <i class="fas fa-times ml-2" style="cursor: pointer;" onclick="removeSkill(${index})"></i>
-                    `;
-                                selectedSkillsContainer.appendChild(tag);
-                            });
+                    if (mySkills.length === 0) {
+                        noSkillsMsg.style.display = 'block';
+                        skillsContainer.style.display = 'none';
+                    } else {
+                        noSkillsMsg.style.display = 'none';
+                        skillsContainer.style.display = 'flex';
 
-                            // Cập nhật input ẩn (Backend sẽ nhận chuỗi "React,Node.js,SQL")
-                            hiddenSkillsInput.value = selectedSkills.join(',');
-                        }
+                        mySkills.forEach((skill, index) => {
+                            let badgeColor = 'primary';
+                            if (skill.ProficiencyLevel === 'Expert') badgeColor = 'success';
+                            if (skill.ProficiencyLevel === 'Beginner') badgeColor = 'secondary';
+
+                            const html = `
+                    <div class="d-inline-flex align-items-center bg-white border shadow-sm rounded-pill pr-2 pl-3 py-2 animate__animated animate__fadeIn">
+                        <div class="mr-3">
+                            <span class="font-weight-bold text-dark d-block" style="line-height:1.2">${skill.SkillName}</span>
+                            <small class="text-muted" style="font-size: 0.75rem;">
+                                ${skill.ProficiencyLevel} • ${skill.IsRequired ? '<span class="text-danger">Required</span>' : '<span class="text-success">Optional</span>'}
+                            </small>
+                        </div>
+                        <button type="button" class="btn btn-sm btn-light text-danger rounded-circle hover-bg-danger-soft" 
+                                onclick="removeSkill(${index})" style="width: 28px; height: 28px; padding: 0; display:flex; align-items:center; justify-content:center;">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                `;
+                            skillsContainer.insertAdjacentHTML('beforeend', html);
+                        });
+                    }
+                    skillsInput.value = JSON.stringify(mySkills);
+                }
+
+                document.getElementById('saveSkillBtn').addEventListener('click', function () {
+                    const name = document.getElementById('skillNameInput').value;
+                    const level = document.getElementById('skillLevelInput').value;
+                    const isRequired = document.getElementById('skillRequiredInput').checked;
+
+                    if (!name) {
+                        alert("Please enter a skill name");
+                        return;
+                    }
+
+                    if (mySkills.some(s => s.SkillName.toLowerCase() === name.toLowerCase())) {
+                        alert("This requirement is already added!");
+                        return;
+                    }
+
+                    mySkills.push({
+                        SkillName: name,
+                        ProficiencyLevel: level,
+                        IsRequired: isRequired
+                    });
 
                     renderSkills();
 
-                    // 2. Hàm thêm skill
-                    function addSkill(skillName) {
-                        const cleanName = skillName.trim();
-                        if (cleanName && !selectedSkills.includes(cleanName)) {
-                            selectedSkills.push(cleanName);
-                            renderSkills();
-                        }
-                        skillInput.value = ''; // Xóa ô nhập
-                    }
-
-                    // 3. Hàm xóa skill (gắn vào window để gọi được từ onclick HTML)
-                    window.removeSkill = function (index) {
-                        selectedSkills.splice(index, 1);
-                        renderSkills();
-                    };
-
-                    // 4. Sự kiện khi nhấn Enter hoặc chọn từ datalist
-                    skillInput.addEventListener('keydown', function (e) {
-                        if (e.key === 'Enter') {
-                            e.preventDefault(); // Ngăn submit form
-                            addSkill(this.value);
-                        }
-                    });
-
-                    // Sự kiện khi chọn từ datalist (change event)
-                    skillInput.addEventListener('change', function (e) {
-                        addSkill(this.value);
-                    });
-
-                    // 5. Xử lý submit form
-                    submitBtn.addEventListener('click', function (e) {
-                        e.preventDefault();
-                        // Kiểm tra xem đã có skill nào chưa (nếu bắt buộc)
-                        // if (selectedSkills.length === 0) {
-                        //     // Nếu không bắt buộc thì bỏ qua, nếu bắt buộc thì alert
-                        //     alert('Please add at least one skill.');
-                        //     return;
-                        // }
-                        form.submit();
-                    });
+                    document.getElementById('skillForm').reset();
+                    $('#addSkillModal').modal('hide');
                 });
+
+                window.removeSkill = function (index) {
+                    mySkills.splice(index, 1);
+                    renderSkills();
+                };
+
+                renderSkills();
             </script>
     </body>

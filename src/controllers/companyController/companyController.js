@@ -91,7 +91,19 @@ const getCreateJobPage = async (req, res, next) => {
         res.render('company/post-job.ejs', {
             title: 'Post A Job',
             user: req.session.user,
-            availableSkills
+            availableSkills,
+            job: {
+                JobTitle: '',
+                EmploymentType: 'FullTime',
+                SalaryMin: '',
+                SalaryMax: '',
+                ExperienceRequired: '',
+                Location: '',
+                JobDescription: '',
+                OpeningCount: 1,
+                ApplicationDeadline: '',
+                Skills: []
+            }
         })
     } catch (error) {
         next(error)
@@ -103,8 +115,38 @@ const createJob = async (req, res, next) => {
         const { JobTitle, JobDescription, SalaryMin, SalaryMax, Location, EmploymentType, ExperienceRequired, ApplicationDeadline, OpeningCount, skills } = req.body
         const companyId = req.session.user.id
 
-        // Parse skills from comma-separated string if needed, or use as array if already array
-        const skillsArray = skills ? skills.split(',').filter(s => s.trim() !== '') : []
+        let skillsArray = []
+
+        if (skills) {
+            if (typeof skills === 'string') {
+                if (skills.trim().startsWith('[')) {
+                    try {
+                        skillsArray = JSON.parse(skills)
+                    } catch (e) {
+                        skillsArray = []
+                    }
+                } else {
+                    skillsArray = skills.split(',').filter(s => s.trim() !== '').map(s => ({
+                        SkillName: s.trim(),
+                        ProficiencyLevel: 'Intermediate',
+                        YearOfExperience: 0,
+                        IsRequired: true
+                    }))
+                }
+            } else if (Array.isArray(skills)) {
+                skillsArray = skills.map(s => {
+                    if (typeof s === 'string') {
+                        return {
+                            SkillName: s,
+                            ProficiencyLevel: 'Intermediate',
+                            YearOfExperience: 0,
+                            IsRequired: true
+                        }
+                    }
+                    return s
+                })
+            }
+        }
 
         await jobModel.createJob({
             jobTitle: JobTitle,
@@ -122,14 +164,13 @@ const createJob = async (req, res, next) => {
 
         res.redirect('/company/jobs')
     } catch (error) {
-        console.log(error)
         const availableSkills = await seekerModel.getAvailableSkills()
         res.render('company/post-job.ejs', {
             title: 'Post A Job',
             error: error.message,
             user: req.session.user,
             availableSkills,
-            job: req.body // Pass back submitted data
+            job: req.body
         })
     }
 }
@@ -150,7 +191,7 @@ const deleteJob = async (req, res, next) => {
 const toggleJobStatus = async (req, res, next) => {
     try {
         const { id } = req.params
-        const { status } = req.body // 'Open' or 'Closed'
+        const { status } = req.body
         const companyId = req.session.user.id
 
         await jobModel.updateJobStatus(id, companyId, status)
@@ -188,13 +229,44 @@ const getEditJobPage = async (req, res, next) => {
 
 const updateJob = async (req, res, next) => {
     const { id } = req.params
-    const job = await jobModel.getJobById(id)
+    let job
+
     try {
+        job = await jobModel.getJobById(id)
         const companyId = req.session.user.id
 
         const { JobTitle, JobDescription, SalaryMin, SalaryMax, Location, EmploymentType, ExperienceRequired, ApplicationDeadline, OpeningCount, skills } = req.body
 
-        const skillsArray = skills ? skills.split(',').filter(s => s.trim() !== '') : []
+        let skillsArray = []
+
+        if (skills) {
+            if (typeof skills === 'string') {
+                if (skills.trim().startsWith('[')) {
+                    try {
+                        skillsArray = JSON.parse(skills)
+                    } catch (e) {
+                        skillsArray = []
+                    }
+                } else {
+                    skillsArray = skills.split(',').filter(s => s.trim() !== '').map(s => ({
+                        SkillName: s.trim(),
+                        ProficiencyLevel: 'Intermediate',
+                        IsRequired: true
+                    }))
+                }
+            } else if (Array.isArray(skills)) {
+                skillsArray = skills.map(s => {
+                    if (typeof s === 'string') {
+                        return {
+                            SkillName: s,
+                            ProficiencyLevel: 'Intermediate',
+                            IsRequired: true
+                        }
+                    }
+                    return s
+                })
+            }
+        }
 
         await jobModel.updateJob(id, companyId, {
             jobTitle: JobTitle,
@@ -211,13 +283,21 @@ const updateJob = async (req, res, next) => {
 
         res.redirect('/company/jobs')
     } catch (error) {
-        console.log(error)
         const availableSkills = await seekerModel.getAvailableSkills()
+
+        if (!job) {
+            try {
+                job = await jobModel.getJobById(id)
+            } catch (err) {
+
+            }
+        }
+
         res.render('company/post-job.ejs', {
             title: 'Edit Job',
             error: error.message,
             user: req.session.user,
-            job,
+            job: { ...job, ...req.body },
             isEdit: true,
             availableSkills
         })

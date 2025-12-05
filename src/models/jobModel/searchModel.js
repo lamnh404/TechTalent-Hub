@@ -1,8 +1,7 @@
 import sql from 'mssql';
 import { GET_SQL_POOL } from '~/config/SQLDatabase';
 
-const searchModel = {
-    searchJobs: async (keyword, page = 1, limit = 10) => {
+const searchJobs = async (keyword, page = 1, limit = 10) => {
         try {
             const pool = GET_SQL_POOL();
             const request = pool.request();
@@ -51,7 +50,8 @@ const searchModel = {
         } catch (err) {
             throw err;
         }
-    },
-};
+    };
 
-export default searchModel;
+export const searchModel = {
+    searchJobs
+}
