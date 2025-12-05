@@ -462,48 +462,45 @@ GO
 -- STORED PROCEDURES (Create before triggers that use them)
 -- =============================================
 
--- Procedure: Update skill popularity scores
-CREATE PROCEDURE dbo.sp_UpdateSkillPopularityScores(
-    @p_SkillID INT
-)
+-- Procedure: Update all skill popularity scores
+DROP PROCEDURE IF EXISTS [dbo.sp_UpdateAllSkillPopularityScores];
+GO
+
+CREATE PROCEDURE dbo.sp_UpdateAllSkillPopularityScores
 AS
 BEGIN
     SET NOCOUNT ON;
     
-    DECLARE @v_JobRequireCount INT = 0;
-    DECLARE @v_TotalOpenJobs INT = 1;
-    DECLARE @v_PopularityScore INT = 0;
+    DECLARE @TotalOpenJobs INT;
     
-    IF @p_SkillID IS NULL
-    BEGIN
-        RAISERROR(N'SkillID cannot be null', 16, 1);
-        RETURN;
-    END
-
-    SELECT @v_JobRequireCount = COUNT(*)
-    FROM [JobRequireSkill] jrs
-    INNER JOIN [Job] j ON jrs.[JobID] = j.[JobID]
-    WHERE jrs.[SkillID] = @p_SkillID
-        AND j.[JobStatus] = N'Open';
-    
-    SELECT @v_TotalOpenJobs = COUNT(*)
+    SELECT @TotalOpenJobs = COUNT(*)
     FROM [Job]
     WHERE [JobStatus] = N'Open';
-
-    IF @v_TotalOpenJobs > 0
+    
+    IF @TotalOpenJobs = 0
     BEGIN
-        SET @v_PopularityScore = FLOOR((CAST(@v_JobRequireCount AS DECIMAL(10,2)) / @v_TotalOpenJobs) * 100);
+        UPDATE [Skill] SET [PopularityScore] = 0;
+        RETURN;
     END
-    ELSE
-    BEGIN
-        SET @v_PopularityScore = 0;
-    END
+    
 
-    UPDATE [Skill]
-    SET [PopularityScore] = @v_PopularityScore
-    WHERE [SkillID] = @p_SkillID;
+    UPDATE s
+    SET s.[PopularityScore] = FLOOR(
+        (CAST(ISNULL(job_count.cnt, 0) AS DECIMAL(10,2)) / @TotalOpenJobs) * 100
+    )
+    FROM [Skill] s
+    LEFT JOIN (
+        SELECT 
+            jrs.SkillID,
+            COUNT(DISTINCT jrs.JobID) AS cnt
+        FROM [JobRequireSkill] jrs
+        INNER JOIN [Job] j ON jrs.JobID = j.JobID
+        WHERE j.JobStatus = N'Open'
+        GROUP BY jrs.SkillID
+    ) job_count ON s.SkillID = job_count.SkillID;
 END
 GO
+
 
 -- Procedure: Get top matching jobs for a job seeker
 CREATE PROCEDURE dbo.sp_GetTopMatchingJobs(
@@ -575,6 +572,10 @@ END
 GO
 
 -- Procedure: Get application statistics by company
+
+DROP PROCEDURE IF EXISTS [dbo.sp_GetApplicationStatisticsByCompany];
+GO
+
 CREATE PROCEDURE dbo.sp_GetApplicationStatisticsByCompany(
     @p_StartDate DATETIME = NULL,
     @p_EndDate DATETIME = NULL
@@ -649,21 +650,18 @@ AS
 BEGIN
     SET NOCOUNT ON;
     
-    -- Kiểm tra nếu không có data
     IF NOT EXISTS (SELECT 1 FROM inserted)
         RETURN;
 
     DECLARE @next_id INT;
     DECLARE @GeneratedIDs TABLE (UserId NVARCHAR(128), Email NVARCHAR(256));
     
-    -- Lấy ID tiếp theo với TABLOCKX
     SELECT @next_id = ISNULL(MAX(CAST(SUBSTRING(UserId, 3, LEN(UserId)) AS INT)), 0) + 1
     FROM [User] WITH (TABLOCKX)
     WHERE UserId LIKE N'US[0-9]%' 
       AND LEN(UserId) = 9
       AND ISNUMERIC(SUBSTRING(UserId, 3, LEN(UserId))) = 1;
     
-    -- Insert và lưu generated IDs vào table variable
     INSERT INTO [User] (
         [UserId], 
         [Email], 
@@ -688,18 +686,12 @@ BEGIN
         ISNULL([avatarURL], N'https://aic.com.vn/wp-content/uploads/2024/10/avatar-fb-mac-dinh-1.jpg') AS avatarURL
     FROM inserted;
     
-    -- CRITICAL: Return generated IDs để client có thể lấy
-    -- Cách 1: Return qua SELECT (cho SQL query trực tiếp)
     SELECT UserId, Email FROM @GeneratedIDs;
     
-    -- Note: Với application code, bạn có thể query lại:
-    -- SELECT UserId FROM [User] WHERE Email = @Email
 END
 GO
 
--- =============================================
--- FIXED: Auto-generate JobID và RETURN ID sau khi insert
--- =============================================
+-- Trigger: Generate JobID on Job insert
 
 DROP TRIGGER IF EXISTS [trg_Job_BeforeInsert];
 GO
@@ -711,7 +703,6 @@ AS
 BEGIN
     SET NOCOUNT ON;
     
-    -- Kiểm tra nếu không có data
     IF NOT EXISTS (SELECT 1 FROM inserted)
         RETURN;
     
@@ -722,14 +713,12 @@ BEGIN
         CompanyID NVARCHAR(128)
     );
     
-    -- Lấy ID tiếp theo với TABLOCKX
     SELECT @next_id = ISNULL(MAX(CAST(SUBSTRING(JobID, 4, LEN(JobID)) AS INT)), 0) + 1
     FROM [Job] WITH (TABLOCKX)
     WHERE JobID LIKE N'JOB[0-9]%' 
       AND LEN(JobID) = 10
       AND ISNUMERIC(SUBSTRING(JobID, 4, LEN(JobID))) = 1;
     
-    -- Insert và lưu generated IDs
     INSERT INTO [Job] (
         [JobID], 
         [CompanyID], 
@@ -764,7 +753,6 @@ BEGIN
         ISNULL([JobStatus], N'Open') AS JobStatus
     FROM inserted;
     
-    -- Return generated IDs
     SELECT JobID, JobTitle, CompanyID FROM @GeneratedIDs;
 END
 GO
@@ -817,34 +805,21 @@ AFTER INSERT
 AS
 BEGIN
     SET NOCOUNT ON;
-
-    DECLARE @AffectedSkills TABLE (SkillID INT);
     
-    INSERT INTO @AffectedSkills (SkillID)
-    SELECT DISTINCT i.SkillID
-    FROM inserted i
-    INNER JOIN [Job] j ON i.JobID = j.JobID
-    WHERE j.JobStatus = N'Open';
-
-    DECLARE @SkillID INT;
-    DECLARE skill_cursor CURSOR FOR
-    SELECT SkillID FROM @AffectedSkills;
-
-    OPEN skill_cursor;
-    FETCH NEXT FROM skill_cursor INTO @SkillID;
-
-    WHILE @@FETCH_STATUS = 0
+    IF EXISTS (
+        SELECT 1 
+        FROM inserted i
+        INNER JOIN [Job] j ON i.JobID = j.JobID
+        WHERE j.JobStatus = N'Open'
+    )
     BEGIN
-        EXEC dbo.sp_UpdateSkillPopularityScores @p_SkillID = @SkillID;
-        FETCH NEXT FROM skill_cursor INTO @SkillID;
+        EXEC dbo.sp_UpdateAllSkillPopularityScores;
     END
-
-    CLOSE skill_cursor;
-    DEALLOCATE skill_cursor;
 END
 GO
 
 -- Trigger: Update skill popularity after JobRequireSkill delete
+
 DROP TRIGGER IF EXISTS [trg_JobRequireSkill_AfterDelete];
 GO
 
@@ -855,26 +830,44 @@ AS
 BEGIN
     SET NOCOUNT ON;
     
-    DECLARE @AffectedSkills TABLE (SkillID INT PRIMARY KEY);
-    
-    INSERT INTO @AffectedSkills (SkillID)
-    SELECT DISTINCT SkillID FROM deleted;
 
-    DECLARE @SkillID INT;
-    DECLARE skill_cursor CURSOR FOR
-    SELECT SkillID FROM @AffectedSkills;
-
-    OPEN skill_cursor;
-    FETCH NEXT FROM skill_cursor INTO @SkillID;
-
-    WHILE @@FETCH_STATUS = 0
+    IF EXISTS (
+        SELECT 1 
+        FROM deleted d
+        INNER JOIN [Job] j ON d.JobID = j.JobID
+        WHERE j.JobStatus = N'Open'
+    )
     BEGIN
-        EXEC dbo.sp_UpdateSkillPopularityScores @p_SkillID = @SkillID;
-        FETCH NEXT FROM skill_cursor INTO @SkillID;
+        EXEC dbo.sp_UpdateAllSkillPopularityScores;
     END
+END
+GO
 
-    CLOSE skill_cursor;
-    DEALLOCATE skill_cursor;
+-- Update popularity scores when job status changes
+
+DROP TRIGGER IF EXISTS [trg_Job_AfterUpdate_JobStatus];
+GO
+
+CREATE TRIGGER [trg_Job_AfterUpdate_JobStatus]
+ON [Job]
+AFTER UPDATE
+AS
+BEGIN
+    SET NOCOUNT ON;
+    
+    IF UPDATE(JobStatus)
+    BEGIN
+        IF EXISTS (
+            SELECT 1 
+            FROM inserted i
+            INNER JOIN deleted d ON i.JobID = d.JobID
+            WHERE i.JobStatus != d.JobStatus
+              AND (i.JobStatus = N'Open' OR d.JobStatus = N'Open')
+        )
+        BEGIN
+            EXEC dbo.sp_UpdateAllSkillPopularityScores;
+        END
+    END
 END
 GO
 
@@ -1160,8 +1153,8 @@ SELECT @JobSeekerId1, 3, N'Expert', 4.0
 UNION ALL SELECT @JobSeekerId1, 4, N'Expert', 4.0
 UNION ALL SELECT @JobSeekerId1, 5, N'Advanced', 3.5
 UNION ALL SELECT @JobSeekerId1, 8, N'Advanced', 3.0
-UNION ALL SELECT @JobSeekerId2, 2, N'Intermediate', 1.5
-UNION ALL SELECT @JobSeekerId2, 12, N'Intermediate', 1.0
+UNION ALL SELECT @JobSeekerId2, 2, N'Advanced', 1.5
+UNION ALL SELECT @JobSeekerId2, 12, N'Advanced', 1.0
 UNION ALL SELECT @JobSeekerId2, 13, N'Beginner', 1.0
 UNION ALL SELECT @JobSeekerId3, 1, N'Expert', 7.0
 UNION ALL SELECT @JobSeekerId3, 6, N'Expert', 6.5
@@ -1282,7 +1275,7 @@ UNION ALL
 SELECT @JobSeekerId1, @Job6, N'2024-11-16 09:30:00', N'UnderReview', N'https://storage.example.com/cover/app002.pdf', 
  NULL, NULL
 UNION ALL
-SELECT @JobSeekerId2, @Job2, N'2024-11-06 11:00:00', N'Offered', N'https://storage.example.com/cover/app003.pdf',
+SELECT @JobSeekerId2, @Job2, N'2024-11-06 11:00:00', N'Interview', N'https://storage.example.com/cover/app003.pdf',
  N'2024-11-18 10:00:00', N'Excellent academic background, enthusiastic learner'
 UNION ALL
 SELECT @JobSeekerId3, @Job1, N'2024-11-02 14:30:00', N'Interview', N'https://storage.example.com/cover/app004.pdf',
