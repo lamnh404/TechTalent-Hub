@@ -1,41 +1,3 @@
-<%
-    // Mock Data cho Homepage (Chạy khi chưa có dữ liệu từ Server)
-    if (typeof featuredJobs === 'undefined') {
-        var featuredJobs = [
-            {
-                id: 1,
-                title: "Senior Frontend Developer",
-                company: "Meta",
-                logo: "https://logo.clearbit.com/meta.com",
-                tags: [
-                    { text: "Remote", class: "tag-remote" },
-                    { text: "Full-time", class: "tag-fulltime" }
-                ]
-            },
-            {
-                id: 2,
-                title: "Product Manager",
-                company: "Google",
-                logo: "https://logo.clearbit.com/google.com",
-                tags: [
-                    { text: "Full-time", class: "tag-fulltime" },
-                    { text: "New York", style: "background: #f3e8ff; color: #7e22ce" }
-                ]
-            },
-            {
-                id: 3,
-                title: "Data Scientist",
-                company: "Netflix",
-                logo: "https://logo.clearbit.com/netflix.com",
-                tags: [
-                    { text: "Contract", class: "tag-contract" },
-                    { text: "California", class: "tag-remote" }
-                ]
-            }
-        ];
-    }
-%>
-
 <%- include('../partials/header', { title: 'Homepage' }) %>
 
 <body class="animate-fade-in">
@@ -87,19 +49,14 @@
                         <div class="col-lg-4 col-md-6 mb-4">
                             <div class="job-card hover-scale h-100"> 
                                 <div class="d-flex justify-content-between align-items-start">
-                                    <img src="<%= job.logo %>" alt="<%= job.company %> Logo" class="company-logo" 
-                                         onerror="this.src='/images/default-company.png'">
+                                    <img src="<%= job.LogoURL || '/images/default-company.png' %>" alt="<%= job.CompanyName %> Logo" class="company-logo" onerror="this.src='/images/default-company.png'">
                                     <button class="btn btn-sm btn-link text-muted"><i class="far fa-heart"></i></button>
                                 </div>
-                                <a href="/jobs/<%= job.id %>" class="job-title stretched-link"><%= job.title %></a>
-                                <p class="company-name"><%= job.company %></p>
+                                <a href="/jobs/<%= job.JobID %>" class="job-title stretched-link"><%= job.JobTitle %></a>
+                                <p class="company-name"><%= job.CompanyName %></p>
                                 <div class="job-tags mt-auto">
-                                    <% job.tags.forEach(tag => { %>
-                                        <span class="tag <%= tag.class || '' %>" 
-                                              style="<%= tag.style || '' %>">
-                                            <%= tag.text || tag.label %>
-                                        </span>
-                                    <% }) %>
+                                    <span class="tag tag-type"><%= job.EmploymentType %></span>
+                                    <span class="tag tag-location"><%= job.Location %></span>
                                 </div>
                             </div>
                         </div>

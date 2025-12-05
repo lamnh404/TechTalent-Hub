@@ -54,7 +54,7 @@ const setupCompany = async (userData, profileData) => {
         const pool = GET_SQL_POOL()
 
         const { email, passwordHash, role } = userData
-        const { CompanyName, Industry, CompanySize, CompanyWebsite, FounderYear, LogoURL, CompanyDescription, CompanyAddress } = profileData
+        const { CompanyName, Industry, CompanySize, CompanyWebsite, FoundedYear, LogoURL, CompanyDescription, CompanyAddress } = profileData
 
         const userResult = await pool.request()
             .input('email', email)
@@ -78,22 +78,27 @@ const setupCompany = async (userData, profileData) => {
             .input('industry', Industry)
             .input('size', CompanySize)
             .input('website', CompanyWebsite)
-            .input('foundedYear', FounderYear)
+            .input('foundedYear', FoundedYear)
             .input('logoUrl', LogoURL)
             .input('description', CompanyDescription || '')
             .query(`
-                INSERT INTO [Company] (CompanyID, CompanyName, Industry, CompanySize, CompanyWebsite, FounderYear, LogoURL, CompanyDescription, VerificationStatus)
+                INSERT INTO [Company] (CompanyID, CompanyName, Industry, CompanySize, CompanyWebsite, FoundedYear, LogoURL, CompanyDescription, VerificationStatus)
                 VALUES (@userId, @companyName, @industry, @size, @website, @foundedYear, @logoUrl, @description, 'PENDING')
             `)
 
-        // Insert into CompanyLocation table
+        // Upsert into CompanyLocation table (avoid duplicate key errors)
         if (CompanyAddress) {
             await pool.request()
                 .input('companyId', userId)
                 .input('address', CompanyAddress)
                 .query(`
-                    INSERT INTO [CompanyLocation] (CompanyID, Address)
-                    VALUES (@companyId, @address)
+                    MERGE INTO [CompanyLocation] AS Target
+                    USING (VALUES (@companyId, @address)) AS Source (CompanyID, Address)
+                    ON Target.CompanyID = Source.CompanyID
+                    WHEN MATCHED THEN
+                        UPDATE SET Address = Source.Address
+                    WHEN NOT MATCHED THEN
+                        INSERT (CompanyID, Address) VALUES (Source.CompanyID, Source.Address);
                 `)
         }
 

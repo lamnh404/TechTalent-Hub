@@ -91,6 +91,22 @@ const createJob = async (jobData) => {
 const getJobById = async (jobId) => {
     try {
         const pool = GET_SQL_POOL()
+        const time = dayjs().tz('Asia/Ho_Chi_Minh').format('YYYY-MM-DD HH:mm:ss')
+
+        await pool.request()
+            .input('jobId', jobId)
+            .input('time', time)
+            .query(`
+                IF EXISTS (SELECT 1 FROM [JobMetrics] WHERE JobMetricID = @jobId)
+                    UPDATE [JobMetrics]
+                    SET ViewCount = ISNULL(ViewCount, 0) + 1,
+                        LastUpdated = @time
+                    WHERE JobMetricID = @jobId
+                ELSE
+                    INSERT INTO [JobMetrics] (JobMetricID, AppliedCount, LikeCount, ViewCount, LastUpdated)
+                    VALUES (@jobId, 0, 0, 1, @time)
+            `)
+
         const result = await pool.request()
             .input('jobId', jobId)
             .query(`
@@ -133,6 +149,36 @@ const getJobById = async (jobId) => {
         }))
 
         return job
+    } catch (error) {
+        throw new ApiError(StatusCodes.INTERNAL_SERVER_ERROR, error.message)
+    }
+}
+
+const getLatestJobs = async (limit = 6) => {
+    try {
+        const pool = GET_SQL_POOL()
+        const result = await pool.request()
+            .input('limit', sql.Int, limit)
+            .query(`
+                SELECT
+                    J.JobID,
+                    J.JobTitle,
+                    J.PostedDate,
+                    J.ApplicationDeadline AS ApplicationDeadline,
+                    J.EmploymentType,
+                    J.Location,
+                    C.CompanyName,
+                    C.LogoURL AS LogoURL,
+                    ISNULL((SELECT COUNT(1) FROM [Application] A WHERE A.JobID = J.JobID), 0) AS Applicants
+                FROM [Job] J
+                JOIN [Company] C ON J.CompanyID = C.CompanyID
+                WHERE J.JobStatus = 'Open'
+                ORDER BY J.PostedDate DESC
+                OFFSET 0 ROWS
+                FETCH NEXT @limit ROWS ONLY
+            `)
+
+        return result.recordset
     } catch (error) {
         throw new ApiError(StatusCodes.INTERNAL_SERVER_ERROR, error.message)
     }
@@ -354,6 +400,7 @@ const findJobID = async (jobTitle, companyId, postedDate) => {
 export const jobModel = {
     createJob,
     getJobById,
+    getLatestJobs,
     getJobsByCompanyId,
     deleteJob,
     updateJobStatus,

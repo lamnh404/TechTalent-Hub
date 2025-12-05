@@ -1,48 +1,6 @@
-<%
-    // 1. Mock Data: Thông tin công ty
-    if (typeof company === 'undefined') {
-        var company = {
-            CompanyID: 1,
-            CompanyName: "Google Inc.",
-            LogoURL: "https://logo.clearbit.com/google.com",
-            Industry: "Internet & Technology",
-            CompanySize: "10,000+ Employees",
-            FoundedYear: 1998,
-            Website: "https://about.google",
-            Location: "Mountain View, CA",
-            Description: "Google's mission is to organize the world's information and make it universally accessible and useful. We create products and services that help billions of people around the world.",
-            Socials: { website: "#", facebook: "#", linkedin: "#" },
-            // Mock Reviews
-            Reviews: [
-                { 
-                    ReviewerName: "Anonymous Employee", 
-                    ReviewerAvatar: "/images/default-avatar.png", 
-                    ReviewDate: new Date("2023-10-05"), 
-                    Rating: 5, 
-                    ReviewTitle: "Great place to work", 
-                    ReviewText: "Amazing culture, smart colleagues, and great benefits. The best place to grow your career." 
-                },
-                { 
-                    ReviewerName: "John Doe", 
-                    ReviewerAvatar: "https://i.pravatar.cc/150?u=5", 
-                    ReviewDate: new Date("2023-09-12"), 
-                    Rating: 4, 
-                    ReviewTitle: "Good but intense", 
-                    ReviewText: "Projects are challenging and impactful. Work-life balance can be tricky sometimes due to tight deadlines." 
-                }
-            ]
-        };
-    }
-
-    // 2. Mock Data: Job đang tuyển
-    if (typeof openJobs === 'undefined') {
-        var openJobs = [
-            { JobID: 101, JobTitle: "Senior Software Engineer", Location: "Remote", Type: "Full-time", Salary: "$120k - $150k" },
-            { JobID: 102, JobTitle: "Product Manager", Location: "Singapore", Type: "Full-time", Salary: "$90k - $120k" },
-            { JobID: 103, JobTitle: "UX Researcher", Location: "Ho Chi Minh", Type: "Contract", Salary: "Negotiable" }
-        ];
-    }
-%>
+<% if (typeof company === 'undefined' || !company) company = {} %>
+<% if (typeof openJobs === 'undefined' || !openJobs) openJobs = [] %>
+<% if (typeof reviews === 'undefined' || !reviews) reviews = [] %>
 
 <%- include('../partials/header', { title: company.CompanyName }) %>
 
@@ -73,9 +31,9 @@
                         <p class="text-primary font-weight-bold mb-3"><%= company.Industry %></p>
                         
                         <div class="d-flex justify-content-center gap-2 mb-4">
-                            <a href="<%= company.Socials.website %>" target="_blank" class="btn btn-sm btn-light rounded-circle" style="width: 40px; height: 40px; display:inline-flex; align-items:center; justify-content:center;"><i class="fas fa-globe"></i></a>
-                            <a href="#" class="btn btn-sm btn-light rounded-circle" style="width: 40px; height: 40px; display:inline-flex; align-items:center; justify-content:center;"><i class="fab fa-facebook-f"></i></a>
-                            <a href="#" class="btn btn-sm btn-light rounded-circle" style="width: 40px; height: 40px; display:inline-flex; align-items:center; justify-content:center;"><i class="fab fa-linkedin-in"></i></a>
+                            <a href="<%= company.CompanyWebsite || '#' %>" target="_blank" class="btn btn-sm btn-light rounded-circle" style="width: 40px; height: 40px; display:inline-flex; align-items:center; justify-content:center;"><i class="fas fa-globe"></i></a>
+                            <a href="<%= company.CompanyWebsite || '#' %>" class="btn btn-sm btn-light rounded-circle" style="width: 40px; height: 40px; display:inline-flex; align-items:center; justify-content:center;"><i class="fab fa-facebook-f"></i></a>
+                            <a href="<%= company.CompanyWebsite || '#' %>" class="btn btn-sm btn-light rounded-circle" style="width: 40px; height: 40px; display:inline-flex; align-items:center; justify-content:center;"><i class="fab fa-linkedin-in"></i></a>
                         </div>
 
                         <hr>
@@ -99,7 +57,7 @@
                                 <div class="icon-box-sm bg-soft-primary text-primary mr-3 rounded-circle p-2"><i class="fas fa-map-marker-alt"></i></div>
                                 <div>
                                     <small class="text-muted d-block">Location</small>
-                                    <span class="font-weight-bold text-dark"><%= company.Location %></span>
+                                    <span class="font-weight-bold text-dark"><%= company.CompanyAddress || company.Location || '' %></span>
                                 </div>
                             </div>
                         </div>
@@ -127,9 +85,9 @@
                         <div class="card border-0 shadow-sm rounded-lg">
                             <div class="card-body p-4">
                                 <h5 class="font-weight-bold text-dark mb-3">About Us</h5>
-                                <div class="text-muted" style="line-height: 1.8;">
-                                    <%= company.Description %>
-                                </div>
+                                    <div class="text-muted" style="line-height: 1.8;">
+                                        <%= company.CompanyDescription || company.Description || '' %>
+                                    </div>
                             </div>
                         </div>
                     </div>
@@ -140,8 +98,8 @@
                                 <div class="card border-0 shadow-sm rounded-lg mb-3 hover-scale job-card-horizontal p-3">
                                     <div class="d-flex align-items-center w-100">
                                         <div class="flex-grow-1">
-                                            <h6 class="font-weight-bold mb-1">
-                                                <a href="/jobs/<%= job.JobID %>" class="text-dark text-decoration-none stretched-link"><%= job.JobTitle %></a>
+                                                <h6 class="font-weight-bold mb-1">
+                                                <a href="/jobs/<%= job.JobID %>" class="text-dark text-decoration-none"><%= job.JobTitle %></a>
                                             </h6>
                                             <div class="small text-muted">
                                                 <i class="fas fa-map-marker-alt mr-1"></i> <%= job.Location %> &bull; 
@@ -203,10 +161,10 @@
 
                         <div class="card border-0 shadow-sm rounded-lg">
                             <div class="card-body p-4">
-                                <h5 class="font-weight-bold text-dark mb-4">Employee Reviews (<%= company.Reviews ? company.Reviews.length : 0 %>)</h5>
+                                <h5 class="font-weight-bold text-dark mb-4">Employee Reviews (<%= reviews && reviews.length ? reviews.length : 0 %>)</h5>
                                 
-                                <% if (company.Reviews && company.Reviews.length > 0) { %>
-                                    <% company.Reviews.forEach(review => { %>
+                                <% if (reviews && reviews.length > 0) { %>
+                                    <% reviews.forEach(review => { %>
                                         <div class="review-item">
                                             <div class="d-flex justify-content-between align-items-start mb-2">
                                                 <div class="d-flex align-items-center">

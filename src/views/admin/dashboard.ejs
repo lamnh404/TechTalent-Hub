@@ -1,24 +1,5 @@
-<%
-    // Mock Data cho Admin Dashboard
-    if (typeof adminStats === 'undefined') {
-        var adminStats = {
-            totalUsers: 15430,
-            totalCompanies: 850,
-            activeJobs: 3200,
-            newReports: 12
-        };
-    }
-
-    if (typeof recentActivities === 'undefined') {
-        var recentActivities = [
-            { id: 1, user: "Google Inc.", action: "Posted a new job", target: "Senior AI Engineer", time: "5 mins ago", icon: "briefcase", color: "primary" },
-            { id: 2, user: "Nguyen Van A", action: "Registered account", target: "Job Seeker", time: "1 hour ago", icon: "user-plus", color: "success" },
-            { id: 3, user: "System", action: "Daily backup completed", target: "Database", time: "3 hours ago", icon: "server", color: "info" },
-            { id: 4, user: "Facebook", action: "Updated profile", target: "Company Info", time: "5 hours ago", icon: "edit", color: "warning" },
-            { id: 5, user: "Tran Thi B", action: "Reported a job", target: "Scam Alert", time: "1 day ago", icon: "flag", color: "danger" }
-        ];
-    }
-%>
+<% if (typeof adminStats === 'undefined' || !adminStats) { adminStats = { totalUsers: 0, totalCompanies: 0, activeJobs: 0, newReports: 0 }; } %>
+<% if (typeof recentActivities === 'undefined' || !recentActivities) { recentActivities = []; } %>
 
 <%- include('../partials/header', { title: 'Admin Dashboard' }) %>
 

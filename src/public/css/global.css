@@ -140,6 +140,23 @@ body:not(.auth-layout-page):not(.dashboard-page) {
 .tag-fulltime { background: #dcfce7; color: #15803d; }
 .tag-contract { background: #fef3c7; color: #b45309; }
 
+/* Homepage featured tags: employment type and location badges */
+.tag-type {
+    background: linear-gradient(90deg, rgba(224,242,254,0.6), rgba(238,242,255,0.6));
+    color: #1e3a8a;
+    padding: 6px 10px;
+    border-radius: 10px;
+    font-size: 0.8rem;
+    margin-right: 6px;
+}
+.tag-location {
+    background: linear-gradient(90deg, rgba(240,253,244,0.6), rgba(237,247,255,0.6));
+    color: #065f46;
+    padding: 6px 10px;
+    border-radius: 10px;
+    font-size: 0.8rem;
+}
+
 /* ========================================
    NAVBAR STYLES (CUSTOM COLOR)
    ======================================== */

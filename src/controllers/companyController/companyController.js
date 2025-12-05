@@ -113,7 +113,17 @@ const updateProfile = async (req, res, next) => {
 
         res.redirect('/company/profile?success=true')
     } catch (error) {
-        next(error)
+        try {
+            const company = await companyModel.getCompanyProfile(req.session.user.id)
+            return res.render('company/profile.ejs', {
+                title: 'Company Profile',
+                user: req.session.user,
+                company,
+                error: error.message
+            })
+        } catch (err) {
+            return next(error)
+        }
     }
 }
 
@@ -349,6 +359,17 @@ const updateApplicationStatus = async (req, res, next) => {
     }
 }
 
+const getApplicationDetail = async (req, res, next) => {
+    try {
+        const { applicationId } = req.params
+        const app = await applicationModel.getApplicationById(applicationId)
+        if (!app) return res.status(StatusCodes.NOT_FOUND).json({ message: 'Application not found' })
+        return res.json({ application: app })
+    } catch (error) {
+        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ message: error.message })
+    }
+}
+
 export const companyController = {
     getDashboard,
     getApplicationStatistics,
@@ -362,5 +383,6 @@ export const companyController = {
     deleteJob,
     toggleJobStatus,
     getEditJobPage,
-    updateJob
+    updateJob,
+    getApplicationDetail
 }

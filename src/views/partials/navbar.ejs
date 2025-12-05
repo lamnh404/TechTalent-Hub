@@ -187,25 +187,27 @@
                 const notiBadge = document.getElementById('notiBadge');
                 const notiCountText = document.getElementById('notiCountText');
 
-                // 1. Hàm tải thông báo
                 async function fetchNotifications() {
                     try {
                         const response = await fetch('/api/notifications');
-                        if (!response.ok) throw new Error('Failed to load');
-
+                        if (!response.ok) {
+                            notiList.innerHTML = '<div class="text-center py-4 text-muted small">You have no new notifications.</div>';
+                            notiBadge.style.display = 'none';
+                            notiCountText.innerText = '0 new';
+                            return;
+                        }
                         const data = await response.json();
                         const notifications = data.notifications || [];
                         renderNotifications(notifications);
                     } catch (error) {
-                        console.error("Error fetching notifications:", error);
-                        // Mock Data fallback
-                        renderMockData();
+                        notiList.innerHTML = '<div class="text-center py-4 text-muted small">You have no new notifications.</div>';
+                        notiBadge.style.display = 'none';
+                        notiCountText.innerText = '0 new';
                     }
                 }
 
-                // 2. Hàm Render
                 function renderNotifications(notifications) {
-                    if (notifications.length === 0) {
+                    if (!notifications || notifications.length === 0) {
                         notiList.innerHTML = '<div class="text-center py-4 text-muted small">You have no new notifications.</div>';
                         notiBadge.style.display = 'none';
                         notiCountText.innerText = '0 new';
@@ -225,81 +227,39 @@
                     let html = '';
                     notifications.forEach(n => {
                         const date = new Date(n.SendDate).toLocaleDateString('vi-VN');
-
                         let icon = 'fa-info-circle text-info';
                         if (n.NotificationType === 'Application') icon = 'fa-briefcase text-primary';
-                        if (n.NotificationType === 'System') icon = 'fa-cog text-secondary';
-                        if (n.NotificationType === 'Rejection') icon = 'fa-times-circle text-danger';
-                        if (n.NotificationType === 'Interview') icon = 'fa-calendar-check text-success';
-
+                        else if (n.NotificationType === 'System') icon = 'fa-cog text-secondary';
+                        else if (n.NotificationType === 'Rejection') icon = 'fa-times-circle text-danger';
+                        else if (n.NotificationType === 'Interview') icon = 'fa-calendar-check text-success';
                         const bgClass = n.ReadStatus ? '' : 'notification-unread';
-
-                        html += `
-                    <div class="notification-item ${bgClass}" id="noti-${n.NotificationID}">
-    <div class="notification-icon-wrapper">
-        <i class="fas ${icon}"></i>
-    </div>
-
-    <div class="notification-content">
-        <p class="mb-1 small" style="line-height: 1.4;">
-            ${n.NotificationContent}
-        </p>
-        <div class="notification-time">${date}</div>
-    </div>
-
-    <button class="btn p-0 notification-delete-btn" onclick="deleteNotification(event, ${n.NotificationID})">
-        <i class="fas fa-times"></i>
-    </button>
-</div>
-
-                `;
+                        html += `<div class="notification-item ${bgClass}" id="noti-${n.NotificationID}"><div class="notification-icon-wrapper"><i class="fas ${icon}"></i></div><div class="notification-content"><p class="mb-1 small" style="line-height: 1.4;">${n.NotificationContent}</p><div class="notification-time">${date}</div></div><button class="btn p-0 notification-delete-btn" onclick="deleteNotification(event, ${n.NotificationID})"><i class="fas fa-times"></i></button></div>`;
                     });
                     notiList.innerHTML = html;
                 }
 
-                // 3. Hàm xóa
-                window.deleteNotification = async function (event, id) {
+                window.deleteNotification = function (event, id) {
                     event.preventDefault();
                     event.stopPropagation();
                     if (!confirm('Delete this notification?')) return;
-
-                    try {
-                        // Gọi API xóa thật (Giả lập)
-                        // await fetch(`/api/notifications/${id}`, { method: 'DELETE' });
-
-                        // Xóa UI
-                        const el = document.getElementById(`noti-${id}`);
-                        if (el) {
-                            el.style.opacity = '0';
-                            setTimeout(() => {
-                                el.remove();
-                                let current = parseInt(notiBadge.innerText) || 0;
-                                if (current > 0) {
-                                    notiBadge.innerText = current - 1;
-                                    if (current - 1 === 0) notiBadge.style.display = 'none';
-                                }
-                                if (notiList.children.length === 0) {
-                                    notiList.innerHTML = '<div class="text-center py-4 text-muted small">You have no new notifications.</div>';
-                                }
-                            }, 300);
-                        }
-                    } catch (err) {
-                        console.error("Delete failed", err);
+                    const el = document.getElementById(`noti-${id}`);
+                    if (el) {
+                        el.style.opacity = '0';
+                        setTimeout(() => {
+                            el.remove();
+                            let current = parseInt(notiBadge.innerText) || 0;
+                            if (current > 0) {
+                                notiBadge.innerText = current - 1;
+                                if (current - 1 === 0) notiBadge.style.display = 'none';
+                            }
+                            if (notiList.children.length === 0) {
+                                notiList.innerHTML = '<div class="text-center py-4 text-muted small">You have no new notifications.</div>';
+                            }
+                        }, 300);
                     }
                 }
 
-                // Fallback Mock Data
-                function renderMockData() {
-                    const mockData = [
-                        { NotificationID: 1, NotificationType: 'Application', NotificationContent: 'Nguyen Van A applied for Senior React Dev.', SendDate: new Date(), ReadStatus: false },
-                        { NotificationID: 2, NotificationType: 'System', NotificationContent: 'Your profile has been verified.', SendDate: new Date(Date.now() - 86400000), ReadStatus: true }
-                    ];
-                    renderNotifications(mockData);
-                }
-
-                // Chạy
-                // fetchNotifications();
-                renderMockData();
+                fetchNotifications();
             });
         </script>
         <% } %>

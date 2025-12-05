@@ -1,11 +1,5 @@
 <% 
-    // Mock Data phòng khi chưa có backend
-    if (typeof suggestions === 'undefined') {
-        var suggestions = [
-            { JobID: 1, JobTitle: "Senior React Dev", CompanyName: "Google", MatchScore: 85.5, Location: "HCM", SalaryMin: 2000, SalaryMax: 3000, PostedDate: new Date() },
-            { JobID: 2, JobTitle: "NodeJS Backend", CompanyName: "Microsoft", MatchScore: 60.0, Location: "Hanoi", SalaryMin: 1500, SalaryMax: 2500, PostedDate: new Date() }
-        ];
-    }
+    var suggestions = (typeof suggestions !== 'undefined' && suggestions) ? suggestions : [];
 %>
 
 <%- include('../partials/header', { title: 'Gợi ý việc làm' }) %>
@@ -14,6 +8,7 @@
     <div class="dashboard-wrapper">
         
         <%- include('../partials/dashboard-sidebar', { activePage: 'suggestions' }) %>
+        <%- include('../partials/navbar', { activePage: 'suggestions' }) %>
 
         <main class="main-content">
             

@@ -50,7 +50,7 @@ GO
 
 CREATE TABLE [Company] (
     [CompanyID] NVARCHAR(128) NOT NULL,
-    [FounderYear] SMALLINT NULL,
+    [FoundedYear] SMALLINT NULL,
     [VerificationStatus] NVARCHAR(10) NOT NULL DEFAULT N'PENDING',
     [LogoURL] NVARCHAR(512) NULL,
     [CompanySize] NVARCHAR(10) NULL,
@@ -783,7 +783,7 @@ BEGIN
 END
 GO
 
--- Trigger: Validate FounderYear on Company insert
+-- Trigger: Validate FoundedYear on Company insert
 CREATE TRIGGER [trg_Company_BeforeInsert]
 ON [Company]
 AFTER INSERT
@@ -791,16 +791,16 @@ AS
 BEGIN
     SET NOCOUNT ON;
     
-    IF EXISTS (SELECT 1 FROM inserted WHERE FounderYear IS NOT NULL AND FounderYear > YEAR(GETDATE()))
+    IF EXISTS (SELECT 1 FROM inserted WHERE FoundedYear IS NOT NULL AND FoundedYear > YEAR(GETDATE()))
     BEGIN
-        RAISERROR(N'FounderYear cannot be in the future', 16, 1);
+        RAISERROR(N'FoundedYear cannot be in the future', 16, 1);
         ROLLBACK TRANSACTION;
         RETURN;
     END
 END
 GO
 
--- Trigger: Validate FounderYear on Company update
+-- Trigger: Validate FoundedYear on Company update
 CREATE TRIGGER [trg_Company_BeforeUpdate]
 ON [Company]
 AFTER UPDATE
@@ -808,9 +808,9 @@ AS
 BEGIN
     SET NOCOUNT ON;
     
-    IF EXISTS (SELECT 1 FROM inserted WHERE FounderYear IS NOT NULL AND FounderYear > YEAR(GETDATE()))
+    IF EXISTS (SELECT 1 FROM inserted WHERE FoundedYear IS NOT NULL AND FoundedYear > YEAR(GETDATE()))
     BEGIN
-        RAISERROR(N'FounderYear cannot be in the future', 16, 1);
+        RAISERROR(N'FoundedYear cannot be in the future', 16, 1);
         ROLLBACK TRANSACTION;
         RETURN;
     END

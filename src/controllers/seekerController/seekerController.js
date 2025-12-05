@@ -97,6 +97,24 @@ const deleteSkill = async (req, res, next) => {
     }
 }
 
+const getSuggestions = async (req, res, next) => {
+    try {
+        const user = req.session.user
+        if (!user || user.userType !== 'JobSeeker') {
+            return res.redirect('/auth/login')
+        }
+        const suggestions = await seekerModel.getTopMatchingJobs(user.id, 0, 10)
+
+        res.render('seeker/suggested-jobs.ejs', {
+            title: 'Job Suggestions',
+            user: user,
+            suggestions
+        })
+    } catch (err) {
+        next(err)
+    }
+}
+
 
 export const seekerController = {
     viewDashboard,
@@ -105,4 +123,5 @@ export const seekerController = {
     getSkills,
     addSkill,
     deleteSkill
+    ,getSuggestions
 }

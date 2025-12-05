@@ -258,6 +258,22 @@ const getAvailableSkills = async () => {
     }
 }
 
+const getTopMatchingJobs = async (jobSeekerId, minMatchScore = 0, limit = 10) => {
+    try {
+        const pool = GET_SQL_POOL()
+        const request = pool.request()
+            .input('p_JobSeekerID', jobSeekerId)
+            .input('p_MinMatchScore', minMatchScore)
+            .input('p_Limit', limit)
+
+        const result = await request.execute('dbo.sp_GetTopMatchingJobs')
+
+        return result.recordset || []
+    } catch (err) {
+        throw new ApiError(StatusCodes.INTERNAL_SERVER_ERROR, err.message)
+    }
+}
+
 export const seekerModel = {
     getProfile,
     updateProfile,
@@ -266,4 +282,5 @@ export const seekerModel = {
     addSkill,
     deleteSkill,
     getAvailableSkills
+    ,getTopMatchingJobs
 }
