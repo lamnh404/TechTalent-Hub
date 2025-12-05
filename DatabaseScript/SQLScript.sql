@@ -1088,19 +1088,19 @@ DECLARE @CompanyId4 NVARCHAR(128) = (SELECT UserId FROM [User] WHERE Email = N'h
 INSERT INTO [Company] ([CompanyID], [CompanyName], [FounderYear], [CompanySize], [Industry], [CompanyDescription], [CompanyWebsite], [VerificationStatus], [LogoURL])
 SELECT @CompanyId1, N'FPT Software', 1999, N'Enterprise', N'Information Technology', 
  N'Leading software outsourcing company in Vietnam with over 30,000 employees worldwide. Specializing in digital transformation, AI, cloud computing, and enterprise solutions.',
- N'https://fptsoftware.com', N'ACCEPTED', N'https://fptsoftware.com/logo.png'
+ N'https://fptsoftware.com', N'ACCEPTED', N'https://cdn.haitrieu.com/wp-content/uploads/2022/01/Logo-FPT.png'
 UNION ALL
 SELECT @CompanyId2, N'VNG Corporation', 2004, N'Large', N'Technology & Entertainment',
  N'Pioneer in online games, digital content, and e-commerce platforms in Vietnam. Creator of Zalo, Vietnam''s leading messaging app with over 70 million users.',
- N'https://vng.com.vn', N'ACCEPTED', N'https://vng.com.vn/logo.png'
+ N'https://vng.com.vn', N'ACCEPTED', N'https://mondialbrand.com/wp-content/uploads/2024/02/vng_corporation-logo_brandlogos.net_ysr15-1200x1200.png'
 UNION ALL
 SELECT @CompanyId3, N'Vietnam Technological and Commercial Joint Stock Bank', 1993, N'Large', N'Banking & Finance',
  N'One of the leading commercial banks in Vietnam with cutting-edge fintech solutions. Recognized for innovation in digital banking and customer experience.',
- N'https://techcombank.com.vn', N'ACCEPTED', N'https://techcombank.com.vn/logo.png'
+ N'https://techcombank.com.vn', N'ACCEPTED', N'https://cdn.haitrieu.com/wp-content/uploads/2021/11/Logo-TCB-V.png'
 UNION ALL
 SELECT @CompanyId4, N'Viettel Group', 1989, N'Enterprise', N'Telecommunications',
  N'Largest telecommunications company in Vietnam providing mobile, internet, and digital services. Expanding into AI, IoT, cloud computing, and cybersecurity solutions.',
- N'https://viettel.com.vn', N'ACCEPTED', N'https://viettel.com.vn/logo.png';
+ N'https://viettel.com.vn', N'ACCEPTED', N'https://media.vneconomy.vn/images/upload/2021/04/20/logo-moi-cua-viettel-1610030805425937362871.jpg?w=600';
 GO
 
 
