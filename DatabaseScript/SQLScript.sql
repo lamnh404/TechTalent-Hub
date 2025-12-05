@@ -69,18 +69,19 @@ CREATE TABLE [Company] (
 );
 GO
 
--- FIX: Reduce Address column size to fit within 900 bytes limit for clustered index
+
 CREATE TABLE [CompanyLocation] (
+    [LocationID] INT IDENTITY(1,1) PRIMARY KEY,
     [CompanyID] NVARCHAR(128) NOT NULL,
-    [Address] NVARCHAR(300) NOT NULL,  -- Changed from 600 to 300
-    PRIMARY KEY ([CompanyID], [Address]),
+    [Address] NVARCHAR(300) NOT NULL,  
+    CONSTRAINT [UQ_CompanyLocation_CompanyID_Address] UNIQUE ([CompanyID], [Address]),
     CONSTRAINT [FK_CompanyLocation_CompanyID_Company]
         FOREIGN KEY ([CompanyID]) REFERENCES [Company]([CompanyID])
         ON UPDATE CASCADE 
         ON DELETE CASCADE
 );
 GO
-CREATE INDEX [IX_CompanyLocation_Address] ON [CompanyLocation]([Address]);
+CREATE INDEX [IX_CompanyLocation_CompanyID] ON [CompanyLocation]([CompanyID]);
 GO
 
 CREATE TABLE [JobSeeker] (
@@ -637,87 +638,72 @@ GO
 -- TRIGGERS
 -- =============================================
 
--- Trigger: Update LastLoginDate on User update
-CREATE TRIGGER [trg_User_OnUpdate_SetLastLoginDate]
-ON [User]
-AFTER UPDATE
-AS
-BEGIN
-    SET NOCOUNT ON;
-    
-    IF UPDATE(LastLoginDate)
-        RETURN;
-    
-    UPDATE u
-    SET LastLoginDate = GETDATE()
-    FROM [User] u
-    INNER JOIN inserted i ON u.UserId = i.UserId;
-END
+
+DROP TRIGGER IF EXISTS [trg_User_BeforeInsert];
 GO
 
--- Trigger: Update LastUpdated on JobMetrics update
-CREATE TRIGGER [trg_JobMetrics_OnUpdate_SetLastUpdated]
-ON [JobMetrics]
-AFTER UPDATE
-AS
-BEGIN
-    SET NOCOUNT ON;
-    
-    IF UPDATE(LastUpdated)
-        RETURN;
-    
-    UPDATE jm
-    SET LastUpdated = GETDATE()
-    FROM [JobMetrics] jm
-    INNER JOIN inserted i ON jm.JobMetricID = i.JobMetricID;
-END
-GO
-
--- Trigger: Auto-generate UserId before insert
 CREATE TRIGGER [trg_User_BeforeInsert]
 ON [User]
 INSTEAD OF INSERT
 AS
 BEGIN
     SET NOCOUNT ON;
+    
+    -- Kiểm tra nếu không có data
+    IF NOT EXISTS (SELECT 1 FROM inserted)
+        RETURN;
 
     DECLARE @next_id INT;
-    DECLARE @new_UserId NVARCHAR(128);
+    DECLARE @GeneratedIDs TABLE (UserId NVARCHAR(128), Email NVARCHAR(256));
     
-    DECLARE @Email NVARCHAR(256), @PasswordHash NVARCHAR(256), @RegistrationDate DATETIME, 
-            @LastLoginDate DATETIME, @AccountStatus NVARCHAR(10), @UserType NVARCHAR(10);
-
-    DECLARE cursor_inserted CURSOR FOR
-    SELECT Email, PasswordHash, ISNULL(RegistrationDate, GETDATE()), 
-           ISNULL(LastLoginDate, GETDATE()), ISNULL(AccountStatus, N'Active'), UserType
+    -- Lấy ID tiếp theo với TABLOCKX
+    SELECT @next_id = ISNULL(MAX(CAST(SUBSTRING(UserId, 3, LEN(UserId)) AS INT)), 0) + 1
+    FROM [User] WITH (TABLOCKX)
+    WHERE UserId LIKE N'US[0-9]%' 
+      AND LEN(UserId) = 9
+      AND ISNUMERIC(SUBSTRING(UserId, 3, LEN(UserId))) = 1;
+    
+    -- Insert và lưu generated IDs vào table variable
+    INSERT INTO [User] (
+        [UserId], 
+        [Email], 
+        [PasswordHash], 
+        [RegistrationDate], 
+        [LastLoginDate], 
+        [AccountStatus], 
+        [UserType],
+        [avatarURL]
+    )
+    OUTPUT inserted.UserId, inserted.Email INTO @GeneratedIDs
+    SELECT
+        CONCAT(N'US', RIGHT(N'0000000' + CAST(
+            ROW_NUMBER() OVER (ORDER BY (SELECT NULL)) + @next_id - 1 
+        AS NVARCHAR(7)), 7)) AS UserId,
+        [Email],
+        [PasswordHash],
+        ISNULL([RegistrationDate], GETDATE()) AS RegistrationDate,
+        ISNULL([LastLoginDate], GETDATE()) AS LastLoginDate,
+        ISNULL([AccountStatus], N'Active') AS AccountStatus,
+        [UserType],
+        ISNULL([avatarURL], N'https://aic.com.vn/wp-content/uploads/2024/10/avatar-fb-mac-dinh-1.jpg') AS avatarURL
     FROM inserted;
-
-    OPEN cursor_inserted;
-    FETCH NEXT FROM cursor_inserted INTO @Email, @PasswordHash, @RegistrationDate, @LastLoginDate, @AccountStatus, @UserType;
-
-    WHILE @@FETCH_STATUS = 0
-    BEGIN
-        SELECT @next_id = ISNULL(MAX(CAST(SUBSTRING(UserId, 3, LEN(UserId)) AS INT)), 0) + 1
-        FROM [User] WITH (UPDLOCK, HOLDLOCK)
-        WHERE UserId LIKE N'US[0-9]%' AND LEN(UserId) = 9;
-        
-        SET @new_UserId = CONCAT(N'US', RIGHT(N'0000000' + CAST(@next_id AS NVARCHAR(7)), 7));
-
-        INSERT INTO [User] (
-            [UserId], [Email], [PasswordHash], [RegistrationDate], [LastLoginDate], [AccountStatus], [UserType]
-        ) VALUES (
-            @new_UserId, @Email, @PasswordHash, @RegistrationDate, @LastLoginDate, @AccountStatus, @UserType
-        );
-
-        FETCH NEXT FROM cursor_inserted INTO @Email, @PasswordHash, @RegistrationDate, @LastLoginDate, @AccountStatus, @UserType;
-    END
-
-    CLOSE cursor_inserted;
-    DEALLOCATE cursor_inserted;
+    
+    -- CRITICAL: Return generated IDs để client có thể lấy
+    -- Cách 1: Return qua SELECT (cho SQL query trực tiếp)
+    SELECT UserId, Email FROM @GeneratedIDs;
+    
+    -- Note: Với application code, bạn có thể query lại:
+    -- SELECT UserId FROM [User] WHERE Email = @Email
 END
 GO
 
--- Trigger: Auto-generate JobID before insert
+-- =============================================
+-- FIXED: Auto-generate JobID và RETURN ID sau khi insert
+-- =============================================
+
+DROP TRIGGER IF EXISTS [trg_Job_BeforeInsert];
+GO
+
 CREATE TRIGGER [trg_Job_BeforeInsert]
 ON [Job]
 INSTEAD OF INSERT
@@ -725,64 +711,64 @@ AS
 BEGIN
     SET NOCOUNT ON;
     
-    DECLARE @JobData TABLE (
-        [CompanyID] NVARCHAR(128), [JobTitle] NVARCHAR(255), [JobDescription] NVARCHAR(MAX),
-        [EmploymentType] NVARCHAR(10), [ExperienceRequired] SMALLINT, [SalaryMin] DECIMAL(15,2),
-        [SalaryMax] DECIMAL(15,2), [Location] NVARCHAR(255), [OpeningCount] INT,
-        [PostedDate] DATETIME, [ApplicationDeadline] DATETIME, [JobStatus] NVARCHAR(10)
-    );
-
-    INSERT INTO @JobData
-    SELECT
-        [CompanyID], [JobTitle], [JobDescription], [EmploymentType],
-        ISNULL([ExperienceRequired], 0), [SalaryMin], [SalaryMax], [Location],
-        ISNULL([OpeningCount], 1), ISNULL([PostedDate], GETDATE()), 
-        [ApplicationDeadline], ISNULL([JobStatus], N'Open')
-    FROM inserted;
-
-    DECLARE @CompanyID NVARCHAR(128), @JobTitle NVARCHAR(255), @JobDescription NVARCHAR(MAX),
-            @EmploymentType NVARCHAR(10), @ExperienceRequired SMALLINT, @SalaryMin DECIMAL(15,2),
-            @SalaryMax DECIMAL(15,2), @Location NVARCHAR(255), @OpeningCount INT,
-            @PostedDate DATETIME, @ApplicationDeadline DATETIME, @JobStatus NVARCHAR(10);
+    -- Kiểm tra nếu không có data
+    IF NOT EXISTS (SELECT 1 FROM inserted)
+        RETURN;
     
     DECLARE @next_id INT;
-    DECLARE @new_JobID NVARCHAR(128);
-
-    DECLARE job_cursor CURSOR FOR
-    SELECT * FROM @JobData;
-
-    OPEN job_cursor;
-    FETCH NEXT FROM job_cursor INTO @CompanyID, @JobTitle, @JobDescription, @EmploymentType, 
-        @ExperienceRequired, @SalaryMin, @SalaryMax, @Location, @OpeningCount, 
-        @PostedDate, @ApplicationDeadline, @JobStatus;
-
-    WHILE @@FETCH_STATUS = 0
-    BEGIN
-        SELECT @next_id = ISNULL(MAX(CAST(SUBSTRING(JobID, 4, LEN(JobID)) AS INT)), 0) + 1
-        FROM [Job] WITH (UPDLOCK, HOLDLOCK)
-        WHERE JobID LIKE N'JOB[0-9]%' AND LEN(JobID) = 10;
-        
-        SET @new_JobID = CONCAT(N'JOB', RIGHT(N'0000000' + CAST(@next_id AS NVARCHAR(7)), 7));
-
-        INSERT INTO [Job] (
-            [JobID], [CompanyID], [JobTitle], [JobDescription], [EmploymentType], 
-            [ExperienceRequired], [SalaryMin], [SalaryMax], [Location], [OpeningCount], 
-            [PostedDate], [ApplicationDeadline], [JobStatus]
-        ) VALUES (
-            @new_JobID, @CompanyID, @JobTitle, @JobDescription, @EmploymentType, 
-            @ExperienceRequired, @SalaryMin, @SalaryMax, @Location, @OpeningCount, 
-            @PostedDate, @ApplicationDeadline, @JobStatus
-        );
-
-        FETCH NEXT FROM job_cursor INTO @CompanyID, @JobTitle, @JobDescription, @EmploymentType, 
-            @ExperienceRequired, @SalaryMin, @SalaryMax, @Location, @OpeningCount, 
-            @PostedDate, @ApplicationDeadline, @JobStatus;
-    END
-
-    CLOSE job_cursor;
-    DEALLOCATE job_cursor;
+    DECLARE @GeneratedIDs TABLE (
+        JobID NVARCHAR(128), 
+        JobTitle NVARCHAR(255),
+        CompanyID NVARCHAR(128)
+    );
+    
+    -- Lấy ID tiếp theo với TABLOCKX
+    SELECT @next_id = ISNULL(MAX(CAST(SUBSTRING(JobID, 4, LEN(JobID)) AS INT)), 0) + 1
+    FROM [Job] WITH (TABLOCKX)
+    WHERE JobID LIKE N'JOB[0-9]%' 
+      AND LEN(JobID) = 10
+      AND ISNUMERIC(SUBSTRING(JobID, 4, LEN(JobID))) = 1;
+    
+    -- Insert và lưu generated IDs
+    INSERT INTO [Job] (
+        [JobID], 
+        [CompanyID], 
+        [JobTitle], 
+        [JobDescription], 
+        [EmploymentType], 
+        [ExperienceRequired], 
+        [SalaryMin], 
+        [SalaryMax], 
+        [Location], 
+        [OpeningCount], 
+        [PostedDate], 
+        [ApplicationDeadline], 
+        [JobStatus]
+    )
+    OUTPUT inserted.JobID, inserted.JobTitle, inserted.CompanyID INTO @GeneratedIDs
+    SELECT
+        CONCAT(N'JOB', RIGHT(N'0000000' + CAST(
+            ROW_NUMBER() OVER (ORDER BY (SELECT NULL)) + @next_id - 1 
+        AS NVARCHAR(7)), 7)) AS JobID,
+        [CompanyID],
+        [JobTitle],
+        [JobDescription],
+        [EmploymentType],
+        ISNULL([ExperienceRequired], 0) AS ExperienceRequired,
+        [SalaryMin],
+        [SalaryMax],
+        [Location],
+        ISNULL([OpeningCount], 1) AS OpeningCount,
+        ISNULL([PostedDate], GETDATE()) AS PostedDate,
+        [ApplicationDeadline],
+        ISNULL([JobStatus], N'Open') AS JobStatus
+    FROM inserted;
+    
+    -- Return generated IDs
+    SELECT JobID, JobTitle, CompanyID FROM @GeneratedIDs;
 END
 GO
+
 
 -- Trigger: Validate FounderYear on Company insert
 CREATE TRIGGER [trg_Company_BeforeInsert]
@@ -802,6 +788,9 @@ END
 GO
 
 -- Trigger: Validate FounderYear on Company update
+DROP TRIGGER IF EXISTS [trg_Company_BeforeUpdate];
+GO
+
 CREATE TRIGGER [trg_Company_BeforeUpdate]
 ON [Company]
 AFTER UPDATE
@@ -819,6 +808,9 @@ END
 GO
 
 -- Trigger: Update skill popularity after JobRequireSkill insert
+DROP TRIGGER IF EXISTS [trg_JobRequireSkill_AfterInsert];
+GO
+
 CREATE TRIGGER [trg_JobRequireSkill_AfterInsert]
 ON [JobRequireSkill]
 AFTER INSERT
@@ -853,6 +845,9 @@ END
 GO
 
 -- Trigger: Update skill popularity after JobRequireSkill delete
+DROP TRIGGER IF EXISTS [trg_JobRequireSkill_AfterDelete];
+GO
+
 CREATE TRIGGER [trg_JobRequireSkill_AfterDelete]
 ON [JobRequireSkill]
 AFTER DELETE
@@ -884,6 +879,9 @@ END
 GO
 
 -- Trigger: Check job status and deadline before application insert
+DROP TRIGGER IF EXISTS [trg_Application_BeforeInsert_CheckDeadline];
+GO
+
 CREATE TRIGGER [trg_Application_BeforeInsert_CheckDeadline]
 ON [Application]
 INSTEAD OF INSERT
@@ -929,6 +927,8 @@ END
 GO
 
 -- Trigger: Validate DateOfBirth on JobSeeker insert
+DROP TRIGGER IF EXISTS [trg_JobSeeker_BeforeInsert];
+GO
 CREATE TRIGGER [trg_JobSeeker_BeforeInsert]
 ON [JobSeeker]
 AFTER INSERT
@@ -946,6 +946,9 @@ END
 GO
 
 -- Trigger: Validate DateOfBirth on JobSeeker update
+DROP TRIGGER IF EXISTS [trg_JobSeeker_BeforeUpdate];
+GO
+
 CREATE TRIGGER [trg_JobSeeker_BeforeUpdate]
 ON [JobSeeker]
 AFTER UPDATE
@@ -963,6 +966,9 @@ END
 GO
 
 -- Trigger: Prevent self-following on Follow insert
+DROP TRIGGER IF EXISTS [trg_check_no_self_follow];
+GO
+
 CREATE TRIGGER [trg_check_no_self_follow]
 ON [Follow]
 AFTER INSERT
@@ -980,6 +986,9 @@ END
 GO
 
 -- Trigger: Prevent self-following on Follow update
+DROP TRIGGER IF EXISTS [trg_check_no_self_follow_update];
+GO
+
 CREATE TRIGGER [trg_check_no_self_follow_update]
 ON [Follow]
 AFTER UPDATE
