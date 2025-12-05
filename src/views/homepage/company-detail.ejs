@@ -1,5 +1,5 @@
 <%
-    // Mock Data: Thông tin công ty
+    // 1. Mock Data: Thông tin công ty
     if (typeof company === 'undefined') {
         var company = {
             CompanyID: 1,
@@ -9,13 +9,32 @@
             CompanySize: "10,000+ Employees",
             FoundedYear: 1998,
             Website: "https://about.google",
-            Location: "Mountain View, CA (Headquarters)",
+            Location: "Mountain View, CA",
             Description: "Google's mission is to organize the world's information and make it universally accessible and useful. We create products and services that help billions of people around the world.",
-            Socials: { facebook: "#", linkedin: "#", twitter: "#" }
+            Socials: { website: "#", facebook: "#", linkedin: "#" },
+            // Mock Reviews
+            Reviews: [
+                { 
+                    ReviewerName: "Anonymous Employee", 
+                    ReviewerAvatar: "/images/default-avatar.png", 
+                    ReviewDate: new Date("2023-10-05"), 
+                    Rating: 5, 
+                    ReviewTitle: "Great place to work", 
+                    ReviewText: "Amazing culture, smart colleagues, and great benefits. The best place to grow your career." 
+                },
+                { 
+                    ReviewerName: "John Doe", 
+                    ReviewerAvatar: "https://i.pravatar.cc/150?u=5", 
+                    ReviewDate: new Date("2023-09-12"), 
+                    Rating: 4, 
+                    ReviewTitle: "Good but intense", 
+                    ReviewText: "Projects are challenging and impactful. Work-life balance can be tricky sometimes due to tight deadlines." 
+                }
+            ]
         };
     }
 
-    // Mock Data: Các job đang tuyển của công ty này
+    // 2. Mock Data: Job đang tuyển
     if (typeof openJobs === 'undefined') {
         var openJobs = [
             { JobID: 101, JobTitle: "Senior Software Engineer", Location: "Remote", Type: "Full-time", Salary: "$120k - $150k" },
@@ -40,6 +59,7 @@
 
     <div class="container" style="margin-top: -80px; position: relative; z-index: 2;">
         <div class="row">
+            
             <div class="col-lg-4 mb-4">
                 <div class="card border-0 shadow-lg rounded-lg mb-4">
                     <div class="card-body p-4 text-center">
@@ -88,44 +108,136 @@
             </div>
 
             <div class="col-lg-8" style="padding-top: 90px;">
-                <div class="card border-0 shadow-sm rounded-lg mb-4">
-                    <div class="card-body p-4">
-                        <h5 class="font-weight-bold text-dark mb-3">About Us</h5>
-                        <p class="text-muted" style="line-height: 1.8;">
-                            <%= company.Description %>
-                        </p>
-                    </div>
-                </div>
-
-                <h5 class="font-weight-bold text-dark mb-3">Open Positions (<%= openJobs.length %>)</h5>
                 
-                <% if (openJobs && openJobs.length > 0) { %>
-                    <% openJobs.forEach(job => { %>
-                        <div class="card border-0 shadow-sm rounded-lg mb-3 hover-scale job-card-horizontal p-3">
-                            <div class="d-flex align-items-center w-100">
-                                <div class="flex-grow-1">
-                                    <h6 class="font-weight-bold mb-1">
-                                        <a href="/jobs/<%= job.JobID %>" class="text-dark text-decoration-none stretched-link"><%= job.JobTitle %></a>
-                                    </h6>
-                                    <div class="small text-muted">
-                                        <i class="fas fa-map-marker-alt mr-1"></i> <%= job.Location %> &bull; 
-                                        <i class="far fa-clock mr-1 ml-1"></i> <%= job.Type %>
-                                    </div>
-                                </div>
-                                <div class="text-right d-none d-md-block">
-                                    <span class="text-primary font-weight-bold"><%= job.Salary %></span>
-                                    <br>
-                                    <a href="/jobs/<%= job.JobID %>" class="btn btn-sm btn-outline-primary rounded-pill mt-2 px-3">Apply</a>
+                <ul class="nav nav-tabs nav-tabs-modern" id="companyTabs" role="tablist">
+                    <li class="nav-item">
+                        <a class="nav-link active" id="about-tab" data-toggle="tab" href="#about" role="tab">About</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="jobs-tab" data-toggle="tab" href="#jobs" role="tab">Jobs <span class="badge badge-soft-primary ml-1"><%= openJobs.length %></span></a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="reviews-tab" data-toggle="tab" href="#reviews" role="tab">Reviews</a>
+                    </li>
+                </ul>
+
+                <div class="tab-content" id="companyTabsContent">
+                    
+                    <div class="tab-pane fade show active" id="about" role="tabpanel">
+                        <div class="card border-0 shadow-sm rounded-lg">
+                            <div class="card-body p-4">
+                                <h5 class="font-weight-bold text-dark mb-3">About Us</h5>
+                                <div class="text-muted" style="line-height: 1.8;">
+                                    <%= company.Description %>
                                 </div>
                             </div>
                         </div>
-                    <% }) %>
-                <% } else { %>
-                    <div class="text-center py-4 text-muted">
-                        No open positions at the moment.
                     </div>
-                <% } %>
 
+                    <div class="tab-pane fade" id="jobs" role="tabpanel">
+                        <% if (openJobs && openJobs.length > 0) { %>
+                            <% openJobs.forEach(job => { %>
+                                <div class="card border-0 shadow-sm rounded-lg mb-3 hover-scale job-card-horizontal p-3">
+                                    <div class="d-flex align-items-center w-100">
+                                        <div class="flex-grow-1">
+                                            <h6 class="font-weight-bold mb-1">
+                                                <a href="/jobs/<%= job.JobID %>" class="text-dark text-decoration-none stretched-link"><%= job.JobTitle %></a>
+                                            </h6>
+                                            <div class="small text-muted">
+                                                <i class="fas fa-map-marker-alt mr-1"></i> <%= job.Location %> &bull; 
+                                                <i class="far fa-clock mr-1 ml-1"></i> <%= job.Type %>
+                                            </div>
+                                        </div>
+                                        <div class="text-right d-none d-md-block">
+                                            <span class="text-primary font-weight-bold"><%= job.Salary %></span>
+                                            <br>
+                                            <a href="/jobs/<%= job.JobID %>" class="btn btn-sm btn-outline-primary rounded-pill mt-2 px-3">Apply</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            <% }) %>
+                        <% } else { %>
+                            <div class="text-center py-5">
+                                <img src="/images/empty-state.svg" width="150" class="mb-3 opacity-50">
+                                <p class="text-muted">No open positions at the moment.</p>
+                            </div>
+                        <% } %>
+                    </div>
+
+                    <div class="tab-pane fade" id="reviews" role="tabpanel">
+                        
+                        <% if (typeof user !== 'undefined' && user && user.userType === 'JobSeeker') { %>
+                            <div class="card border-0 shadow-sm rounded-lg mb-4 bg-soft-primary">
+                                <div class="card-body p-4">
+                                    <h6 class="font-weight-bold mb-3 text-primary"><i class="fas fa-pen mr-2"></i> Write a Review</h6>
+                                    <form action="/companies/<%= company.CompanyID %>/review" method="POST">
+                                        <div class="row">
+                                            <div class="col-md-8 mb-3">
+                                                <input type="text" class="form-control-modern bg-white" name="title" placeholder="Title (e.g. Great environment)" required>
+                                            </div>
+                                            <div class="col-md-4 mb-3 d-flex align-items-center">
+                                                <div class="star-rating-input">
+                                                    <input type="radio" id="star5" name="rating" value="5" required /><label for="star5">★</label>
+                                                    <input type="radio" id="star4" name="rating" value="4" /><label for="star4">★</label>
+                                                    <input type="radio" id="star3" name="rating" value="3" /><label for="star3">★</label>
+                                                    <input type="radio" id="star2" name="rating" value="2" /><label for="star2">★</label>
+                                                    <input type="radio" id="star1" name="rating" value="1" /><label for="star1">★</label>
+                                                </div>
+                                                <span class="small text-muted ml-2">Rate this company</span>
+                                            </div>
+                                        </div>
+                                        <div class="form-group mb-3">
+                                            <textarea class="form-control-modern h-auto bg-white py-3" name="content" rows="3" placeholder="Share your experience..." required></textarea>
+                                        </div>
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <div class="custom-control custom-checkbox">
+                                                <input type="checkbox" class="custom-control-input" id="anonCheck" name="isAnonymous">
+                                                <label class="custom-control-label text-muted small" for="anonCheck">Post anonymously</label>
+                                            </div>
+                                            <button type="submit" class="btn btn-primary-modern shadow-sm px-4">Submit Review</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        <% } %>
+
+                        <div class="card border-0 shadow-sm rounded-lg">
+                            <div class="card-body p-4">
+                                <h5 class="font-weight-bold text-dark mb-4">Employee Reviews (<%= company.Reviews ? company.Reviews.length : 0 %>)</h5>
+                                
+                                <% if (company.Reviews && company.Reviews.length > 0) { %>
+                                    <% company.Reviews.forEach(review => { %>
+                                        <div class="review-item">
+                                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                                <div class="d-flex align-items-center">
+                                                    <img src="<%= review.ReviewerAvatar %>" class="rounded-circle mr-3" width="45" height="45" style="object-fit: cover;">
+                                                    <div>
+                                                        <h6 class="font-weight-bold mb-0 text-dark"><%= review.ReviewerName %></h6>
+                                                        <small class="text-muted"><%= new Date(review.ReviewDate).toLocaleDateString() %></small>
+                                                    </div>
+                                                </div>
+                                                <div class="star-display">
+                                                    <% for(let i=1; i<=5; i++) { %>
+                                                        <i class="fas fa-star <%= i <= review.Rating ? 'filled' : '' %>"></i>
+                                                    <% } %>
+                                                </div>
+                                            </div>
+                                            <h6 class="font-weight-bold mt-3"><%= review.ReviewTitle %></h6>
+                                            <p class="text-muted mb-0" style="font-size: 0.95rem;"><%= review.ReviewText %></p>
+                                        </div>
+                                    <% }) %>
+                                <% } else { %>
+                                    <div class="text-center py-5">
+                                        <div class="mb-3 opacity-50"><i class="far fa-comment-dots fa-3x text-muted"></i></div>
+                                        <p class="text-muted">No reviews yet. Be the first to share your experience!</p>
+                                    </div>
+                                <% } %>
+
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
             </div>
         </div>
     </div>

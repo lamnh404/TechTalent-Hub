@@ -250,3 +250,85 @@
         margin-bottom: 20px;
     }
 }
+
+/* ========================================
+   COMPANY DETAIL - TABS & REVIEWS
+   ======================================== */
+
+/* --- Modern Tabs (Soft UI) --- */
+.nav-tabs-modern {
+    border-bottom: 2px solid #f3f4f6;
+    margin-bottom: 1.5rem;
+}
+
+.nav-tabs-modern .nav-item {
+    margin-bottom: -2px;
+    margin-right: 1rem;
+}
+
+.nav-tabs-modern .nav-link {
+    border: none;
+    color: #6b7280;
+    font-weight: 600;
+    padding: 1rem 0.5rem;
+    background: transparent;
+    border-bottom: 2px solid transparent;
+    transition: all 0.3s;
+}
+
+.nav-tabs-modern .nav-link:hover {
+    color: var(--primary-color);
+}
+
+.nav-tabs-modern .nav-link.active {
+    color: var(--primary-color);
+    background: transparent;
+    border-bottom: 2px solid var(--primary-color);
+}
+
+/* --- Star Rating (Input Form) --- */
+.star-rating-input {
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: flex-start;
+    gap: 5px;
+}
+
+.star-rating-input input {
+    display: none;
+}
+
+.star-rating-input label {
+    font-size: 2rem;
+    color: #e5e7eb; /* Màu xám khi chưa chọn */
+    cursor: pointer;
+    transition: color 0.2s;
+    margin: 0;
+}
+
+/* Hiệu ứng: Hover hoặc Checked sẽ sáng các sao phía trước */
+.star-rating-input input:checked ~ label,
+.star-rating-input label:hover,
+.star-rating-input label:hover ~ label {
+    color: #fbbf24; /* Màu vàng */
+}
+
+/* --- Review Item --- */
+.review-item {
+    border-bottom: 1px solid #f3f4f6;
+    padding-bottom: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+.review-item:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+}
+
+/* Rating Read-only (Hiển thị kết quả) */
+.star-display {
+    color: #e5e7eb;
+    font-size: 0.9rem;
+}
+.star-display .filled {
+    color: #fbbf24;
+}
