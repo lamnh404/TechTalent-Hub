@@ -103,17 +103,17 @@ CREATE TABLE [JobSeeker] (
         ON DELETE NO ACTION,
     CONSTRAINT [CK_JobSeeker_Gender] CHECK ([Gender] IN (N'MALE',N'FEMALE',N'OTHER'))
 );
-
 GO
 
 CREATE TABLE [Skill] (
     [SkillID] INT NOT NULL IDENTITY(1,1),
     [SkillName] NVARCHAR(160) NOT NULL,
     [SkillCategory] NVARCHAR(120) NULL,
+    [PopularityScore] INT NULL DEFAULT 0,
     PRIMARY KEY ([SkillID]),
-    CONSTRAINT [UQ_Skill_SkillName] UNIQUE ([SkillName])
+    CONSTRAINT [UQ_Skill_SkillName] UNIQUE ([SkillName]),
+    CONSTRAINT [CK_Skill_PopularityScore] CHECK ([PopularityScore] >= 0 AND [PopularityScore] <= 100)
 );
-
 GO
 
 CREATE TABLE [JobSeekerSkill] (
@@ -132,11 +132,8 @@ CREATE TABLE [JobSeekerSkill] (
         ON DELETE NO ACTION,
     CONSTRAINT [CK_JSS_Proficiency] CHECK ([ProficiencyLevel] IN (N'Beginner',N'Intermediate',N'Advanced',N'Expert'))
 );
-
 GO
-
 CREATE INDEX [IX_JobSeekerSkill_SkillID] ON [JobSeekerSkill]([SkillID]);
-
 GO
 
 CREATE TABLE [Experience] (
@@ -161,10 +158,13 @@ CREATE TABLE [Experience] (
     CONSTRAINT [CK_Experience_Dates] CHECK ([EndDate] IS NULL OR [EndDate] >= [StartDate]),
     CONSTRAINT [CK_Exp_Type] CHECK ([ExperienceType] IN (N'Internship',N'FullTime',N'PartTime',N'Contract',N'Freelance'))
 );
+
 GO
 CREATE INDEX [IX_Experience_JobTitle] ON [Experience]([JobTitle]);
+
 GO
 CREATE INDEX [IX_Experience_CompanyID] ON [Experience]([CompanyID]);
+
 GO
 
 CREATE TABLE [Job] (
@@ -193,10 +193,8 @@ CREATE TABLE [Job] (
     CONSTRAINT [CK_Job_Status] CHECK ([JobStatus] IN (N'Open',N'Closed',N'OnHold',N'Filled'))
 );
 GO
-
 CREATE INDEX [IX_Job_CompanyID] ON [Job]([CompanyID]);
 GO
-
 CREATE INDEX [IX_Job_PostedDate] ON [Job]([PostedDate]);
 GO
 
@@ -217,7 +215,6 @@ CREATE TABLE [JobRequireSkill] (
     CONSTRAINT [CK_JRS_Proficiency] CHECK ([ProficiencyLevel] IN (N'Beginner',N'Intermediate',N'Advanced',N'Expert'))
 );
 GO
-
 CREATE INDEX [IX_JobRequireSkill_SkillID] ON [JobRequireSkill]([SkillID]);
 GO
 
@@ -323,7 +320,6 @@ CREATE TABLE [ReceiveNotification] (
         ON DELETE CASCADE
 );
 GO
-
 CREATE INDEX [IX_ReceiveNotification_ReceiverID] ON [ReceiveNotification]([ReceiverID]);
 GO
 
@@ -472,111 +468,50 @@ BEGIN
 END
 GO
 
--- Function to calculate skill popularity score
+-- =============================================
+-- STORED PROCEDURES (Create before triggers that use them)
+-- =============================================
 
+-- Procedure: Update all skill popularity scores
 
-DROP FUNCTION IF EXISTS dbo.fn_GetSkillPopularityScore;
+DROP PROCEDURE IF EXISTS [dbo.sp_UpdateAllSkillPopularityScores];
 GO
 
-CREATE FUNCTION dbo.fn_GetSkillPopularityScore(
-    @SkillID INT
-)
-RETURNS DECIMAL(5,2)
+CREATE PROCEDURE dbo.sp_UpdateAllSkillPopularityScores
 AS
 BEGIN
-    DECLARE @PopularityScore DECIMAL(5,2) = 0;
-    DECLARE @TotalOpenJobs INT = 0;
-    DECLARE @JobsRequiringSkill INT = 0;
+    SET NOCOUNT ON;
+    
+    DECLARE @TotalOpenJobs INT;
     
     SELECT @TotalOpenJobs = COUNT(*)
     FROM [Job]
     WHERE [JobStatus] = N'Open';
     
     IF @TotalOpenJobs = 0
-        RETURN 0;
+    BEGIN
+        UPDATE [Skill] SET [PopularityScore] = 0;
+        RETURN;
+    END
     
 
-    SELECT @JobsRequiringSkill = COUNT(DISTINCT jrs.JobID)
-    FROM [JobRequireSkill] jrs
-    INNER JOIN [Job] j ON jrs.JobID = j.JobID
-    WHERE jrs.SkillID = @SkillID
-      AND j.JobStatus = N'Open';
-    
-    SET @PopularityScore = (CAST(@JobsRequiringSkill AS DECIMAL(10,2)) / @TotalOpenJobs) * 100;
-    
-    RETURN @PopularityScore;
+    UPDATE s
+    SET s.[PopularityScore] = FLOOR(
+        (CAST(ISNULL(job_count.cnt, 0) AS DECIMAL(10,2)) / @TotalOpenJobs) * 100
+    )
+    FROM [Skill] s
+    LEFT JOIN (
+        SELECT 
+            jrs.SkillID,
+            COUNT(DISTINCT jrs.JobID) AS cnt
+        FROM [JobRequireSkill] jrs
+        INNER JOIN [Job] j ON jrs.JobID = j.JobID
+        WHERE j.JobStatus = N'Open'
+        GROUP BY jrs.SkillID
+    ) job_count ON s.SkillID = job_count.SkillID;
 END
 GO
 
-
-
--- ===========================================
--- VIEWS
--- ===========================================
-
-DROP VIEW IF EXISTS vw_SkillsWithPopularity;
-GO
-
-CREATE VIEW vw_SkillsWithPopularity
-AS
-SELECT 
-    s.SkillID,
-    s.SkillName,
-    s.SkillCategory,
-    CAST(
-        CASE 
-            WHEN total_jobs.cnt = 0 THEN 0
-            ELSE (CAST(ISNULL(job_count.cnt, 0) AS DECIMAL(10,2)) / total_jobs.cnt) * 100
-        END 
-    AS DECIMAL(5,2)) AS PopularityScore,
-    ISNULL(job_count.cnt, 0) AS JobsRequiringSkill,
-    total_jobs.cnt AS TotalOpenJobs
-FROM [Skill] s
-CROSS JOIN (
-    SELECT COUNT(*) AS cnt
-    FROM [Job]
-    WHERE [JobStatus] = N'Open'
-) total_jobs
-LEFT JOIN (
-    SELECT 
-        jrs.SkillID,
-        COUNT(DISTINCT jrs.JobID) AS cnt
-    FROM [JobRequireSkill] jrs
-    INNER JOIN [Job] j ON jrs.JobID = j.JobID
-    WHERE j.JobStatus = N'Open'
-    GROUP BY jrs.SkillID
-) job_count ON s.SkillID = job_count.SkillID;
-
-GO
-
-
--- =============================================
--- STORED PROCEDURES (Create before triggers that use them)
--- =============================================
-
-
--- Procedure: Get top N popular skills
-
-DROP PROCEDURE IF EXISTS dbo.sp_GetTopPopularSkills;
-GO
-
-CREATE PROCEDURE dbo.sp_GetTopPopularSkills
-    @TopN INT = 10
-AS
-BEGIN
-    SET NOCOUNT ON;
-    
-    SELECT TOP (@TopN)
-        SkillID,
-        SkillName,
-        SkillCategory,
-        PopularityScore,
-        JobsRequiringSkill,
-        TotalOpenJobs
-    FROM vw_SkillsWithPopularity
-    ORDER BY PopularityScore DESC, SkillName ASC;
-END
-GO
 
 -- Procedure: Get top matching jobs for a job seeker
 
