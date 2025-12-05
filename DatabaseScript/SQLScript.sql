@@ -214,7 +214,6 @@ GO
 CREATE INDEX [IX_JobRequireSkill_SkillID] ON [JobRequireSkill]([SkillID]);
 GO
 
--- FIX: Changed FK_Application_JobID_Job to NO ACTION to avoid cascade cycles
 CREATE TABLE [Application] (
     [ApplicationID] INT NOT NULL IDENTITY(1,1),
     [JobSeekerID] NVARCHAR(128) NOT NULL,
@@ -268,6 +267,7 @@ CREATE TABLE [ReviewCompany] (
     CONSTRAINT [CK_Review_VerStatus] CHECK ([VerificationStatus] IN (N'Pending',N'Verified',N'Rejected'))
 );
 GO
+
 CREATE INDEX [IX_ReviewCompany_CompanyID] ON [ReviewCompany]([CompanyID]);
 GO
 
@@ -297,6 +297,7 @@ CREATE TABLE [Notification] (
     CONSTRAINT [CK_Notif_Delivery] CHECK ([DeliveryMethod] IN (N'Email',N'SMS',N'InApp',N'Push'))
 );
 GO
+
 CREATE INDEX [IX_Notification_SendDate] ON [Notification]([SendDate]);
 GO
 
@@ -332,6 +333,7 @@ CREATE TABLE [Follow] (
         ON DELETE NO ACTION
 );
 GO
+
 CREATE INDEX [IX_Follow_FolloweeID] ON [Follow]([FolloweeID]);
 GO
 
@@ -362,6 +364,7 @@ CREATE TABLE [AuditLog] (
         ON DELETE SET NULL
 );
 GO
+
 CREATE INDEX [IX_AuditLog_ActorID_Timestamp] ON [AuditLog]([ActorID], [Timestamp]);
 GO
 
@@ -387,6 +390,7 @@ GO
 -- =============================================
 
 -- Function: Calculate job match score for a job seeker
+
 CREATE FUNCTION dbo.fn_CalculateJobMatchScore(
     @p_JobSeekerID NVARCHAR(128),
     @p_JobID NVARCHAR(128)
@@ -436,6 +440,7 @@ END
 GO
 
 -- Function: Get average rating for a company
+
 CREATE FUNCTION dbo.fn_GetCompanyAverageRating(
     @p_CompanyID NVARCHAR(128)
 )
@@ -463,6 +468,7 @@ GO
 -- =============================================
 
 -- Procedure: Update all skill popularity scores
+
 DROP PROCEDURE IF EXISTS [dbo.sp_UpdateAllSkillPopularityScores];
 GO
 
@@ -503,6 +509,7 @@ GO
 
 
 -- Procedure: Get top matching jobs for a job seeker
+
 CREATE PROCEDURE dbo.sp_GetTopMatchingJobs(
     @p_JobSeekerID NVARCHAR(128),
     @p_MinMatchScore DECIMAL(5,2) = 0,
@@ -776,6 +783,7 @@ END
 GO
 
 -- Trigger: Validate FounderYear on Company update
+
 DROP TRIGGER IF EXISTS [trg_Company_BeforeUpdate];
 GO
 
@@ -796,6 +804,7 @@ END
 GO
 
 -- Trigger: Update skill popularity after JobRequireSkill insert
+
 DROP TRIGGER IF EXISTS [trg_JobRequireSkill_AfterInsert];
 GO
 
@@ -872,6 +881,7 @@ END
 GO
 
 -- Trigger: Check job status and deadline before application insert
+
 DROP TRIGGER IF EXISTS [trg_Application_BeforeInsert_CheckDeadline];
 GO
 
@@ -920,6 +930,7 @@ END
 GO
 
 -- Trigger: Validate DateOfBirth on JobSeeker insert
+
 DROP TRIGGER IF EXISTS [trg_JobSeeker_BeforeInsert];
 GO
 CREATE TRIGGER [trg_JobSeeker_BeforeInsert]
@@ -939,6 +950,7 @@ END
 GO
 
 -- Trigger: Validate DateOfBirth on JobSeeker update
+
 DROP TRIGGER IF EXISTS [trg_JobSeeker_BeforeUpdate];
 GO
 
@@ -959,6 +971,7 @@ END
 GO
 
 -- Trigger: Prevent self-following on Follow insert
+
 DROP TRIGGER IF EXISTS [trg_check_no_self_follow];
 GO
 
@@ -979,6 +992,7 @@ END
 GO
 
 -- Trigger: Prevent self-following on Follow update
+
 DROP TRIGGER IF EXISTS [trg_check_no_self_follow_update];
 GO
 
@@ -1023,7 +1037,13 @@ GO
 
 USE [TechTalentHub];
 GO
+-- =====================================================
+-- Sample Data Insertion
+-- =====================================================
 
+-- =============================================
+-- Insert sample users
+-- =============================================
 
 INSERT INTO [User] ([Email], [PasswordHash], [UserType], [AccountStatus], [RegistrationDate]) VALUES
 (N'admin@techtalenthub.com', N'$2a$12$yF6QALwl2DVbZ7X1iQiF/ONXNUhBcm2Hj8abEMJvuQqJaFLvF7zxi', N'Admin', N'Active', N'2024-01-15 09:00:00'),
@@ -1059,6 +1079,11 @@ DECLARE @CompanyId1 NVARCHAR(128) = (SELECT UserId FROM [User] WHERE Email = N'h
 DECLARE @CompanyId2 NVARCHAR(128) = (SELECT UserId FROM [User] WHERE Email = N'recruitment@vng.com.vn');
 DECLARE @CompanyId3 NVARCHAR(128) = (SELECT UserId FROM [User] WHERE Email = N'talent@techcombank.com.vn');
 DECLARE @CompanyId4 NVARCHAR(128) = (SELECT UserId FROM [User] WHERE Email = N'hr@viettel.com.vn');
+
+
+-- =============================================
+-- Insert sample companies
+-- =============================================
 
 INSERT INTO [Company] ([CompanyID], [CompanyName], [FounderYear], [CompanySize], [Industry], [CompanyDescription], [CompanyWebsite], [VerificationStatus], [LogoURL])
 SELECT @CompanyId1, N'FPT Software', 1999, N'Enterprise', N'Information Technology', 
@@ -1101,6 +1126,11 @@ DECLARE @JobSeekerId3 NVARCHAR(128) = (SELECT UserId FROM [User] WHERE Email = N
 DECLARE @JobSeekerId4 NVARCHAR(128) = (SELECT UserId FROM [User] WHERE Email = N'pham.thi.d@gmail.com');
 DECLARE @JobSeekerId5 NVARCHAR(128) = (SELECT UserId FROM [User] WHERE Email = N'hoang.van.e@gmail.com');
 
+-- =============================================
+-- Insert sample job seekers
+-- =============================================
+
+
 INSERT INTO [JobSeeker] ([JobSeekerID], [FirstName], [LastName], [PhoneNumber], [Gender], [DateOfBirth], [CurrentLocation], [ExperienceLevel], [ProfileSummary], [CVFileURL])
 SELECT @JobSeekerId1, N'Van A', N'Nguyen', N'+84901234567', N'MALE', N'1995-05-15', N'Ho Chi Minh City', N'Mid-Level',
  N'Experienced Full-stack Developer with 4+ years building scalable web applications using React, Node.js, and PostgreSQL. Strong problem-solving skills and passion for clean code.',
@@ -1123,6 +1153,11 @@ SELECT @JobSeekerId5, N'Van E', N'Hoang', N'+84945678901', N'MALE', N'1994-07-08
  N'https://storage.example.com/cv/hoang-van-e.pdf';
 GO
 
+-- =============================================
+-- Insert sample skills
+-- =============================================
+
+
 INSERT INTO [Skill] ([SkillName], [SkillCategory], [PopularityScore]) VALUES
 (N'Java', N'Programming Language', 0),
 (N'Python', N'Programming Language', 0),
@@ -1141,7 +1176,7 @@ INSERT INTO [Skill] ([SkillName], [SkillCategory], [PopularityScore]) VALUES
 (N'Flutter', N'Mobile Development', 0);
 GO
 
--- Step 8: Insert JobSeeker Skills
+
 DECLARE @JobSeekerId1 NVARCHAR(128) = (SELECT UserId FROM [User] WHERE Email = N'nguyen.van.a@gmail.com');
 DECLARE @JobSeekerId2 NVARCHAR(128) = (SELECT UserId FROM [User] WHERE Email = N'tran.thi.b@gmail.com');
 DECLARE @JobSeekerId3 NVARCHAR(128) = (SELECT UserId FROM [User] WHERE Email = N'le.van.c@gmail.com');
@@ -1175,6 +1210,11 @@ DECLARE @CompanyId1 NVARCHAR(128) = (SELECT UserId FROM [User] WHERE Email = N'h
 DECLARE @CompanyId2 NVARCHAR(128) = (SELECT UserId FROM [User] WHERE Email = N'recruitment@vng.com.vn');
 DECLARE @CompanyId3 NVARCHAR(128) = (SELECT UserId FROM [User] WHERE Email = N'talent@techcombank.com.vn');
 DECLARE @CompanyId4 NVARCHAR(128) = (SELECT UserId FROM [User] WHERE Email = N'hr@viettel.com.vn');
+
+
+-- =============================================
+-- Insert sample jobs
+-- =============================================
 
 INSERT INTO [Job] ([CompanyID], [JobTitle], [JobDescription], [EmploymentType], [ExperienceRequired], [SalaryMin], [SalaryMax], [Location], [OpeningCount], [ApplicationDeadline], [JobStatus], [PostedDate])
 SELECT @CompanyId1, N'Senior Java Developer', 
@@ -1268,6 +1308,12 @@ DECLARE @Job4 NVARCHAR(128) = (SELECT TOP 1 JobID FROM [Job] WHERE JobTitle = N'
 DECLARE @Job5 NVARCHAR(128) = (SELECT TOP 1 JobID FROM [Job] WHERE JobTitle = N'Backend Developer (Spring Boot)' ORDER BY PostedDate);
 DECLARE @Job6 NVARCHAR(128) = (SELECT TOP 1 JobID FROM [Job] WHERE JobTitle = N'Mobile Developer (React Native)' ORDER BY PostedDate);
 
+
+-- =============================================
+-- Insert sample applications
+-- =============================================
+
+
 INSERT INTO [Application] ([JobSeekerID], [JobID], [ApplicationDate], [ApplicationStatus], [CoverLetterURL], [InterviewDate], [InterviewNote])
 SELECT @JobSeekerId1, @Job3, N'2024-11-09 10:00:00', N'Interview', N'https://storage.example.com/cover/app001.pdf', 
  N'2024-11-20 14:00:00', N'Strong technical skills, good communication'
@@ -1319,6 +1365,12 @@ DECLARE @CompanyId2 NVARCHAR(128) = (SELECT UserId FROM [User] WHERE Email = N'r
 DECLARE @CompanyId3 NVARCHAR(128) = (SELECT UserId FROM [User] WHERE Email = N'talent@techcombank.com.vn');
 DECLARE @CompanyId4 NVARCHAR(128) = (SELECT UserId FROM [User] WHERE Email = N'hr@viettel.com.vn');
 
+
+-- =============================================
+-- Insert sample experiences
+-- =============================================
+
+
 INSERT INTO [Experience] ([JobSeekerID], [CompanyID], [JobTitle], [ExperienceType], [StartDate], [EndDate], [Description])
 SELECT @JobSeekerId1, @CompanyId1, N'Full-stack Developer', N'FullTime', N'2020-06-01', N'2024-02-28',
  N'Developed and maintained web applications using React and Node.js. Collaborated with cross-functional teams to deliver high-quality software solutions.'
@@ -1359,6 +1411,11 @@ DECLARE @CompanyId1 NVARCHAR(128) = (SELECT UserId FROM [User] WHERE Email = N'h
 DECLARE @CompanyId2 NVARCHAR(128) = (SELECT UserId FROM [User] WHERE Email = N'recruitment@vng.com.vn');
 DECLARE @CompanyId3 NVARCHAR(128) = (SELECT UserId FROM [User] WHERE Email = N'talent@techcombank.com.vn');
 DECLARE @CompanyId4 NVARCHAR(128) = (SELECT UserId FROM [User] WHERE Email = N'hr@viettel.com.vn');
+
+
+-- =============================================
+-- Insert sample reviews
+-- =============================================
 
 INSERT INTO [ReviewCompany] ([JobSeekerID], [CompanyID], [ReviewTitle], [ReviewDate], [ReviewText], [Rating], [VerificationStatus], [IsAnonymous])
 SELECT @JobSeekerId1, @CompanyId1, N'Great place to grow your career', N'2024-03-15 10:00:00',
@@ -1457,6 +1514,10 @@ DECLARE @CompanyId2 NVARCHAR(128) = (SELECT UserId FROM [User] WHERE Email = N'r
 DECLARE @CompanyId3 NVARCHAR(128) = (SELECT UserId FROM [User] WHERE Email = N'talent@techcombank.com.vn');
 DECLARE @CompanyId4 NVARCHAR(128) = (SELECT UserId FROM [User] WHERE Email = N'hr@viettel.com.vn');
 
+
+-- =============================================
+-- Insert sample department contacts
+-- =============================================
 INSERT INTO [DepartmentContact] ([CompanyID], [ContactEmail], [ContactName], [ContactPhone], [ContactRole], [Department])
 SELECT @CompanyId1, N'hr@fpt.com.vn', N'Nguyen Thi Mai', N'+84281234567', N'HR Manager', N'Human Resources'
 UNION ALL SELECT @CompanyId1, N'tech.recruitment@fpt.com.vn', N'Tran Van Hoang', N'+84281234568', N'Technical Recruiter', N'Talent Acquisition'
