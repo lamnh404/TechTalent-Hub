@@ -5,65 +5,82 @@
 /* Override body padding for dashboard */
 body.dashboard-page {
     background-color: var(--bg-body);
-    padding-top: 0 !important; /* Dashboard tự lo header, không cần padding global */
+    padding-top: var(--header-height) !important; /* Enable padding for fixed navbar */
 }
 
 .dashboard-wrapper {
-    display: flex;
+    display: block; /* Remove flex since sidebar is gone */
     min-height: 100vh;
 }
 
-/* --- Sidebar (Fixed Left) --- */
+/* --- Sidebar (Hidden) --- */
 .sidebar {
-    width: var(--sidebar-width);
-    background: white;
-    border-right: 1px solid #e5e7eb;
-    position: fixed;
-    height: 100vh;
-    top: 0;
-    left: 0;
-    z-index: 1000;
-    overflow-y: auto;
+    display: none !important;
 }
 
+/* --- Main Content Area --- */
+.main-content {
+    margin-left: 0 !important;
+    width: 100% !important;
+    flex: none;
+}
+
+/* Logo Area trong Sidebar */
 .sidebar-brand {
-    height: var(--header-height); /* 80px bằng với Navbar */
+    height: var(--header-height);
     display: flex;
     align-items: center;
     padding: 0 1.5rem;
-    border-bottom: 1px solid #f3f4f6;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1); /* Viền mờ */
+    background: rgba(0, 0, 0, 0.1);
 }
+.sidebar-brand .brand-name-main { color: #ffffff; font-weight: 700; font-size: 1.3rem; }
+.sidebar-brand .brand-name-accent { color: #60a5fa; font-weight: 700; font-size: 1.3rem; } /* Màu xanh sáng làm điểm nhấn */
 
 .sidebar-menu {
     padding: 1.5rem 1rem;
     list-style: none;
 }
 
+/* Tiêu đề nhóm menu (Overview, Account...) */
 .menu-header {
-    font-size: 0.75rem;
-    color: var(--text-muted);
+    font-size: 0.7rem;
+    color: rgba(255, 255, 255, 0.4); /* Màu xám nhạt */
     margin: 1.5rem 0 0.5rem 0.75rem;
     font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 0.05em;
+    letter-spacing: 0.08em;
 }
 
+/* Link Menu */
 .menu-link {
     display: flex;
     align-items: center;
-    padding: 0.75rem 1rem;
-    color: #4b5563;
+    padding: 0.8rem 1rem;
+    color: rgba(255, 255, 255, 0.75) !important; /* Chữ trắng mờ */
     text-decoration: none;
     border-radius: 10px;
     font-weight: 500;
     font-size: 0.95rem;
     transition: all 0.2s;
-    margin-bottom: 4px;
+    margin-bottom: 6px;
+    border: 1px solid transparent;
 }
 
-.menu-link:hover, .menu-link.active {
-    background-color: #eff6ff;
-    color: var(--primary-color);
+/* Hover & Active State */
+.menu-link:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #ffffff !important;
+    transform: translateX(4px);
+}
+
+.menu-link.active {
+    /* Glass effect to match Navbar theme */
+    background: rgba(255, 255, 255, 0.2);
+    color: #ffffff !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    font-weight: 600;
+    border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .menu-link i {
@@ -71,6 +88,19 @@ body.dashboard-page {
     margin-right: 12px;
     text-align: center;
     font-size: 1.1rem;
+    opacity: 0.9;
+}
+
+.menu-link.active i {
+    opacity: 1;
+}
+
+/* Nút Logout ở dưới */
+.menu-link.text-danger {
+    color: #f87171 !important; /* Đỏ sáng hơn cho nền tối */
+}
+.menu-link.text-danger:hover {
+    background-color: rgba(239, 68, 68, 0.15);
 }
 
 /* --- Main Content Area --- */
@@ -82,17 +112,25 @@ body.dashboard-page {
 
 /* --- Dashboard Sticky Header --- */
 .dashboard-header {
-    height: var(--header-height);
-    background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(10px);
-    border-bottom: 1px solid #e5e7eb;
+    /* Remove sticky header styles or adapt them */
+    background: transparent;
+    border-bottom: none;
+    padding: 1.5rem 2rem 0; /* Add top padding */
+    margin-bottom: 1rem;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0 2rem;
-    position: sticky;
-    top: 0;
-    z-index: 900;
+    height: auto;
+    position: static;
+    box-shadow: none;
+}
+
+/* Reset text colors in header since background is transparent/light */
+.dashboard-header .text-dark,
+.dashboard-header h5,
+.dashboard-header span,
+.dashboard-header a {
+    color: var(--text-dark) !important;
 }
 
 /* --- Stats Cards --- */
@@ -235,35 +273,6 @@ body.dashboard-page {
 .dashboard-header img.rounded-circle:hover {
     transform: scale(1.1);
     box-shadow: 0 0 0 3px rgba(0, 99, 255, 0.2);
-}
-
-/* Thêm vào dashboard.css */
-
-.sidebar {
-    background: #ffffff;
-    border-right: none !important; /* Bỏ đường kẻ dọc xấu xí */
-    box-shadow: 4px 0 20px rgba(0, 0, 0, 0.02); /* Dùng shadow thay cho border */
-}
-
-.menu-link {
-    border-radius: 12px !important;
-    margin-bottom: 8px !important;
-    font-weight: 600 !important;
-    color: #64748b !important;
-}
-
-.menu-link:hover, .menu-link.active {
-    background: #eff6ff !important;
-    color: var(--primary-color) !important;
-    transform: translateX(5px); /* Hiệu ứng trượt nhẹ sang phải */
-}
-
-.menu-link i {
-    transition: transform 0.3s;
-}
-
-.menu-link:hover i {
-    transform: scale(1.2); /* Icon phóng to nhẹ khi hover */
 }
 
 /* ========================================

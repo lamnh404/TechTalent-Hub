@@ -2,31 +2,11 @@
 
     <body class="dashboard-page">
         <div class="dashboard-wrapper">
-            <%- include('../partials/dashboard-sidebar', { activePage: 'my-jobs' }) %>
+            <%- include('../partials/navbar', { activePage: 'my-jobs' }) %>
 
                 <main class="main-content">
                     <header class="dashboard-header">
                         <h5 class="mb-0 font-weight-bold text-dark">My Job Posts</h5>
-                        <div class="d-flex align-items-center">
-                            <div class="dropdown">
-                                <a href="#"
-                                    class="d-flex align-items-center text-decoration-none text-dark dropdown-toggle"
-                                    data-toggle="dropdown">
-                                    <img src="<%= (typeof user !== 'undefined' && user.avatarUrl) ? user.avatarUrl : '/images/default-avatar.png' %>"
-                                        class="rounded-circle mr-2" width="35" height="35"
-                                        style="object-fit: cover; border: 1px solid #dee2e6;">
-                                    <span class="font-weight-bold small mr-1">
-                                        <%= (typeof user !=='undefined' && user.email) ? user.email.split('@')[0]
-                                            : 'Company' %>
-                                    </span>
-                                </a>
-                                <div class="dropdown-menu dropdown-menu-right border-0 shadow-lg">
-                                    <a class="dropdown-item" href="/">Back Home</a>
-                                    <div class="dropdown-divider"></div>
-                                    <a class="dropdown-item text-danger" href="/auth/logout">Logout</a>
-                                </div>
-                            </div>
-                        </div>
                     </header>
 
                     <div class="p-4">

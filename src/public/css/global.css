@@ -141,74 +141,142 @@ body:not(.auth-layout-page):not(.dashboard-page) {
 .tag-contract { background: #fef3c7; color: #b45309; }
 
 /* ========================================
-   NAVBAR STYLES (MATCHING SIDEBAR)
+   NAVBAR STYLES (CUSTOM COLOR)
    ======================================== */
 
-/* --- 1. Base Nav Link Style (Giống .menu-link của Sidebar) --- */
+/* 1. Cấu hình màu sắc riêng cho Navbar (Sửa mã màu tại đây) */
+:root {
+    --nav-bg-start: #2c3050;    /* Màu nền bắt đầu (Bên trái) */
+    --nav-bg-end: #0d37b4;      /* Màu nền kết thúc (Bên phải) - Để giống nhau nếu muốn màu đơn */
+    --nav-text-color: #ffffff;  /* Màu chữ */
+    --nav-item-hover: rgba(255, 255, 255, 0.15); /* Màu nền khi di chuột vào menu */
+}
+
+/* 2. Áp dụng vào Container */
+.navbar-glass {
+    height: var(--header-height);
+    /* Dùng gradient để tạo màu nền đẹp hơn */
+    background: linear-gradient(135deg, var(--nav-bg-start) 0%, var(--nav-bg-end) 100%) !important;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-bottom: none;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15); /* Bóng đổ trung tính */
+    transition: all 0.3s ease;
+}
+
+/* 3. Logo */
+.navbar-brand .brand-name-main { 
+    font-size: 1.5rem; 
+    font-weight: 700; 
+    color: var(--nav-text-color) !important;
+    letter-spacing: -0.5px; 
+}
+.navbar-brand .brand-name-accent { 
+    font-size: 1.5rem; 
+    font-weight: 700; 
+    color: var(--nav-text-color) !important;
+    opacity: 0.8;
+}
+
+/* 4. Menu Links */
 .navbar-glass .nav-link {
     display: flex;
     align-items: center;
-    padding: 0.6rem 1rem !important; /* Padding giống sidebar item */
-    color: #4b5563 !important;       /* Màu xám muted chuẩn */
+    padding: 0.6rem 1rem !important;
+    color: var(--nav-text-color) !important;
+    opacity: 0.9;
     text-decoration: none;
-    border-radius: 8px;              /* Bo góc giống sidebar */
+    border-radius: 8px;
     font-weight: 500;
     font-size: 0.95rem;
     transition: all 0.2s ease;
-    margin: 0 2px;                   /* Khoảng cách giữa các item */
+    margin: 0 2px;
 }
 
-/* --- 2. Hover & Active State (Quan trọng nhất) --- */
-/* Khi hover hoặc khi đang active, đổi nền xanh nhạt và chữ xanh đậm */
+/* Icon trong menu */
+.navbar-glass .nav-link i {
+    color: var(--nav-text-color) !important;
+    opacity: 0.9;
+}
+
+/* 5. Trạng thái Hover & Active */
 .navbar-glass .nav-link:hover, 
 .navbar-glass .nav-link.active {
-    background-color: #eff6ff !important; /* Màu nền xanh nhạt giống sidebar */
-    color: var(--primary-color) !important; /* Chữ màu xanh chủ đạo */
+    background-color: var(--nav-item-hover) !important;
+    color: #ffffff !important;
+    opacity: 1;
+    transform: translateY(-1px);
 }
 
-/* --- 3. Icons trong Navbar (Nếu có) --- */
-.navbar-glass .nav-link i {
-    font-size: 1.1rem;
-    margin-right: 8px;
-    color: inherit; /* Icon đổi màu theo chữ */
-}
-
-/* --- 4. Nút Sign In (Đặc biệt hơn chút) --- */
-/* Nút Sign In vẫn giữ style link nhưng đậm hơn */
+/* 6. Nút Sign In (Đậm hơn) */
 .navbar-glass .nav-link.font-weight-bold {
-    font-weight: 600;
-    color: var(--text-dark) !important;
-}
-.navbar-glass .nav-link.font-weight-bold:hover {
-    color: var(--primary-color) !important;
-    background-color: transparent !important; /* Không nền cho nút Sign In */
+    opacity: 1;
 }
 
-/* --- 5. Dropdown Menu (User Profile) --- */
+/* Fix: Ensure User Name is white (overriding Bootstrap text-dark) */
+.navbar-glass .text-dark {
+    color: #ffffff !important;
+}
+
+/* 7. Nút Sign Up (Nổi bật trên nền tùy chọn) */
+.navbar-nav .btn-primary {
+    background-color: #ffffff !important; /* Luôn dùng nền trắng */
+    color: #333333 !important; /* Chữ màu tối cho dễ đọc */
+    border: none !important;
+    font-weight: 700;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+.navbar-nav .btn-primary:hover {
+    background-color: #f8f9fa !important;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+    color: #000000 !important;
+}
+
+/* 8. Nút mở menu Mobile */
+.navbar-light .navbar-toggler {
+    border-color: rgba(255,255,255,0.3);
+}
+.navbar-light .navbar-toggler-icon {
+    filter: invert(1) brightness(100); /* Đảo màu icon sang trắng */
+}
+
+/* 9. Dropdown & Mobile Menu (Giữ nền trắng cho sạch sẽ) */
 .navbar-glass .dropdown-menu {
-    border: 0;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    background: #ffffff;
     border-radius: 12px;
-    overflow: hidden;
-    margin-top: 10px;
-    animation: fadeInUp 0.3s ease;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+    border: none;
+    margin-top: 15px;
 }
-
 .navbar-glass .dropdown-item {
-    padding: 0.7rem 1.2rem;
-    font-size: 0.9rem;
-    color: #4b5563;
-    transition: all 0.2s;
+    color: #4b5563 !important;
 }
-
 .navbar-glass .dropdown-item:hover {
     background-color: #f3f4f6;
-    color: var(--primary-color);
 }
 
-.navbar-glass .dropdown-item.text-danger:hover {
-    background-color: #fee2e2;
-    color: #dc2626;
+/* Responsive: Trên mobile giữ nguyên màu nền đã chọn */
+@media (max-width: 991.98px) {
+    .navbar-glass {
+        background: linear-gradient(135deg, var(--nav-bg-start) 0%, var(--nav-bg-end) 100%) !important;
+    }
+    .navbar-collapse {
+        background: #ffffff;
+        margin-top: 15px;
+        border-radius: 12px;
+        padding: 10px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    }
+    /* Trả lại màu chữ đen cho menu mobile (trên nền trắng) */
+    .navbar-collapse .nav-link, 
+    .navbar-collapse .nav-link i {
+        color: #4b5563 !important; 
+    }
+    .navbar-collapse .nav-link:hover {
+        background-color: #eff6ff !important;
+        color: #333 !important;
+    }
 }
 
 /* ==========================================================================
@@ -277,23 +345,6 @@ a, button, input, select, textarea, .btn, .card {
     transition: var(--trans-smooth);
 }
 
-/* Thêm vào global.css */
-
-.btn-primary-modern {
-    /* Gradient chéo nhẹ */
-    background: linear-gradient(135deg, #0063FF 0%, #004ecc 100%);
-    border: none;
-    box-shadow: 0 4px 15px rgba(0, 99, 255, 0.3); /* Shadow màu của nút */
-    font-weight: 600;
-    letter-spacing: 0.5px;
-}
-
-.btn-primary-modern:hover {
-    background: linear-gradient(135deg, #004ecc 0%, #003db3 100%);
-    transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(0, 99, 255, 0.4); /* Shadow to hơn khi hover */
-}
-
 /* Nút phụ (Outline) */
 .btn-outline-primary {
     border: 2px solid #e0f2fe;
@@ -354,7 +405,7 @@ a, button, input, select, textarea, .btn, .card {
         border: none;
         box-shadow: none;
         padding-left: 20px; /* Thụt đầu dòng cho menu con */
-        background: #f9fafb; /* Nền xám nhẹ phân biệt với menu chính */
+        background: #c2c6ca; /* Nền xám nhẹ phân biệt với menu chính */
         margin-top: 5px;
     }
 
@@ -365,4 +416,171 @@ a, button, input, select, textarea, .btn, .card {
         text-align: center;
         justify-content: center;
     }
+}
+
+/* ======= Notification Dropdown UI Upgrade ======= */
+
+.dropdown-menu.notification-menu {
+    width: 380px;
+    max-height: 520px;
+    overflow-y: auto;
+    border-radius: 18px !important;
+    padding: 0;
+    border: 1px solid rgba(0,0,0,0.04);
+    background: #ffffff;
+    box-shadow:
+        0 12px 40px rgba(0, 0, 0, 0.12),
+        0 0 0 1px rgba(255,255,255,0.4) inset;
+    animation: dropdownFade 0.25s ease-out;
+}
+
+@keyframes dropdownFade {
+    from { opacity: 0; transform: scale(0.96) translateY(-6px); }
+    to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+/* Header */
+.notification-header {
+    background: #ffffff;
+    padding: 16px 20px;
+    border-bottom: 1px solid #f1f5f9;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.notification-header h6 {
+    margin: 0;
+    font-weight: 700;
+    font-size: 0.95rem;
+    color: #1e293b;
+    letter-spacing: 0.5px;
+}
+
+.notification-header .mark-read-btn {
+    font-size: 0.75rem;
+    color: var(--primary-color);
+    font-weight: 500;
+    padding: 4px 8px;
+    border-radius: 6px;
+    background: rgba(0, 99, 255, 0.08);
+    transition: 0.2s ease;
+}
+
+.notification-header .mark-read-btn:hover {
+    background: rgba(0, 99, 255, 0.15);
+}
+
+/* Notification Item */
+.notification-item {
+    display: flex;
+    align-items: flex-start;
+    padding: 16px 20px;
+    transition: all 0.2s ease;
+    border-bottom: 1px solid #f3f4f6;
+    background: #ffffff;
+    position: relative;
+}
+
+.notification-item:hover {
+    background: #f9fafb !important;
+    transform: translateX(3px);
+}
+
+/* Unread */
+.notification-item.unread {
+    background: #f0f7ff;
+    border-left: 4px solid var(--primary-color);
+}
+
+.notification-item.unread:hover {
+    background: #e4efff !important;
+    transform: translateX(4px);
+}
+
+/* Icon Wrapper */
+.notification-icon-wrapper {
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+    background: #f1f5f9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 14px;
+    color: var(--primary-color);
+    font-size: 1.15rem;
+    box-shadow:
+        0 2px 4px rgba(0,0,0,0.05),
+        0 0 0 1px rgba(255,255,255,0.6) inset;
+    transition: 0.2s ease;
+}
+
+.notification-item:hover .notification-icon-wrapper {
+    transform: scale(1.05);
+}
+
+/* Unread icon look */
+.notification-item.unread .notification-icon-wrapper {
+    background: #ffffff;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.06);
+}
+
+/* Content */
+.notification-content {
+    flex-grow: 1;
+    min-width: 0;
+}
+
+.notification-text {
+    font-size: 0.92rem;
+    color: #0f172a;
+    margin-bottom: 4px;
+    line-height: 1.45;
+}
+
+.notification-item.unread .notification-text {
+    font-weight: 600;
+}
+
+.notification-time {
+    font-size: 0.75rem;
+    color: #64748b;
+}
+
+/* Delete Button */
+.notification-delete-btn {
+    color: #b0b7c3;
+    border: none;
+    background: transparent;
+    padding: 4px;
+    margin-left: 8px;
+    opacity: 0;
+    transition: 0.2s ease;
+}
+
+.notification-delete-btn:hover {
+    color: #ef4444;
+    background: rgba(239, 68, 68, 0.12);
+    border-radius: 5px;
+}
+
+.notification-item:hover .notification-delete-btn {
+    opacity: 1;
+}
+
+/* Empty State */
+.notification-empty {
+    padding: 70px 20px;
+    text-align: center;
+    color: #94a3b8;
+}
+
+.notification-empty i {
+    font-size: 3.3rem;
+    color: #e2e8f0;
+    margin-bottom: 1rem;
 }

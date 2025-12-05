@@ -2,22 +2,9 @@
    Homepage Styles - TechTalent Hub
    ======================================== */
 
-/* [QUAN TRỌNG] Đã xóa :root vì đã có trong global.css */
-
-/* --- Navbar Override (Cho khớp style Homepage) --- */
-.navbar-glass {
-    height: var(--header-height);
-    background: rgba(255, 255, 255, 0.98) !important;
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
-}
-.navbar-brand .brand-name-main { font-size: 1.5rem; font-weight: 700; color: #111827; letter-spacing: -0.5px; }
-.navbar-brand .brand-name-accent { font-size: 1.5rem; font-weight: 700; color: var(--primary-color); }
-
 /* --- Hero Section --- */
 .home-hero {
+    /* ... (Phần dưới giữ nguyên) */
     position: relative;
     background: linear-gradient(135deg, var(--bg-gradient-start) 0%, #ffffff 100%);
     padding: 100px 0;
