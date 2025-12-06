@@ -1,15 +1,4 @@
-<%
-    // Mock Data cho Admin Job Management
-    if (typeof allJobs === 'undefined') {
-        var allJobs = [
-            { id: 1, title: "Senior React Developer", company: "Google Inc.", postedBy: "hr@google.com", postedDate: "2023-10-25", status: "Active", reports: 0 },
-            { id: 2, title: "Spam Job Posting", company: "Fake Company", postedBy: "spammer@gmail.com", postedDate: "2023-10-26", status: "Active", reports: 5 },
-            { id: 3, title: "Backend Node.js Engineer", company: "Netflix", postedBy: "tech@netflix.com", postedDate: "2023-10-20", status: "Closed", reports: 0 },
-            { id: 4, title: "Marketing Intern", company: "Startup ABC", postedBy: "founder@abc.com", postedDate: "2023-10-28", status: "Pending", reports: 1 },
-            { id: 5, title: "Data Analyst", company: "Shopee", postedBy: "recruitment@shopee.com", postedDate: "2023-10-15", status: "Banned", reports: 12 }
-        ];
-    }
-%>
+<%# Admin controller phải truyền allJobs từ database %>
 
 <%- include('../partials/header', { title: 'Jobs Management' }) %>
 

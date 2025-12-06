@@ -1,32 +1,4 @@
-<% 
-    // 1. Mock Data: Thông tin Seeker (Chỉ dùng khi chưa có Backend gửi xuống)
-    if (typeof seeker === 'undefined') {
-        var seeker = {
-            FirstName: "Nguyen",
-            LastName: "Van A",
-            Email: "nguyenvana@gmail.com",
-            PhoneNumber: "0901234567",
-            ProfessionalTitle: "Senior Frontend Developer",
-            CurrentLocation: "Ho Chi Minh City",
-            ProfileSummary: "Experienced developer with 5+ years in React...",
-            // Quan trọng: Skill phải là Array để JS xử lý
-            Skills: [
-                { SkillID: 1, SkillName: "React", ProficiencyLevel: "Expert", YearOfExperience: 5 },
-                { SkillID: 2, SkillName: "Node.js", ProficiencyLevel: "Advanced", YearOfExperience: 3 }
-            ]
-        };
-    }
-
-    // 2. Mock Data: Danh sách Skill gợi ý
-    if (typeof availableSkills === 'undefined') {
-        var availableSkills = [
-            { SkillID: 1, SkillName: 'Java' }, { SkillID: 2, SkillName: 'Python' },
-            { SkillID: 3, SkillName: 'JavaScript' }, { SkillID: 4, SkillName: 'React' },
-            { SkillID: 5, SkillName: 'Node.js' }, { SkillID: 6, SkillName: 'SQL' },
-            { SkillID: 7, SkillName: 'AWS' }, { SkillID: 8, SkillName: 'Docker' }
-        ];
-    }
-%>
+<%# Server phải truyền seeker và availableSkills từ database %>
 
 <%- include('../partials/header', { title: 'My Profile' }) %>
 

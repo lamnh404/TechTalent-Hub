@@ -1,28 +1,6 @@
-<%
-    // Mock Data: Chi tiết ứng viên
-    if (typeof seeker === 'undefined') {
-        var seeker = {
-            Name: "Nguyen Van A",
-            Title: "Senior Frontend Developer",
-            Avatar: "https://i.pravatar.cc/150?u=1",
-            Location: "Ho Chi Minh City, Vietnam",
-            Email: "nguyenvana@email.com",
-            Phone: "(+84) 901 234 567",
-            Website: "nguyenvana.dev",
-            Bio: "Passionate Frontend Developer with 5 years of experience in building high-performance web applications. I specialize in React ecosystem and UI/UX implementation. Looking for opportunities to work with innovative teams.",
-            Skills: ["ReactJS", "TypeScript", "Next.js", "Tailwind CSS", "Redux", "Figma", "Git"],
-            Experience: [
-                { Role: "Senior Frontend Dev", Company: "TechStart Inc.", Duration: "2021 - Present", Desc: "Led the frontend team of 5. Migrated legacy code to Next.js." },
-                { Role: "Web Developer", Company: "Creative Agency", Duration: "2019 - 2021", Desc: "Developed responsive websites for 20+ clients using React and Vue." }
-            ],
-            Education: [
-                { Degree: "Bachelor of Computer Science", School: "HCMC University of Technology", Year: "2015 - 2019" }
-            ]
-        };
-    }
-%>
+<%# Server phải truyền seeker từ database - không dùng mock data %>
 
-<%- include('../partials/header', { title: seeker.Name + ' - Profile' }) %>
+<%- include('../partials/header', { title: seeker.FirstName + ' ' + seeker.LastName + ' - Profile' }) %>
 
 <body style="background-color: #f8fafc;">
     <%- include('../partials/navbar', {activePage: 'seekers'}) %>

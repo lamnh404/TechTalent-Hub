@@ -8,12 +8,14 @@ import { ApiError } from '~/utils/ApiError'
 const getDashboard = async (req, res, next) => {
     try {
         const companyId = req.session.user.id
+        const company = await companyModel.getCompanyProfile(companyId)
         const stats = await companyModel.getDashboardStats(companyId)
         const recentJobs = await companyModel.getRecentJobs(companyId)
 
         res.render('company/dashboard.ejs', {
             title: 'Company Dashboard',
             user: req.session.user,
+            company,
             stats,
             recentJobs
         })

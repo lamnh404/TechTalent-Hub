@@ -1,6 +1,4 @@
-<% if (typeof company === 'undefined' || !company) company = {} %>
-<% if (typeof openJobs === 'undefined' || !openJobs) openJobs = [] %>
-<% if (typeof reviews === 'undefined' || !reviews) reviews = [] %>
+<%# Server phải luôn truyền company, openJobs, reviews từ database %>
 
 <%- include('../partials/header', { title: company.CompanyName }) %>
 
@@ -163,10 +161,10 @@
                             <h1 class="profile-title"><%= company.CompanyName %> <i class="fas fa-check-circle text-primary small" style="font-size: 1rem;" title="Verified"></i></h1>
                             
                             <div class="profile-meta">
-                                <span><i class="fas fa-industry"></i> <%= company.Industry || 'Technology' %></span>
-                                <span><i class="fas fa-map-marker-alt"></i> <%= company.CompanyAddress || 'Headquarters' %></span>
-                                <span><i class="fas fa-users"></i> <%= company.CompanySize %> Employees</span>
-                                <span><i class="far fa-calendar-alt"></i> Est. <%= company.FoundedYear %></span>
+                                <% if (company.Industry) { %><span><i class="fas fa-industry"></i> <%= company.Industry %></span><% } %>
+                                <% if (company.CompanyAddress) { %><span><i class="fas fa-map-marker-alt"></i> <%= company.CompanyAddress %></span><% } %>
+                                <% if (company.CompanySize) { %><span><i class="fas fa-users"></i> <%= company.CompanySize %></span><% } %>
+                                <% if (company.FoundedYear) { %><span><i class="far fa-calendar-alt"></i> Est. <%= company.FoundedYear %></span><% } %>
                             </div>
                         </div>
                     </div>
@@ -327,14 +325,18 @@
                         <div class="info-card-header">Contact Info</div>
                         <div class="info-card-body">
                             <ul class="list-unstyled mb-0">
+                                <% if (company.CompanyAddress) { %>
                                 <li class="mb-3 d-flex">
                                     <i class="fas fa-map-marker-alt text-muted mt-1 mr-3" style="width: 20px;"></i>
-                                    <span class="text-dark"><%= company.CompanyAddress || company.Location || 'N/A' %></span>
+                                    <span class="text-dark"><%= company.CompanyAddress %></span>
                                 </li>
+                                <% } %>
+                                <% if (company.CompanyWebsite) { %>
                                 <li class="mb-3 d-flex">
                                     <i class="fas fa-globe text-muted mt-1 mr-3" style="width: 20px;"></i>
-                                    <a href="<%= company.CompanyWebsite %>" target="_blank" class="text-primary text-truncate"><%= company.CompanyWebsite || 'N/A' %></a>
+                                    <a href="<%= company.CompanyWebsite %>" target="_blank" class="text-primary text-truncate"><%= company.CompanyWebsite %></a>
                                 </li>
+                                <% } %>
                             </ul>
                             <hr class="my-3 opacity-50">
                             <h6 class="font-weight-bold small text-uppercase text-muted mb-3">Social Profiles</h6>
