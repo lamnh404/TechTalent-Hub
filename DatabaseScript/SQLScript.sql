@@ -134,6 +134,7 @@ CREATE TABLE [JobSeekerSkill] (
     CONSTRAINT [CK_JSS_Proficiency] CHECK ([ProficiencyLevel] IN (N'Beginner',N'Intermediate',N'Advanced',N'Expert'))
 );
 GO
+
 CREATE INDEX [IX_JobSeekerSkill_SkillID] ON [JobSeekerSkill]([SkillID]);
 GO
 
@@ -412,6 +413,7 @@ CREATE TABLE [DepartmentContact] (
         ON UPDATE CASCADE 
         ON DELETE CASCADE
 );
+
 GO
 
 -- =============================================
