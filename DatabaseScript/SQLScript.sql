@@ -60,6 +60,7 @@ CREATE TABLE [Company] (
     [CompanyDescription] NVARCHAR(MAX) NULL,
     [CompanyWebsite] NVARCHAR(512) NULL,
     PRIMARY KEY ([CompanyID]),
+    CONSTRAINT [UQ_Company_CompanyName] UNIQUE ([CompanyName]),
     CONSTRAINT [FK_Company_CompanyID_User]
         FOREIGN KEY ([CompanyID]) REFERENCES [User]([UserId])
         ON UPDATE CASCADE 
@@ -192,9 +193,12 @@ CREATE TABLE [Job] (
     CONSTRAINT [CK_Job_EmpType] CHECK ([EmploymentType] IN (N'FullTime',N'PartTime',N'Contract',N'Internship',N'Remote')),
     CONSTRAINT [CK_Job_Status] CHECK ([JobStatus] IN (N'Open',N'Closed',N'OnHold',N'Filled'))
 );
+
 GO
+
 CREATE INDEX [IX_Job_CompanyID] ON [Job]([CompanyID]);
 GO
+
 CREATE INDEX [IX_Job_PostedDate] ON [Job]([PostedDate]);
 GO
 
@@ -214,8 +218,11 @@ CREATE TABLE [JobRequireSkill] (
         ON DELETE NO ACTION,
     CONSTRAINT [CK_JRS_Proficiency] CHECK ([ProficiencyLevel] IN (N'Beginner',N'Intermediate',N'Advanced',N'Expert'))
 );
+
 GO
+
 CREATE INDEX [IX_JobRequireSkill_SkillID] ON [JobRequireSkill]([SkillID]);
+
 GO
 
 CREATE TABLE [Application] (
@@ -244,8 +251,11 @@ CREATE TABLE [Application] (
     CONSTRAINT [CK_Application_InterviewDate] CHECK ([InterviewDate] IS NULL OR [InterviewDate] >= [ApplicationDate]),
     CONSTRAINT [CK_App_Status] CHECK ([ApplicationStatus] IN (N'Submitted',N'UnderReview',N'Shortlisted',N'Interview',N'Offered',N'Rejected',N'Withdrawn'))
 );
+
 GO
+
 CREATE INDEX [IX_Application_JobID] ON [Application]([JobID]);
+
 GO
 
 CREATE TABLE [ReviewCompany] (
@@ -271,9 +281,11 @@ CREATE TABLE [ReviewCompany] (
     CONSTRAINT [CK_ReviewCompany_Rating] CHECK ([Rating] >= 1 AND [Rating] <= 5),
     CONSTRAINT [CK_Review_VerStatus] CHECK ([VerificationStatus] IN (N'Pending',N'Verified',N'Rejected'))
 );
+
 GO
 
 CREATE INDEX [IX_ReviewCompany_CompanyID] ON [ReviewCompany]([CompanyID]);
+
 GO
 
 CREATE TABLE [JobMetrics] (
@@ -301,9 +313,11 @@ CREATE TABLE [Notification] (
     CONSTRAINT [CK_Notif_Type] CHECK ([NotificationType] IN (N'Application',N'Interview',N'Offer',N'Rejection',N'Message',N'System')),
     CONSTRAINT [CK_Notif_Delivery] CHECK ([DeliveryMethod] IN (N'Email',N'SMS',N'InApp',N'Push'))
 );
+
 GO
 
 CREATE INDEX [IX_Notification_SendDate] ON [Notification]([SendDate]);
+
 GO
 
 CREATE TABLE [ReceiveNotification] (
@@ -319,8 +333,11 @@ CREATE TABLE [ReceiveNotification] (
         ON UPDATE CASCADE 
         ON DELETE CASCADE
 );
+
 GO
+
 CREATE INDEX [IX_ReceiveNotification_ReceiverID] ON [ReceiveNotification]([ReceiverID]);
+
 GO
 
 CREATE TABLE [Follow] (
@@ -337,9 +354,11 @@ CREATE TABLE [Follow] (
         ON UPDATE NO ACTION 
         ON DELETE NO ACTION
 );
+
 GO
 
 CREATE INDEX [IX_Follow_FolloweeID] ON [Follow]([FolloweeID]);
+
 GO
 
 CREATE TABLE [SocialProfile] (
@@ -353,6 +372,7 @@ CREATE TABLE [SocialProfile] (
         ON DELETE CASCADE,
     CONSTRAINT [CK_Social_Type] CHECK ([ProfileType] IN (N'LinkedIn',N'GitHub',N'Facebook',N'Twitter',N'Portfolio',N'Other'))
 );
+
 GO
 
 CREATE TABLE [AuditLog] (
@@ -368,9 +388,11 @@ CREATE TABLE [AuditLog] (
         ON UPDATE CASCADE 
         ON DELETE SET NULL
 );
+
 GO
 
 CREATE INDEX [IX_AuditLog_ActorID_Timestamp] ON [AuditLog]([ActorID], [Timestamp]);
+
 GO
 
 CREATE TABLE [DepartmentContact] (
@@ -383,6 +405,8 @@ CREATE TABLE [DepartmentContact] (
     [Department] NVARCHAR(120) NULL,
     PRIMARY KEY ([ContactID]),
     CONSTRAINT [UQ_DepartmentContact_Email] UNIQUE ([CompanyID], [ContactEmail]),
+    CONSTRAINT [UQ_DepartmentContact_Name] UNIQUE ([CompanyID], [ContactName]),
+    CONSTRAINT [CK_DepartmentContact_Email] CHECK ([ContactEmail] LIKE N'%@%.%'),
     CONSTRAINT [FK_DepartmentContact_CompanyID_Company]
         FOREIGN KEY ([CompanyID]) REFERENCES [Company]([CompanyID])
         ON UPDATE CASCADE 
