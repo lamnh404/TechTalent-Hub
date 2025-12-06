@@ -4,201 +4,503 @@
 
 <%- include('../partials/header', { title: company.CompanyName }) %>
 
-<body class="animate-fade-in">
+<style>
+    body {
+        background-color: #f0f2f5;
+    }
+
+    /* --- STICKY HEADER CONTAINER --- */
+    .profile-header-sticky {
+        background: rgba(255, 255, 255, 0.98); /* Tăng độ mờ nền */
+        border-bottom: 1px solid #e4e6eb;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        
+        /* Sticky Logic */
+        position: -webkit-sticky;
+        position: sticky;
+        top: 80px; /* Dính ngay dưới Navbar */
+        z-index: 99;
+        
+        /* Padding mặc định */
+        padding-top: 25px;
+        /* Chỉ transition những thuộc tính cần thiết để giảm lag */
+        transition: padding 0.3s ease, box-shadow 0.3s ease;
+        will-change: padding;
+    }
+
+    .header-content {
+        display: flex;
+        align-items: flex-start;
+        padding-bottom: 15px;
+        transition: padding 0.3s ease;
+    }
+
+    /* Avatar Box */
+    .profile-logo {
+        width: 120px;
+        height: 120px;
+        background: #fff;
+        padding: 5px;
+        border-radius: 16px;
+        border: 1px solid #e4e6eb;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+        object-fit: contain;
+        flex-shrink: 0;
+        transform-origin: left top;
+        transition: transform 0.3s ease, width 0.3s ease, height 0.3s ease;
+        will-change: transform, width, height;
+    }
+
+    /* Info Area */
+    .profile-info {
+        margin-left: 24px;
+        flex-grow: 1;
+        padding-top: 5px;
+        overflow: hidden; /* Tránh tràn layout khi animation */
+    }
+
+    .profile-title {
+        font-size: 2rem;
+        font-weight: 800;
+        color: #1c1e21;
+        margin-bottom: 8px;
+        line-height: 1.1;
+        transform-origin: left center;
+        transition: transform 0.3s ease, font-size 0.3s ease, margin 0.3s ease;
+    }
+
+    .profile-meta {
+        color: #65676b;
+        font-size: 0.95rem;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 15px;
+        align-items: center;
+        transition: opacity 0.2s ease, max-height 0.3s ease, margin 0.3s ease;
+        max-height: 50px;
+        opacity: 1;
+    }
+    
+    .profile-meta span { display: flex; align-items: center; }
+    .profile-meta i { margin-right: 6px; color: #888; }
+
+    .profile-actions {
+        margin-left: auto;
+        transition: opacity 0.2s ease;
+    }
+
+    /* --- Tabs --- */
+    .profile-tabs {
+        display: flex;
+        border-top: 1px solid #f0f2f5;
+        margin-top: 0;
+    }
+
+    .profile-tab-link {
+        padding: 15px 25px;
+        font-weight: 600;
+        color: #65676b;
+        text-decoration: none;
+        border-bottom: 3px solid transparent;
+        transition: color 0.2s, background-color 0.2s, border-color 0.2s;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        background: none;
+        border-top: none;
+        border-left: none;
+        border-right: none;
+    }
+
+    .profile-tab-link:hover {
+        background-color: #f2f2f2;
+        color: #1c1e21;
+        text-decoration: none;
+    }
+
+    .profile-tab-link.active {
+        color: var(--primary-color);
+        border-bottom-color: var(--primary-color);
+    }
+
+    /* =========================================
+       SHRUNK STATE (Trạng thái thu gọn)
+       ========================================= */
+    .profile-header-sticky.is-shrunk {
+        padding-top: 10px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+    }
+
+    /* 1. Thu nhỏ Logo */
+    .profile-header-sticky.is-shrunk .profile-logo {
+        width: 48px;
+        height: 48px;
+        border-radius: 8px;
+        box-shadow: none;
+        border-color: transparent;
+    }
+
+    /* 2. Căn chỉnh lại Content */
+    .profile-header-sticky.is-shrunk .header-content {
+        padding-bottom: 0;
+        align-items: center;
+    }
+
+    .profile-header-sticky.is-shrunk .profile-info {
+        margin-left: 15px;
+        padding-top: 0;
+        display: flex;
+        align-items: center;
+    }
+
+    /* 3. Thu nhỏ Title */
+    .profile-header-sticky.is-shrunk .profile-title {
+        font-size: 1.25rem;
+        margin-bottom: 0;
+        margin-right: 15px;
+    }
+
+    /* 4. Ẩn Meta Info */
+    .profile-header-sticky.is-shrunk .profile-meta {
+        opacity: 0;
+        max-height: 0;
+        margin: 0;
+        pointer-events: none;
+    }
+
+    /* 5. Ẩn Actions */
+    .profile-header-sticky.is-shrunk .profile-actions {
+        opacity: 0;
+        pointer-events: none;
+        width: 0;
+        margin: 0;
+    }
+
+    /* 6. Thu gọn Tabs */
+    .profile-header-sticky.is-shrunk .profile-tab-link {
+        padding: 12px 20px;
+        font-size: 0.95rem;
+    }
+
+
+    /* --- Content Section --- */
+    .content-section { padding: 25px 0; min-height: 600px; }
+    
+    .info-card {
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        margin-bottom: 20px;
+        border: 1px solid #e4e6eb;
+        overflow: hidden;
+    }
+    .info-card-header { padding: 15px 20px; border-bottom: 1px solid #f0f2f5; font-weight: 700; font-size: 1.1rem; color: #1c1e21; }
+    .info-card-body { padding: 20px; }
+
+    /* Job Item */
+    .job-item-row {
+        display: flex; justify-content: space-between; align-items: center;
+        padding: 20px; border-bottom: 1px solid #f0f2f5; transition: background 0.2s;
+    }
+    .job-item-row:last-child { border-bottom: none; }
+    .job-item-row:hover { background: #fafafa; }
+
+    /* Review Item */
+    .review-item-row { padding: 20px; border-bottom: 1px solid #f0f2f5; }
+    .review-avatar { width: 45px; height: 45px; border-radius: 50%; object-fit: cover; border: 1px solid #e4e6eb; }
+
+    /* Responsive Mobile */
+    @media (max-width: 991px) {
+        .header-content { flex-direction: column; align-items: center; text-align: center; }
+        .profile-info { margin-left: 0; margin-top: 15px; width: 100%; }
+        .profile-meta { justify-content: center; }
+        .header-actions { margin-top: 15px; margin-left: 0; }
+        .profile-tabs { justify-content: center; overflow-x: auto; }
+        .profile-header-sticky { position: static; } /* Tắt sticky trên mobile */
+    }
+</style>
+
+<body>
     <%- include('../partials/navbar', {activePage: 'companies'}) %>
 
-    <div style="height: 250px; background: linear-gradient(135deg, #0063FF 0%, #004ecc 100%); position: relative;">
-        <div class="container h-100 position-relative">
-            <div style="position: absolute; bottom: -50px; right: 10%; opacity: 0.1; font-size: 15rem; color: white;">
-                <i class="fab fa-google"></i>
-            </div>
-        </div>
-    </div>
+    <!-- Sentinel để phát hiện scroll -->
+    <div id="scrollSentinel" style="position: absolute; top: 0; height: 100px; width: 100%; pointer-events: none; visibility: hidden;"></div>
 
-    <div class="container" style="margin-top: -80px; position: relative; z-index: 2;">
-        <div class="row">
-            
-            <div class="col-lg-4 mb-4">
-                <div class="card border-0 shadow-lg rounded-lg mb-4">
-                    <div class="card-body p-4 text-center">
-                        <div class="bg-white p-2 rounded-circle shadow-sm d-inline-flex mb-3" style="width: 120px; height: 120px; align-items: center; justify-content: center;">
-                            <img src="<%= company.LogoURL || '/images/default-company.png' %>" 
-                                 alt="<%= company.CompanyName %>" 
-                                 class="img-fluid" 
-                                 style="max-height: 80px; object-fit: contain;">
-                        </div>
-                        <h3 class="font-weight-bold mb-1"><%= company.CompanyName %></h3>
-                        <p class="text-primary font-weight-bold mb-3"><%= company.Industry %></p>
-                        
-                        <div class="d-flex justify-content-center gap-2 mb-4">
-                            <a href="<%= company.CompanyWebsite || '#' %>" target="_blank" class="btn btn-sm btn-light rounded-circle" style="width: 40px; height: 40px; display:inline-flex; align-items:center; justify-content:center;"><i class="fas fa-globe"></i></a>
-                            <a href="<%= company.CompanyWebsite || '#' %>" class="btn btn-sm btn-light rounded-circle" style="width: 40px; height: 40px; display:inline-flex; align-items:center; justify-content:center;"><i class="fab fa-facebook-f"></i></a>
-                            <a href="<%= company.CompanyWebsite || '#' %>" class="btn btn-sm btn-light rounded-circle" style="width: 40px; height: 40px; display:inline-flex; align-items:center; justify-content:center;"><i class="fab fa-linkedin-in"></i></a>
-                        </div>
+    <div class="animate-fade-in" id="mainWrapper">
+        <div class="company-cover"></div>
 
-                        <hr>
-
-                        <div class="text-left mt-4">
-                            <div class="mb-3 d-flex align-items-center">
-                                <div class="icon-box-sm bg-soft-primary text-primary mr-3 rounded-circle p-2"><i class="fas fa-users"></i></div>
-                                <div>
-                                    <small class="text-muted d-block">Company Size</small>
-                                    <span class="font-weight-bold text-dark"><%= company.CompanySize %></span>
-                                </div>
-                            </div>
-                            <div class="mb-3 d-flex align-items-center">
-                                <div class="icon-box-sm bg-soft-primary text-primary mr-3 rounded-circle p-2"><i class="far fa-calendar-alt"></i></div>
-                                <div>
-                                    <small class="text-muted d-block">Founded</small>
-                                    <span class="font-weight-bold text-dark"><%= company.FoundedYear %></span>
-                                </div>
-                            </div>
-                            <div class="d-flex align-items-center">
-                                <div class="icon-box-sm bg-soft-primary text-primary mr-3 rounded-circle p-2"><i class="fas fa-map-marker-alt"></i></div>
-                                <div>
-                                    <small class="text-muted d-block">Location</small>
-                                    <span class="font-weight-bold text-dark"><%= company.CompanyAddress || company.Location || '' %></span>
-                                </div>
+        <div class="profile-header-sticky" id="stickyHeader">
+            <div class="container">
+                
+                <div class="header-content">
+                    <img src="<%= company.LogoURL || '/images/default-company.png' %>" 
+                         alt="<%= company.CompanyName %>" 
+                         class="profile-logo">
+                    
+                    <div class="profile-info">
+                        <div>
+                            <h1 class="profile-title"><%= company.CompanyName %> <i class="fas fa-check-circle text-primary small" style="font-size: 1rem;" title="Verified"></i></h1>
+                            
+                            <div class="profile-meta">
+                                <span><i class="fas fa-industry"></i> <%= company.Industry || 'Technology' %></span>
+                                <span><i class="fas fa-map-marker-alt"></i> <%= company.Location || 'Headquarters' %></span>
+                                <span><i class="fas fa-users"></i> <%= company.CompanySize %> Employees</span>
+                                <span><i class="far fa-calendar-alt"></i> Est. <%= company.FoundedYear %></span>
                             </div>
                         </div>
+                    </div>
+
+                    <div class="profile-actions">
+                        <% if (company.CompanyWebsite) { %>
+                            <a href="<%= company.CompanyWebsite %>" target="_blank" class="btn btn-light border shadow-sm font-weight-bold">
+                                <i class="fas fa-globe mr-2"></i> Website
+                            </a>
+                        <% } %>
                     </div>
                 </div>
+
+                <div class="profile-tabs">
+                    <button class="profile-tab-link active" data-target="#about">About</button>
+                    <button class="profile-tab-link" data-target="#jobs">
+                        Jobs <span class="badge badge-light border ml-2"><%= openJobs.length %></span>
+                    </button>
+                    <button class="profile-tab-link" data-target="#reviews">
+                        Reviews <span class="badge badge-light border ml-2"><%= reviews.length %></span>
+                    </button>
+                </div>
+
             </div>
+        </div>
 
-            <div class="col-lg-8" style="padding-top: 90px;">
+        <div class="container content-section">
+            <div class="row">
                 
-                <ul class="nav nav-tabs nav-tabs-modern" id="companyTabs" role="tablist">
-                    <li class="nav-item">
-                        <a class="nav-link active" id="about-tab" data-toggle="tab" href="#about" role="tab">About</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" id="jobs-tab" data-toggle="tab" href="#jobs" role="tab">Jobs <span class="badge badge-soft-primary ml-1"><%= openJobs.length %></span></a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" id="reviews-tab" data-toggle="tab" href="#reviews" role="tab">Reviews</a>
-                    </li>
-                </ul>
-
-                <div class="tab-content" id="companyTabsContent">
-                    
-                    <div class="tab-pane fade show active" id="about" role="tabpanel">
-                        <div class="card border-0 shadow-sm rounded-lg">
-                            <div class="card-body p-4">
-                                <h5 class="font-weight-bold text-dark mb-3">About Us</h5>
-                                    <div class="text-muted" style="line-height: 1.8;">
-                                        <%= company.CompanyDescription || company.Description || '' %>
-                                    </div>
+                <div class="col-lg-8">
+                    <div class="tab-content">
+                        
+                        <div class="tab-pane fade show active" id="about">
+                            <div class="info-card">
+                                <div class="info-card-header">Overview</div>
+                                <div class="info-card-body text-secondary" style="line-height: 1.8;">
+                                    <p><%= company.CompanyDescription || company.Description || 'No description available.' %></p>
+                                </div>
                             </div>
                         </div>
-                    </div>
 
-                    <div class="tab-pane fade" id="jobs" role="tabpanel">
-                        <% if (openJobs && openJobs.length > 0) { %>
-                            <% openJobs.forEach(job => { %>
-                                <div class="card border-0 shadow-sm rounded-lg mb-3 hover-scale job-card-horizontal p-3">
-                                    <div class="d-flex align-items-center w-100">
-                                        <div class="flex-grow-1">
-                                                <h6 class="font-weight-bold mb-1">
-                                                <a href="/jobs/<%= job.JobID %>" class="text-dark text-decoration-none"><%= job.JobTitle %></a>
-                                            </h6>
-                                            <div class="small text-muted">
-                                                <i class="fas fa-map-marker-alt mr-1"></i> <%= job.Location %> &bull; 
-                                                <i class="far fa-clock mr-1 ml-1"></i> <%= job.Type %>
-                                            </div>
-                                        </div>
-                                        <div class="text-right d-none d-md-block">
-                                            <span class="text-primary font-weight-bold"><%= job.Salary %></span>
-                                            <br>
-                                            <a href="/jobs/<%= job.JobID %>" class="btn btn-sm btn-outline-primary rounded-pill mt-2 px-3">Apply</a>
-                                        </div>
-                                    </div>
+                        <div class="tab-pane fade" id="jobs">
+                            <div class="info-card">
+                                <div class="info-card-header d-flex justify-content-between align-items-center">
+                                    <span>Open Positions</span>
+                                    <span class="badge badge-soft-primary"><%= openJobs.length %> Available</span>
                                 </div>
-                            <% }) %>
-                        <% } else { %>
-                            <div class="text-center py-5">
-                                <img src="/images/empty-state.svg" width="150" class="mb-3 opacity-50">
-                                <p class="text-muted">No open positions at the moment.</p>
-                            </div>
-                        <% } %>
-                    </div>
-
-                    <div class="tab-pane fade" id="reviews" role="tabpanel">
-                        
-                        <% if (typeof user !== 'undefined' && user && user.userType === 'JobSeeker') { %>
-                            <div class="card border-0 shadow-sm rounded-lg mb-4 bg-soft-primary">
-                                <div class="card-body p-4">
-                                    <h6 class="font-weight-bold mb-3 text-primary"><i class="fas fa-pen mr-2"></i> Write a Review</h6>
-                                    <form action="/companies/<%= company.CompanyID %>/review" method="POST">
-                                        <div class="row">
-                                            <div class="col-md-8 mb-3">
-                                                <input type="text" class="form-control-modern bg-white" name="title" placeholder="Title (e.g. Great environment)" required>
-                                            </div>
-                                            <div class="col-md-4 mb-3 d-flex align-items-center">
-                                                <div class="star-rating-input">
-                                                    <input type="radio" id="star5" name="rating" value="5" required /><label for="star5">★</label>
-                                                    <input type="radio" id="star4" name="rating" value="4" /><label for="star4">★</label>
-                                                    <input type="radio" id="star3" name="rating" value="3" /><label for="star3">★</label>
-                                                    <input type="radio" id="star2" name="rating" value="2" /><label for="star2">★</label>
-                                                    <input type="radio" id="star1" name="rating" value="1" /><label for="star1">★</label>
-                                                </div>
-                                                <span class="small text-muted ml-2">Rate this company</span>
-                                            </div>
-                                        </div>
-                                        <div class="form-group mb-3">
-                                            <textarea class="form-control-modern h-auto bg-white py-3" name="content" rows="3" placeholder="Share your experience..." required></textarea>
-                                        </div>
-                                        <div class="d-flex justify-content-between align-items-center">
-                                            <div class="custom-control custom-checkbox">
-                                                <input type="checkbox" class="custom-control-input" id="anonCheck" name="isAnonymous">
-                                                <label class="custom-control-label text-muted small" for="anonCheck">Post anonymously</label>
-                                            </div>
-                                            <button type="submit" class="btn btn-primary-modern shadow-sm px-4">Submit Review</button>
-                                        </div>
-                                    </form>
-                                </div>
-                            </div>
-                        <% } %>
-
-                        <div class="card border-0 shadow-sm rounded-lg">
-                            <div class="card-body p-4">
-                                <h5 class="font-weight-bold text-dark mb-4">Employee Reviews (<%= reviews && reviews.length ? reviews.length : 0 %>)</h5>
-                                
-                                <% if (reviews && reviews.length > 0) { %>
-                                    <% reviews.forEach(review => { %>
-                                        <div class="review-item">
-                                            <div class="d-flex justify-content-between align-items-start mb-2">
-                                                <div class="d-flex align-items-center">
-                                                    <img src="<%= review.ReviewerAvatar %>" class="rounded-circle mr-3" width="45" height="45" style="object-fit: cover;">
-                                                    <div>
-                                                        <h6 class="font-weight-bold mb-0 text-dark"><%= review.ReviewerName %></h6>
-                                                        <small class="text-muted"><%= new Date(review.ReviewDate).toLocaleDateString() %></small>
+                                <div class="p-0">
+                                    <% if (openJobs && openJobs.length > 0) { %>
+                                        <% openJobs.forEach(job => { %>
+                                            <div class="job-item-row">
+                                                <div>
+                                                    <h6 class="font-weight-bold mb-1">
+                                                        <a href="/jobs/<%= job.JobID %>" class="text-dark text-decoration-none hover-primary"><%= job.JobTitle %></a>
+                                                    </h6>
+                                                    <div class="text-muted small">
+                                                        <span class="mr-3"><i class="fas fa-map-marker-alt"></i> <%= job.Location %></span>
+                                                        <span class="mr-3"><i class="fas fa-briefcase"></i> <%= job.Type || job.EmploymentType %></span>
                                                     </div>
                                                 </div>
-                                                <div class="star-display">
-                                                    <% for(let i=1; i<=5; i++) { %>
-                                                        <i class="fas fa-star <%= i <= review.Rating ? 'filled' : '' %>"></i>
-                                                    <% } %>
+                                                <div class="text-right">
+                                                    <div class="font-weight-bold text-success mb-1"><%= job.Salary %></div>
+                                                    <a href="/jobs/<%= job.JobID %>" class="btn btn-outline-primary btn-sm rounded-pill px-4 font-weight-bold">Apply</a>
                                                 </div>
                                             </div>
-                                            <h6 class="font-weight-bold mt-3"><%= review.ReviewTitle %></h6>
-                                            <p class="text-muted mb-0" style="font-size: 0.95rem;"><%= review.ReviewText %></p>
+                                        <% }) %>
+                                    <% } else { %>
+                                        <div class="text-center py-5 text-muted">
+                                            <i class="fas fa-briefcase fa-2x mb-3 opacity-25"></i>
+                                            <p>No open positions right now.</p>
                                         </div>
-                                    <% }) %>
-                                <% } else { %>
-                                    <div class="text-center py-5">
-                                        <div class="mb-3 opacity-50"><i class="far fa-comment-dots fa-3x text-muted"></i></div>
-                                        <p class="text-muted">No reviews yet. Be the first to share your experience!</p>
-                                    </div>
-                                <% } %>
+                                    <% } %>
+                                </div>
+                            </div>
+                        </div>
 
+                        <div class="tab-pane fade" id="reviews">
+                            
+                            <% if (typeof user !== 'undefined' && user && user.userType === 'JobSeeker') { %>
+                                <div class="info-card bg-soft-primary border-0 mb-4">
+                                    <div class="info-card-body">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <h6 class="font-weight-bold text-primary mb-0">Have you worked here?</h6>
+                                            <button class="btn btn-sm btn-primary shadow-sm" type="button" data-toggle="collapse" data-target="#reviewForm">
+                                                Write a Review
+                                            </button>
+                                        </div>
+                                        <div class="collapse mt-3" id="reviewForm">
+                                            <form action="/companies/<%= company.CompanyID %>/review" method="POST">
+                                                
+                                                <div class="form-group mb-2">
+                                                    <label class="small font-weight-bold">Your Rating</label>
+                                                    <div class="star-rating-input">
+                                                        <input type="radio" id="s5" name="rating" value="5" required><label for="s5">★</label>
+                                                        <input type="radio" id="s4" name="rating" value="4"><label for="s4">★</label>
+                                                        <input type="radio" id="s3" name="rating" value="3"><label for="s3">★</label>
+                                                        <input type="radio" id="s2" name="rating" value="2"><label for="s2">★</label>
+                                                        <input type="radio" id="s1" name="rating" value="1"><label for="s1">★</label>
+                                                    </div>
+                                                </div>
+
+                                                <div class="form-group mb-2">
+                                                    <input type="text" class="form-control" name="title" placeholder="Review Title (e.g. Great place to learn)" required>
+                                                </div>
+                                                <div class="form-group mb-2">
+                                                    <textarea class="form-control" name="content" rows="3" placeholder="Share your experience..." required></textarea>
+                                                </div>
+                                                <div class="custom-control custom-checkbox mb-3">
+                                                    <input type="checkbox" class="custom-control-input" id="anonCheck" name="isAnonymous">
+                                                    <label class="custom-control-label small" for="anonCheck">Post anonymously</label>
+                                                </div>
+                                                <button class="btn btn-primary btn-sm">Submit Review</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            <% } %>
+
+                            <div class="info-card">
+                                <div class="info-card-header">Employee Reviews</div>
+                                <div class="p-0">
+                                    <% if (reviews && reviews.length > 0) { %>
+                                        <% reviews.forEach(review => { %>
+                                            <div class="review-item-row">
+                                                <div class="d-flex justify-content-between mb-2">
+                                                    <div class="d-flex align-items-center">
+                                                        <img src="<%= review.ReviewerAvatar %>" class="review-avatar mr-3">
+                                                        <div>
+                                                            <h6 class="font-weight-bold mb-0 text-dark"><%= review.ReviewerName %></h6>
+                                                            <small class="text-muted"><%= new Date(review.ReviewDate).toLocaleDateString() %></small>
+                                                        </div>
+                                                    </div>
+                                                    <div class="star-display text-warning small">
+                                                        <% for(let i=1; i<=5; i++) { %>
+                                                            <i class="fas fa-star <%= i <= review.Rating ? 'filled' : 'text-muted opacity-25' %>"></i>
+                                                        <% } %>
+                                                    </div>
+                                                </div>
+                                                <h6 class="font-weight-bold mt-2"><%= review.ReviewTitle %></h6>
+                                                <p class="text-muted mb-0"><%= review.ReviewText %></p>
+                                            </div>
+                                        <% }) %>
+                                    <% } else { %>
+                                        <div class="text-center py-5 text-muted">
+                                            <i class="far fa-comment-dots fa-2x mb-2 opacity-50"></i>
+                                            <p class="mb-0">No reviews yet.</p>
+                                        </div>
+                                    <% } %>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="col-lg-4">
+                    <div class="info-card">
+                        <div class="info-card-header">Contact Info</div>
+                        <div class="info-card-body">
+                            <ul class="list-unstyled mb-0">
+                                <li class="mb-3 d-flex">
+                                    <i class="fas fa-map-marker-alt text-muted mt-1 mr-3" style="width: 20px;"></i>
+                                    <span class="text-dark"><%= company.CompanyAddress || company.Location || 'N/A' %></span>
+                                </li>
+                                <li class="mb-3 d-flex">
+                                    <i class="fas fa-globe text-muted mt-1 mr-3" style="width: 20px;"></i>
+                                    <a href="<%= company.CompanyWebsite %>" target="_blank" class="text-primary text-truncate"><%= company.CompanyWebsite || 'N/A' %></a>
+                                </li>
+                            </ul>
+                            <hr class="my-3 opacity-50">
+                            <h6 class="font-weight-bold small text-uppercase text-muted mb-3">Social Profiles</h6>
+                            <div class="d-flex gap-2">
+                                <a href="#" class="btn btn-light btn-sm flex-grow-1"><i class="fab fa-facebook-f text-primary"></i></a>
+                                <a href="#" class="btn btn-light btn-sm flex-grow-1"><i class="fab fa-linkedin-in text-info"></i></a>
+                                <a href="#" class="btn btn-light btn-sm flex-grow-1"><i class="fab fa-twitter text-info"></i></a>
                             </div>
                         </div>
                     </div>
-
                 </div>
+
             </div>
         </div>
+
+        <%- include('../partials/footer') %>
     </div>
 
-    <%- include('../partials/footer') %>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 1. Fix Animation Jank: Remove animation class after it finishes
+            const wrapper = document.getElementById('mainWrapper');
+            if (wrapper) {
+                setTimeout(() => {
+                    wrapper.style.animation = 'none';
+                    wrapper.style.transform = 'none'; // Ensure no residual transform
+                }, 700); // Slightly longer than 0.6s animation
+            }
+
+            // 2. Optimized Scroll Handler using IntersectionObserver
+            const header = document.getElementById('stickyHeader');
+            const sentinel = document.getElementById('scrollSentinel');
+            
+            if (header && sentinel && 'IntersectionObserver' in window) {
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        // If sentinel is NOT intersecting (scrolled past), shrink header
+                        if (!entry.isIntersecting) {
+                            header.classList.add('is-shrunk');
+                        } else {
+                            header.classList.remove('is-shrunk');
+                        }
+                    });
+                }, { threshold: 0 });
+                
+                observer.observe(sentinel);
+            } else {
+                // Fallback for older browsers
+                window.addEventListener('scroll', function() {
+                    if (window.scrollY > 50) header.classList.add('is-shrunk');
+                    else header.classList.remove('is-shrunk');
+                });
+            }
+
+            // 3. Manual Tab Handling (Robustness)
+            const tabButtons = document.querySelectorAll('.profile-tab-link');
+            tabButtons.forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('data-target');
+                    
+                    // Update Buttons
+                    tabButtons.forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+
+                    // Update Content (Using Bootstrap's jQuery if available, else manual)
+                    if (typeof $ !== 'undefined' && $.fn.tab) {
+                        $(this).tab('show'); // Bootstrap 4 API
+                        // Also show the tab content manually just in case
+                        $('.tab-pane').removeClass('show active');
+                        $(targetId).addClass('show active');
+                    } else {
+                        // Pure JS Fallback
+                        document.querySelectorAll('.tab-pane').forEach(p => {
+                            p.classList.remove('show', 'active');
+                            p.style.display = 'none';
+                        });
+                        const target = document.querySelector(targetId);
+                        if (target) {
+                            target.classList.add('show', 'active');
+                            target.style.display = 'block';
+                            // Small timeout to allow display:block to apply before opacity transition
+                            setTimeout(() => target.style.opacity = 1, 10);
+                        }
+                    }
+                });
+            });
+        });
+    </script>
 </body>
