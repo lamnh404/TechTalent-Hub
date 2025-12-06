@@ -404,43 +404,79 @@ RETURNS DECIMAL(5,2)
 AS
 BEGIN
     DECLARE @v_TotalRequiredSkills INT = 0;
-    DECLARE @v_MatchedSkills INT = 0;
-    DECLARE @v_MatchScore DECIMAL(5,2) = 0;
+    DECLARE @v_MatchedRequiredSkills INT = 0;
+    DECLARE @v_TotalOptionalSkills INT = 0;
+    DECLARE @v_MatchedOptionalSkills INT = 0;
+    DECLARE @v_RequiredScore DECIMAL(10,4) = 0;
+    DECLARE @v_OptionalScore DECIMAL(10,4) = 0;
+    DECLARE @v_FinalScore DECIMAL(5,2) = 0;
     
     IF @p_JobSeekerID IS NULL OR @p_JobID IS NULL
-    BEGIN
         RETURN 0;
-    END
     
     SELECT @v_TotalRequiredSkills = COUNT(*)
     FROM [JobRequireSkill]
     WHERE [JobID] = @p_JobID AND [IsRequired] = 1;
     
-    IF @v_TotalRequiredSkills = 0
+    IF @v_TotalRequiredSkills > 0
     BEGIN
-        RETURN 0;
+        SELECT @v_MatchedRequiredSkills = COUNT(*)
+        FROM [JobRequireSkill] jrs
+        INNER JOIN [JobSeekerSkill] jss 
+            ON jrs.[SkillID] = jss.[SkillID]
+        WHERE jrs.[JobID] = @p_JobID 
+            AND jss.[JobSeekerID] = @p_JobSeekerID
+            AND jrs.[IsRequired] = 1
+            AND (
+                (jrs.[ProficiencyLevel] = N'Beginner') OR
+                (jrs.[ProficiencyLevel] = N'Intermediate' AND jss.[ProficiencyLevel] IN (N'Intermediate', N'Advanced', N'Expert')) OR
+                (jrs.[ProficiencyLevel] = N'Advanced' AND jss.[ProficiencyLevel] IN (N'Advanced', N'Expert')) OR
+                (jrs.[ProficiencyLevel] = N'Expert' AND jss.[ProficiencyLevel] = N'Expert')
+            );
+        
+        SET @v_RequiredScore = (CAST(@v_MatchedRequiredSkills AS DECIMAL(10,4)) / @v_TotalRequiredSkills) * 70;
+    END
+    ELSE
+    BEGIN
+        SET @v_RequiredScore = 70;
     END
     
-    SELECT @v_MatchedSkills = COUNT(*)
-    FROM [JobRequireSkill] jrs
-    INNER JOIN [JobSeekerSkill] jss 
-        ON jrs.[SkillID] = jss.[SkillID]
-    WHERE jrs.[JobID] = @p_JobID 
-        AND jss.[JobSeekerID] = @p_JobSeekerID
-        AND jrs.[IsRequired] = 1
-        AND (
-            (jrs.[ProficiencyLevel] = N'Beginner') OR
-            (jrs.[ProficiencyLevel] = N'Intermediate' AND jss.[ProficiencyLevel] IN (N'Intermediate', N'Advanced', N'Expert')) OR
-            (jrs.[ProficiencyLevel] = N'Advanced' AND jss.[ProficiencyLevel] IN (N'Advanced', N'Expert')) OR
-            (jrs.[ProficiencyLevel] = N'Expert' AND jss.[ProficiencyLevel] = N'Expert')
-        );
+
+    SELECT @v_TotalOptionalSkills = COUNT(*)
+    FROM [JobRequireSkill]
+    WHERE [JobID] = @p_JobID AND [IsRequired] = 0;
     
-    IF @v_TotalRequiredSkills > 0
-        SET @v_MatchScore = (CAST(@v_MatchedSkills AS DECIMAL(10,2)) / @v_TotalRequiredSkills) * 100;
+    IF @v_TotalOptionalSkills > 0
+    BEGIN
+        SELECT @v_MatchedOptionalSkills = COUNT(*)
+        FROM [JobRequireSkill] jrs
+        INNER JOIN [JobSeekerSkill] jss 
+            ON jrs.[SkillID] = jss.[SkillID]
+        WHERE jrs.[JobID] = @p_JobID 
+            AND jss.[JobSeekerID] = @p_JobSeekerID
+            AND jrs.[IsRequired] = 0
+            AND (
+                (jrs.[ProficiencyLevel] = N'Beginner') OR
+                (jrs.[ProficiencyLevel] = N'Intermediate' AND jss.[ProficiencyLevel] IN (N'Intermediate', N'Advanced', N'Expert')) OR
+                (jrs.[ProficiencyLevel] = N'Advanced' AND jss.[ProficiencyLevel] IN (N'Advanced', N'Expert')) OR
+                (jrs.[ProficiencyLevel] = N'Expert' AND jss.[ProficiencyLevel] = N'Expert')
+            );
+        
+        DECLARE @v_OptionalMatchRate DECIMAL(10,4) = CAST(@v_MatchedOptionalSkills AS DECIMAL(10,4)) / @v_TotalOptionalSkills;
+        
+        SET @v_OptionalScore =  @v_OptionalMatchRate * 30;
+    END
     ELSE
-        SET @v_MatchScore = 0;
+    BEGIN
+        SET @v_OptionalScore = 30;
+    END
     
-    RETURN @v_MatchScore;
+    SET @v_FinalScore = @v_RequiredScore + @v_OptionalScore;
+    
+    IF @v_FinalScore > 100
+        SET @v_FinalScore = 100;
+    
+    RETURN @v_FinalScore;
 END
 GO
 
