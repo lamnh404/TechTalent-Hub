@@ -272,7 +272,6 @@ body:not(.auth-layout-page):not(.dashboard-page) {
     border: 1px solid rgba(255, 255, 255, 0.1);
     margin-top: 8px;
     min-width: 180px;
-    max-width: 220px;
     padding: 6px;
     transform-origin: top right;
 }
