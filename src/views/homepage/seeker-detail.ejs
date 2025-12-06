@@ -24,10 +24,11 @@
 
 <%- include('../partials/header', { title: seeker.Name + ' - Profile' }) %>
 
-<body class="animate-fade-in" style="background-color: #f8fafc;">
+<body style="background-color: #f8fafc;">
     <%- include('../partials/navbar', {activePage: 'seekers'}) %>
 
-    <div class="container" style="padding-top: 100px; padding-bottom: 50px;">
+    <div class="animate-fade-in">
+        <div class="container" style="padding-top: 100px; padding-bottom: 50px;">
         <div class="row">
             
             <div class="col-lg-4 mb-4">
@@ -110,4 +111,5 @@
     </div>
 
     <%- include('../partials/footer') %>
+    </div>
 </body>

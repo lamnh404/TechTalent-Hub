@@ -3,6 +3,7 @@
     <body>
         <%- include('../partials/navbar', {activePage: 'jobs' }) %>
 
+        <div class="animate-fade-in">
             <% if (typeof error !== 'undefined' && error) { %>
                 <div class="container">
                     <div class="alert alert-danger auth-alert shadow-sm mt-3" role="alert">
@@ -177,6 +178,7 @@
             </section>
 
             <%- include('../partials/footer') %>
+        </div>
     </body>
 
     <script>

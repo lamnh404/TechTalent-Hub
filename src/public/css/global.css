@@ -171,7 +171,13 @@ body:not(.auth-layout-page):not(.dashboard-page) {
 
 /* 2. Áp dụng vào Container */
 .navbar-glass {
+    position: fixed !important; /* Luôn dính chặt lên top */
+    top: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
     height: var(--header-height);
+    z-index: 1030; /* Luôn nằm trên các thành phần khác */
     /* Dùng gradient để tạo màu nền đẹp hơn */
     background: linear-gradient(135deg, var(--nav-bg-start) 0%, var(--nav-bg-end) 100%) !important;
     backdrop-filter: blur(10px);
@@ -600,4 +606,18 @@ a, button, input, select, textarea, .btn, .card {
     font-size: 3.3rem;
     color: #e2e8f0;
     margin-bottom: 1rem;
+}
+
+/* ========================================
+   GENERAL PAGE LAYOUT (Sticky Footer Fix)
+   ======================================== */
+
+body.general-page {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+body.general-page footer {
+    margin-top: auto !important;
 }

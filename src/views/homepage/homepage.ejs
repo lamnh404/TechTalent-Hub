@@ -1,10 +1,11 @@
 <%- include('../partials/header', { title: 'Homepage' }) %>
 
-<body class="animate-fade-in">
+<body>
     
     <%- include('../partials/navbar', {activePage: 'home'}) %>
 
-    <section class="home-hero">
+    <div class="animate-fade-in">
+        <section class="home-hero">
         <div class="container position-relative" style="z-index: 2;">
             <div class="text-center">
                 <span class="badge badge-pill badge-primary px-3 py-2 mb-3 animate__animated animate__fadeInDown">
@@ -119,5 +120,6 @@
         </div>
     <% } %>
 
-    <%- include('../partials/footer') %>
+        <%- include('../partials/footer') %>
+    </div>
 </body>
