@@ -120,8 +120,6 @@ const setupSeeker = async (userData, profileData) => {
         const pool = GET_SQL_POOL()
 
         const { email, passwordHash, role } = userData
-        // Map form fields to DB columns
-        // Note: 'title' in form -> ProfessionalTitle, 'skills' -> Skills
         const { FirstName, LastName, PhoneNumber, Gender, DateOfBirth, title, ExperienceLevel, CurrentLocation, skills, CVFileURL, summary } = profileData
 
         const userResult = await pool.request()

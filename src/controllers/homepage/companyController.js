@@ -48,19 +48,16 @@ const viewCompanies = async (req, res, next) => {
 const postReview = async (req, res, next) => {
     try {
         const user = req.session && req.session.user
-        console.log('POST /companies/:companyId/review called', { params: req.params, body: req.body, sessionUser: user && { id: user.id, userType: user.userType } })
         if (!user || user.userType !== 'JobSeeker') return res.status(403).redirect('/auth/login')
 
         const companyId = req.params.companyId
         const { title, content, rating } = req.body
         const isAnonymous = req.body.isAnonymous ? 1 : 0
         if (!companyId || !title || !content || !rating) {
-            console.warn('Missing review fields', { companyId, title, content, rating })
             return res.status(400).redirect(`/companies/${companyId}`)
         }
 
         await companyModel.addCompanyReview(companyId, user.id, title, content, parseInt(rating), isAnonymous)
-        console.log('Review inserted for company', companyId, 'by user', user.id)
         res.redirect(`/companies/${companyId}`)
     } catch (error) {
         next(error)

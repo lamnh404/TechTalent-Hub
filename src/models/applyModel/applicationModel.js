@@ -53,7 +53,6 @@ const createApplication = async (applicationData) => {
                 await userModel.sendInAppNotification(job.CompanyID, 'Application', content)
             }
         } catch (nErr) {
-            console.warn('Failed to send application notification:', nErr.message)
         }
 
         try {
@@ -72,7 +71,6 @@ const createApplication = async (applicationData) => {
                         VALUES (@jobId, 1, 0, 0, @time)
                 `)
         } catch (mErr) {
-            console.warn('Failed to update JobMetrics after application:', mErr.message)
         }
 
         return result
@@ -192,7 +190,6 @@ const updateApplicationStatus = async (applicationId, status) => {
                 await userModel.sendInAppNotification(app.JobSeekerID, notifType, content)
             }
         } catch (nErr) {
-            console.warn('Failed to send status-change notification:', nErr.message)
         }
         return result
     } catch (error) {
