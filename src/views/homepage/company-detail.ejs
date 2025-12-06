@@ -9,30 +9,24 @@
         background-color: #f0f2f5;
     }
 
-    /* --- STICKY HEADER CONTAINER --- */
+    /* --- HEADER CONTAINER (Scroll với trang) --- */
     .profile-header-sticky {
-        background: rgba(255, 255, 255, 0.98); /* Tăng độ mờ nền */
+        background: rgba(255, 255, 255, 0.98);
         border-bottom: 1px solid #e4e6eb;
         box-shadow: 0 4px 12px rgba(0,0,0,0.05);
         
-        /* Sticky Logic */
-        position: -webkit-sticky;
-        position: sticky;
-        top: 80px; /* Dính ngay dưới Navbar */
+        /* Bỏ sticky - để scroll theo trang */
+        position: relative;
         z-index: 99;
         
-        /* Padding mặc định */
+        /* Padding */
         padding-top: 25px;
-        /* Chỉ transition những thuộc tính cần thiết để giảm lag */
-        transition: padding 0.3s ease, box-shadow 0.3s ease;
-        will-change: padding;
     }
 
     .header-content {
         display: flex;
         align-items: flex-start;
         padding-bottom: 15px;
-        transition: padding 0.3s ease;
     }
 
     /* Avatar Box */
@@ -46,9 +40,6 @@
         box-shadow: 0 4px 10px rgba(0,0,0,0.08);
         object-fit: contain;
         flex-shrink: 0;
-        transform-origin: left top;
-        transition: transform 0.3s ease, width 0.3s ease, height 0.3s ease;
-        will-change: transform, width, height;
     }
 
     /* Info Area */
@@ -65,8 +56,6 @@
         color: #1c1e21;
         margin-bottom: 8px;
         line-height: 1.1;
-        transform-origin: left center;
-        transition: transform 0.3s ease, font-size 0.3s ease, margin 0.3s ease;
     }
 
     .profile-meta {
@@ -76,9 +65,6 @@
         flex-wrap: wrap;
         gap: 15px;
         align-items: center;
-        transition: opacity 0.2s ease, max-height 0.3s ease, margin 0.3s ease;
-        max-height: 50px;
-        opacity: 1;
     }
     
     .profile-meta span { display: flex; align-items: center; }
@@ -86,7 +72,6 @@
 
     .profile-actions {
         margin-left: auto;
-        transition: opacity 0.2s ease;
     }
 
     /* --- Tabs --- */
@@ -123,66 +108,6 @@
         border-bottom-color: var(--primary-color);
     }
 
-    /* =========================================
-       SHRUNK STATE (Trạng thái thu gọn)
-       ========================================= */
-    .profile-header-sticky.is-shrunk {
-        padding-top: 10px;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.08);
-    }
-
-    /* 1. Thu nhỏ Logo */
-    .profile-header-sticky.is-shrunk .profile-logo {
-        width: 48px;
-        height: 48px;
-        border-radius: 8px;
-        box-shadow: none;
-        border-color: transparent;
-    }
-
-    /* 2. Căn chỉnh lại Content */
-    .profile-header-sticky.is-shrunk .header-content {
-        padding-bottom: 0;
-        align-items: center;
-    }
-
-    .profile-header-sticky.is-shrunk .profile-info {
-        margin-left: 15px;
-        padding-top: 0;
-        display: flex;
-        align-items: center;
-    }
-
-    /* 3. Thu nhỏ Title */
-    .profile-header-sticky.is-shrunk .profile-title {
-        font-size: 1.25rem;
-        margin-bottom: 0;
-        margin-right: 15px;
-    }
-
-    /* 4. Ẩn Meta Info */
-    .profile-header-sticky.is-shrunk .profile-meta {
-        opacity: 0;
-        max-height: 0;
-        margin: 0;
-        pointer-events: none;
-    }
-
-    /* 5. Ẩn Actions */
-    .profile-header-sticky.is-shrunk .profile-actions {
-        opacity: 0;
-        pointer-events: none;
-        width: 0;
-        margin: 0;
-    }
-
-    /* 6. Thu gọn Tabs */
-    .profile-header-sticky.is-shrunk .profile-tab-link {
-        padding: 12px 20px;
-        font-size: 0.95rem;
-    }
-
-
     /* --- Content Section --- */
     .content-section { padding: 25px 0; min-height: 600px; }
     
@@ -216,15 +141,11 @@
         .profile-meta { justify-content: center; }
         .header-actions { margin-top: 15px; margin-left: 0; }
         .profile-tabs { justify-content: center; overflow-x: auto; }
-        .profile-header-sticky { position: static; } /* Tắt sticky trên mobile */
     }
 </style>
 
 <body>
     <%- include('../partials/navbar', {activePage: 'companies'}) %>
-
-    <!-- Sentinel để phát hiện scroll -->
-    <div id="scrollSentinel" style="position: absolute; top: 0; height: 100px; width: 100%; pointer-events: none; visibility: hidden;"></div>
 
     <div class="animate-fade-in" id="mainWrapper">
         <div class="company-cover"></div>
@@ -434,41 +355,7 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // 1. Fix Animation Jank: Remove animation class after it finishes
-            const wrapper = document.getElementById('mainWrapper');
-            if (wrapper) {
-                setTimeout(() => {
-                    wrapper.style.animation = 'none';
-                    wrapper.style.transform = 'none'; // Ensure no residual transform
-                }, 700); // Slightly longer than 0.6s animation
-            }
-
-            // 2. Optimized Scroll Handler using IntersectionObserver
-            const header = document.getElementById('stickyHeader');
-            const sentinel = document.getElementById('scrollSentinel');
-            
-            if (header && sentinel && 'IntersectionObserver' in window) {
-                const observer = new IntersectionObserver((entries) => {
-                    entries.forEach(entry => {
-                        // If sentinel is NOT intersecting (scrolled past), shrink header
-                        if (!entry.isIntersecting) {
-                            header.classList.add('is-shrunk');
-                        } else {
-                            header.classList.remove('is-shrunk');
-                        }
-                    });
-                }, { threshold: 0 });
-                
-                observer.observe(sentinel);
-            } else {
-                // Fallback for older browsers
-                window.addEventListener('scroll', function() {
-                    if (window.scrollY > 50) header.classList.add('is-shrunk');
-                    else header.classList.remove('is-shrunk');
-                });
-            }
-
-            // 3. Manual Tab Handling (Robustness)
+            // Tab Handling
             const tabButtons = document.querySelectorAll('.profile-tab-link');
             tabButtons.forEach(btn => {
                 btn.addEventListener('click', function(e) {

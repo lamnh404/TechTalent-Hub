@@ -264,41 +264,115 @@ body:not(.auth-layout-page):not(.dashboard-page) {
     filter: invert(1) brightness(100); /* Đảo màu icon sang trắng */
 }
 
-/* 9. Dropdown & Mobile Menu (Giữ nền trắng cho sạch sẽ) */
+/* 9. Dropdown & Mobile Menu - Theo màu navbar */
 .navbar-glass .dropdown-menu {
-    background: #ffffff;
+    background: linear-gradient(135deg, var(--nav-bg-start) 0%, var(--nav-bg-end) 100%);
     border-radius: 12px;
-    box-shadow: 0 10px 40px rgba(0,0,0,0.15);
-    border: none;
-    margin-top: 15px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.25);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    margin-top: 8px;
+    min-width: 180px;
+    max-width: 220px;
+    padding: 6px;
+    transform-origin: top right;
 }
 .navbar-glass .dropdown-item {
-    color: #4b5563 !important;
+    color: rgba(255, 255, 255, 0.9) !important;
+    padding: 10px 14px;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    transition: all 0.2s ease;
 }
 .navbar-glass .dropdown-item:hover {
-    background-color: #f3f4f6;
+    background-color: rgba(255, 255, 255, 0.15);
+    color: #ffffff !important;
+}
+.navbar-glass .dropdown-item i {
+    color: rgba(255, 255, 255, 0.8) !important;
+    margin-right: 10px;
+}
+.navbar-glass .dropdown-divider {
+    border-color: rgba(255, 255, 255, 0.15);
 }
 
-/* Responsive: Trên mobile giữ nguyên màu nền đã chọn */
+/* ========================================
+   NAVBAR RESPONSIVE FIX (MOBILE/TABLET)
+   ======================================== */
+
 @media (max-width: 991.98px) {
+    /* 1. Container chính: Giữ gradient xanh, chiều cao tự động để mở menu */
     .navbar-glass {
-        background: linear-gradient(135deg, var(--nav-bg-start) 0%, var(--nav-bg-end) 100%) !important;
+        height: auto !important;
+        min-height: var(--header-height);
+        /* Sử dụng biến màu đã định nghĩa hoặc fallback màu xanh */
+        background: linear-gradient(135deg, var(--nav-bg-start, #2c3050) 0%, var(--nav-bg-end, #0d37b4) 100%) !important;
+        padding: 0.8rem 1rem;
     }
+
+    /* 2. Phần menu sổ xuống: Trong suốt để lộ nền xanh của cha */
     .navbar-collapse {
-        background: #ffffff;
-        margin-top: 15px;
-        border-radius: 12px;
-        padding: 10px;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        background: transparent; 
+        box-shadow: none;
+        border-top: 1px solid rgba(255, 255, 255, 0.1); /* Viền ngăn cách mờ */
+        margin-top: 0;
+        padding-bottom: 1rem;
+        max-height: 80vh;
+        overflow-y: auto;
     }
-    /* Trả lại màu chữ đen cho menu mobile (trên nền trắng) */
-    .navbar-collapse .nav-link, 
-    .navbar-collapse .nav-link i {
-        color: #4b5563 !important; 
+
+    /* 3. Link Text: Chuyển sang màu TRẮNG */
+    .navbar-nav .nav-item {
+        margin: 2px 0;
     }
-    .navbar-collapse .nav-link:hover {
-        background-color: #eff6ff !important;
-        color: #333 !important;
+
+    .navbar-nav .nav-link {
+        color: rgba(255, 255, 255, 0.9) !important; /* Chữ trắng */
+        padding: 12px 15px !important;
+        border-radius: 8px;
+        font-weight: 500;
+    }
+
+    .navbar-nav .nav-link:hover,
+    .navbar-nav .nav-link.active {
+        background-color: rgba(255, 255, 255, 0.15) !important; /* Nền trắng mờ khi hover */
+        color: #ffffff !important;
+        transform: translateX(5px);
+    }
+    
+    /* Icon trong menu mobile */
+    .navbar-nav .nav-link i {
+        color: rgba(255, 255, 255, 0.9) !important;
+        width: 25px;
+        text-align: center;
+    }
+    .navbar-nav .dropdown-item:hover {
+        background-color: #f3f4f6;
+        color: var(--primary-color) !important;
+    }
+    
+    /* Icon trong dropdown con */
+    .navbar-nav .dropdown-item i {
+        color: #9ca3af !important; /* Màu xám cho icon trong dropdown trắng */
+    }
+
+    .navbar-toggler {
+        border-color: rgba(255, 255, 255, 0.4) !important;
+    }
+    .navbar-toggler-icon {
+        filter: brightness(0) invert(1); /* Đảo màu icon sang trắng */
+    }
+    
+    /* 6. Fix icon chuông thông báo trên mobile */
+    #notiDropdown i {
+        color: rgba(255, 255, 255, 0.9) !important;
+    }
+    
+    /* 7. User Name & Avatar */
+    #userDropdown {
+        color: #ffffff !important;
+    }
+    #userDropdown span {
+        color: #ffffff !important;
     }
 }
 
@@ -381,64 +455,6 @@ a, button, input, select, textarea, .btn, .card {
     color: var(--primary-dark);
     border-color: #e0f2fe;
     box-shadow: none;
-}
-
-/* ========================================
-   NAVBAR RESPONSIVE FIX (MOBILE/TABLET)
-   ======================================== */
-
-@media (max-width: 991.98px) {
-    /* 1. Bỏ chiều cao cứng để menu có thể giãn ra */
-    .navbar-glass {
-        height: auto !important;
-        min-height: var(--header-height);
-        background: #ffffff !important; /* Dùng nền trắng đặc trên mobile cho dễ nhìn */
-        padding: 0.8rem 1rem;
-    }
-
-    /* 2. Style cho khung menu khi sổ xuống */
-    .navbar-collapse {
-        background: #ffffff;
-        margin-top: 10px;
-        padding: 1rem 0;
-        border-top: 1px solid #f3f4f6;
-        box-shadow: 0 15px 30px rgba(0,0,0,0.05); /* Bóng đổ nhẹ phía dưới */
-        max-height: 80vh; /* Giới hạn chiều cao nếu menu quá dài */
-        overflow-y: auto; /* Cho phép cuộn trong menu */
-    }
-
-    /* 3. Căn chỉnh lại các item trong menu */
-    .navbar-nav .nav-item {
-        margin: 5px 0; /* Tăng khoảng cách giữa các dòng */
-    }
-
-    .navbar-nav .nav-link {
-        padding: 12px 20px !important; /* Nút to hơn để dễ bấm cảm ứng */
-        border-radius: 10px;
-    }
-
-    .navbar-nav .nav-link:hover,
-    .navbar-nav .nav-link.active {
-        background-color: #eff6ff !important;
-        transform: translateX(5px); /* Hiệu ứng trượt nhẹ khi chạm */
-    }
-
-    /* 4. Xử lý phần User Dropdown trên mobile */
-    .navbar-nav .dropdown-menu {
-        border: none;
-        box-shadow: none;
-        padding-left: 20px; /* Thụt đầu dòng cho menu con */
-        background: #c2c6ca; /* Nền xám nhẹ phân biệt với menu chính */
-        margin-top: 5px;
-    }
-
-    /* 5. Căn giữa nút Sign Up/Login nếu cần */
-    .navbar-nav .btn {
-        width: 100%;
-        margin-top: 10px;
-        text-align: center;
-        justify-content: center;
-    }
 }
 
 /* ======= Notification Dropdown UI Upgrade ======= */
