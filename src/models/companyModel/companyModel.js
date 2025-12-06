@@ -111,7 +111,7 @@ const addCompanyReview = async (companyId, jobSeekerId, title, content, rating, 
 
         const result = await request.query(`
             INSERT INTO [ReviewCompany] (JobSeekerID, CompanyID, ReviewTitle, ReviewDate, ReviewText, Rating, VerificationStatus, IsAnonymous)
-            VALUES (@jobSeekerId, @companyId, @title, GETDATE(), @content, @rating, 'Pending', @isAnonymous);
+            VALUES (@jobSeekerId, @companyId, @title, GETDATE(), @content, @rating, 'Verified', @isAnonymous);
         `)
         return result
     } catch (error) {
