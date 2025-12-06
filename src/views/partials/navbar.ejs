@@ -100,22 +100,16 @@
                                                             id="notiDropdown" role="button" data-toggle="dropdown"
                                                             aria-haspopup="true" aria-expanded="false">
                                                             <i class="far fa-bell" style="font-size: 1.2rem;"></i>
-                                                            <span
-                                                                class="badge badge-danger badge-pill position-absolute"
-                                                                id="notiBadge"
-                                                                style="top: -2px; right: -2px; font-size: 0.6rem; display: none;">0</span>
                                                         </a>
                                                         <div class="dropdown-menu dropdown-menu-right shadow-lg mt-2 animate__animated animate__fadeIn notification-menu"
                                                             style="width: 360px; max-height: 460px; overflow-y: auto;"
                                                             aria-labelledby="notiDropdown">
 
                                                             <div
-                                                                class="px-3 py-2 border-bottom d-flex justify-content-between align-items-center bg-light sticky-top">
+                                                                class="px-3 py-2 border-bottom d-flex align-items-center bg-light sticky-top">
                                                                 <h6
                                                                     class="font-weight-bold mb-0 small text-uppercase text-muted">
                                                                     Notifications</h6>
-                                                                <small class="text-muted" id="notiCountText">0
-                                                                    new</small>
                                                             </div>
 
                                                             <div id="notiList">
@@ -184,25 +178,19 @@
         <script>
             document.addEventListener("DOMContentLoaded", function () {
                 const notiList = document.getElementById('notiList');
-                const notiBadge = document.getElementById('notiBadge');
-                const notiCountText = document.getElementById('notiCountText');
 
                 async function fetchNotifications() {
                     try {
                         const response = await fetch('/api/notifications');
                         if (!response.ok) {
-                            notiList.innerHTML = '<div class="text-center py-4 text-muted small">You have no new notifications.</div>';
-                            notiBadge.style.display = 'none';
-                            notiCountText.innerText = '0 new';
+                            notiList.innerHTML = '<div class="text-center py-4 text-muted small">You have no notifications.</div>';
                             return;
                         }
                         const data = await response.json();
                         const notifications = data.notifications || [];
                         renderNotifications(notifications);
                     } catch (error) {
-                        notiList.innerHTML = '<div class="text-center py-4 text-muted small">You have no new notifications.</div>';
-                        notiBadge.style.display = 'none';
-                        notiCountText.innerText = '0 new';
+                        notiList.innerHTML = '<div class="text-center py-4 text-muted small">You have no notifications.</div>';
                     }
                 }
 
@@ -212,16 +200,6 @@
                         notiBadge.style.display = 'none';
                         notiCountText.innerText = '0 new';
                         return;
-                    }
-
-                    const unreadCount = notifications.filter(n => !n.ReadStatus).length;
-                    if (unreadCount > 0) {
-                        notiBadge.innerText = unreadCount;
-                        notiBadge.style.display = 'inline-block';
-                        notiCountText.innerText = `${unreadCount} new`;
-                    } else {
-                        notiBadge.style.display = 'none';
-                        notiCountText.innerText = 'All caught up';
                     }
 
                     let html = '';
@@ -247,13 +225,8 @@
                         el.style.opacity = '0';
                         setTimeout(() => {
                             el.remove();
-                            let current = parseInt(notiBadge.innerText) || 0;
-                            if (current > 0) {
-                                notiBadge.innerText = current - 1;
-                                if (current - 1 === 0) notiBadge.style.display = 'none';
-                            }
                             if (notiList.children.length === 0) {
-                                notiList.innerHTML = '<div class="text-center py-4 text-muted small">You have no new notifications.</div>';
+                                notiList.innerHTML = '<div class="text-center py-4 text-muted small">You have no notifications.</div>';
                             }
                         }, 300);
                     }

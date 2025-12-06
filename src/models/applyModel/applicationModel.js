@@ -104,7 +104,9 @@ const getCandidatesByCompanyId = async (companyId) => {
         let result = await pool.request()
             .input('companyId', companyId)
             .query(`
-                SELECT A.*, J.JobTitle, (JS.FirstName + ' ' + JS.LastName) as SeekerName, U.Email as SeekerEmail
+                SELECT A.*, J.JobTitle,
+                       (JS.FirstName + ' ' + JS.LastName) as SeekerName,
+                       U.Email as SeekerEmail, U.avatarURL as SeekerAvatar
                 FROM [Application] A
                 JOIN [Job] J ON A.JobID = J.JobID
                 JOIN [JobSeeker] JS ON A.JobSeekerID = JS.JobSeekerID
@@ -124,10 +126,10 @@ const getApplicationById = async (applicationId) => {
         const result = await pool.request()
             .input('applicationId', applicationId)
             .query(`
-                SELECT A.ApplicationID, A.JobSeekerID, A.JobID, A.ApplicationDate, A.ApplicationStatus, A.CoverLetterURL,
-                       J.JobTitle,
-                       JS.FirstName, JS.LastName, JS.PhoneNumber, JS.CurrentLocation, JS.CVFileURL, JS.ProfileSummary,
-                       U.Email as SeekerEmail
+                  SELECT A.ApplicationID, A.JobSeekerID, A.JobID, A.ApplicationDate, A.ApplicationStatus, A.CoverLetterURL,
+                      J.JobTitle,
+                      JS.FirstName, JS.LastName, JS.PhoneNumber, JS.CurrentLocation, JS.CVFileURL, JS.ProfileSummary,
+                      U.Email as SeekerEmail, U.avatarURL as AvatarURL
                 FROM [Application] A
                 JOIN [Job] J ON A.JobID = J.JobID
                 JOIN [JobSeeker] JS ON A.JobSeekerID = JS.JobSeekerID
@@ -150,7 +152,8 @@ const getApplicationById = async (applicationId) => {
 
         app.SeekerName = `${app.FirstName} ${app.LastName}`
         app.SeekerSkills = skillsRes.recordset.map(r => r.SkillName)
-        app.SeekerAvatar = app.CVFileURL || ''
+        // Prefer the user's avatarURL if available; fall back to a sensible default
+        app.SeekerAvatar = app.AvatarURL || '/images/default-avatar.png'
         app.CVUrl = app.CVFileURL
 
         return app
