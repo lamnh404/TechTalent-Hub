@@ -53,7 +53,9 @@ const postReview = async (req, res, next) => {
         const companyId = req.params.companyId
         const { title, content, rating } = req.body
         const isAnonymous = req.body.isAnonymous ? 1 : 0
-        if (!companyId || !title || !content || !rating) return res.status(400).redirect(`/companies/${companyId}`)
+        if (!companyId || !title || !content || !rating) {
+            return res.status(400).redirect(`/companies/${companyId}`)
+        }
 
         await companyModel.addCompanyReview(companyId, user.id, title, content, parseInt(rating), isAnonymous)
         res.redirect(`/companies/${companyId}`)
