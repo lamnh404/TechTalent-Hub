@@ -247,8 +247,8 @@ CREATE TABLE [Application] (
         ON DELETE CASCADE,
     CONSTRAINT [FK_Application_JobID_Job]
         FOREIGN KEY ([JobID]) REFERENCES [Job]([JobID])
-        ON UPDATE NO ACTION  
-        ON DELETE NO ACTION,
+        ON UPDATE NO ACTION
+        ON DELETE CASCADE,
     CONSTRAINT [CK_Application_InterviewDate] CHECK ([InterviewDate] IS NULL OR [InterviewDate] >= [ApplicationDate]),
     CONSTRAINT [CK_App_Status] CHECK ([ApplicationStatus] IN (N'Submitted',N'UnderReview',N'Shortlisted',N'Interview',N'Offered',N'Rejected',N'Withdrawn'))
 );
