@@ -155,7 +155,6 @@
                         jobContainer.style.pointerEvents = 'auto';
                         window.history.pushState({}, '', url);
                         
-                        // Scroll nhẹ
                         const y = jobContainer.getBoundingClientRect().top + window.scrollY - 100;
                         window.scrollTo({top: y, behavior: 'smooth'});
                     })

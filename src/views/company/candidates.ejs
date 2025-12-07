@@ -235,7 +235,6 @@
                         body: JSON.stringify({ status })
                     })
                     if (!res.ok) throw new Error('Failed to save')
-                    // update status badge in table if present (text and color)
                     const badge = document.getElementById('status-' + currentAppId)
                     if (badge) {
                         badge.innerText = status

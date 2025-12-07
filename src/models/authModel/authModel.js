@@ -180,7 +180,6 @@ export const authModel = {
     setupSeeker
 }
 
-// Change password helper
 authModel.changePassword = async (userId, currentPassword, newPassword) => {
     try {
         const pool = GET_SQL_POOL()

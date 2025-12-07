@@ -353,25 +353,20 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Tab Handling
             const tabButtons = document.querySelectorAll('.profile-tab-link');
             tabButtons.forEach(btn => {
                 btn.addEventListener('click', function(e) {
                     e.preventDefault();
                     const targetId = this.getAttribute('data-target');
                     
-                    // Update Buttons
                     tabButtons.forEach(b => b.classList.remove('active'));
                     this.classList.add('active');
 
-                    // Update Content (Using Bootstrap's jQuery if available, else manual)
                     if (typeof $ !== 'undefined' && $.fn.tab) {
-                        $(this).tab('show'); // Bootstrap 4 API
-                        // Also show the tab content manually just in case
+                        $(this).tab('show');
                         $('.tab-pane').removeClass('show active');
                         $(targetId).addClass('show active');
                     } else {
-                        // Pure JS Fallback
                         document.querySelectorAll('.tab-pane').forEach(p => {
                             p.classList.remove('show', 'active');
                             p.style.display = 'none';
@@ -380,7 +375,6 @@
                         if (target) {
                             target.classList.add('show', 'active');
                             target.style.display = 'block';
-                            // Small timeout to allow display:block to apply before opacity transition
                             setTimeout(() => target.style.opacity = 1, 10);
                         }
                     }

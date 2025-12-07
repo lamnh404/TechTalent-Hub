@@ -168,7 +168,6 @@
     <%- include('../partials/footer') %>
 
     <script>
-        // Client-side validation for seeker profile form
         (function() {
             const profileForm = document.getElementById('profileForm');
             if (!profileForm) return;
@@ -186,15 +185,12 @@
             function validateProfile() {
                 let ok = true;
 
-                // First name
                 const fnMsg = firstName ? firstName.parentElement.querySelector('.required-error') : null;
                 if (!firstName || !firstName.value.trim()) { show(fnMsg); firstName && firstName.classList.add('is-invalid'); ok = false; } else { hide(fnMsg); firstName && firstName.classList.remove('is-invalid'); }
 
-                // Last name
                 const lnMsg = lastName ? lastName.parentElement.querySelector('.required-error') : null;
                 if (!lastName || !lastName.value.trim()) { show(lnMsg); lastName && lastName.classList.add('is-invalid'); ok = false; } else { hide(lnMsg); lastName && lastName.classList.remove('is-invalid'); }
 
-                // Phone
                 const phoneReq = phone ? phone.parentElement.querySelector('.required-error') : null;
                 const phoneInvalid = phone ? phone.parentElement.querySelector('.phone-invalid-error') : null;
                 if (!phone || !phone.value.trim()) { show(phoneReq); hide(phoneInvalid); phone && phone.classList.add('is-invalid'); ok = false; }
@@ -203,7 +199,6 @@
                     if (!phoneRegex.test(phone.value.trim())) { show(phoneInvalid); phone.classList.add('is-invalid'); ok = false; } else { hide(phoneInvalid); phone.classList.remove('is-invalid'); }
                 }
 
-                // DOB
                 const dobReq = dob ? dob.parentElement.querySelector('.required-error') : null;
                 const dobInvalid = dob ? dob.parentElement.querySelector('.dob-invalid-error') : null;
                 if (!dob || !dob.value) { show(dobReq); hide(dobInvalid); dob && dob.classList.add('is-invalid'); ok = false; }
@@ -220,7 +215,6 @@
                 return ok;
             }
 
-            // Clear field-level errors on input/change
             [firstName, lastName, phone, dob].forEach(inp => {
                 if (!inp) return;
                 inp.addEventListener('input', () => {
@@ -240,7 +234,6 @@
             });
         })();
 
-        // 1. Lấy dữ liệu từ Mock Data hoặc từ Server (thông qua value của input ẩn)
         let mySkills = [];
         try {
             const rawData = document.getElementById('skillsInput').value;
@@ -255,7 +248,6 @@
         const skillsInput = document.getElementById('skillsInput');
         const totalSkillScoreEl = document.getElementById('totalSkillScore');
 
-        // 2. Hàm vẽ lại danh sách Skill ra màn hình
         function renderSkills() {
             skillsContainer.innerHTML = '';
             
@@ -266,7 +258,6 @@
                 noSkillsMsg.style.display = 'none';
                 let total = 0;
                 mySkills.forEach((skill, index) => {
-                    // Chọn màu badge
                     let badgeColor = 'badge-soft-primary';
                     if (skill.ProficiencyLevel === 'Expert') badgeColor = 'badge-soft-success';
                     if (skill.ProficiencyLevel === 'Beginner') badgeColor = 'badge-soft-secondary';
@@ -297,13 +288,9 @@
                 totalSkillScoreEl.textContent = Math.round(total);
             }
             
-            // Cập nhật lại input ẩn để chuẩn bị gửi form
             skillsInput.value = JSON.stringify(mySkills);
         }
 
-        // Recalculate functionality removed — server-side recalculation not needed
-
-        // 3. Xử lý nút Add Skill (Trong Modal)
         document.getElementById('saveSkillBtn').addEventListener('click', function() {
             const name = document.getElementById('skillNameInput').value;
             const level = document.getElementById('skillLevelInput').value;
@@ -314,27 +301,23 @@
                 return;
             }
 
-            // Check trùng
             if (mySkills.some(s => s.SkillName.toLowerCase() === name.toLowerCase())) {
                 alert("This skill is already added!");
                 return;
             }
 
-            // Thêm vào mảng
             mySkills.push({
                 SkillName: name,
                 ProficiencyLevel: level,
                 YearOfExperience: parseFloat(exp) || 0
             });
 
-            renderSkills(); // Vẽ lại giao diện
-            
-            // Đóng modal và reset form
+            renderSkills();
+
             document.getElementById('skillForm').reset();
             $('#addSkillModal').modal('hide');
         });
 
-        // 4. Hàm xóa skill (gắn vào window để gọi từ HTML)
         window.removeSkill = function(index) {
             if (confirm('Remove this skill?')) {
                 mySkills.splice(index, 1);
@@ -342,7 +325,6 @@
             }
         };
 
-        // Chạy lần đầu
         renderSkills();
     </script>
 </body>

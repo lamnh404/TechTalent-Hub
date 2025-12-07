@@ -59,7 +59,7 @@ const createApplication = async (applicationData) => {
             const time = dayjs().tz('Asia/Ho_Chi_Minh').format('YYYY-MM-DD HH:mm:ss')
             await pool.request()
                 .input('jobId', jobId)
-                .input('time', sql.DateTime, time)
+                .input('time', time)
                 .query(`
                     IF EXISTS (SELECT 1 FROM [JobMetrics] WHERE JobMetricID = @jobId)
                         UPDATE [JobMetrics]
@@ -141,7 +141,6 @@ const getApplicationById = async (applicationId) => {
 
         const app = result.recordset[0]
 
-        // get skills
         const skillsRes = await pool.request()
             .input('seekerId', app.JobSeekerID)
             .query(`
@@ -152,7 +151,6 @@ const getApplicationById = async (applicationId) => {
 
         app.SeekerName = `${app.FirstName} ${app.LastName}`
         app.SeekerSkills = skillsRes.recordset.map(r => r.SkillName)
-        // Prefer the user's avatarURL if available; fall back to a sensible default
         app.SeekerAvatar = app.AvatarURL || '/images/default-avatar.png'
         app.CVUrl = app.CVFileURL
 
@@ -174,7 +172,6 @@ const updateApplicationStatus = async (applicationId, status) => {
                 WHERE ApplicationID = @applicationId
             `)
 
-        // send notification to job seeker about status change
         try {
             const appRes = await pool.request()
                 .input('applicationId', applicationId)

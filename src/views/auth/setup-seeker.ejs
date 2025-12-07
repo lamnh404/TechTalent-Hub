@@ -161,7 +161,6 @@
         <script>
             const form = document.getElementById('seekerForm');
 
-            // 1. HTTPS Validation
             const httpsInputs = document.querySelectorAll('.https-input');
             function validateHttps(input) {
                 const value = input.value.trim();
@@ -179,7 +178,6 @@
             }
             httpsInputs.forEach(input => input.addEventListener('input', () => validateHttps(input)));
 
-            // 2. Phone Validation
             const phoneInput = document.getElementById('phoneNumber');
             const phoneRegex = /^(0|\+84)\d{9,10}$/;
 
@@ -197,7 +195,6 @@
             }
             phoneInput.addEventListener('input', validatePhone);
 
-            // 3. Date of Birth Validation
             const dobInput = document.getElementById('dob');
             function validateDob() {
                 const errorDisplay = dobInput.parentElement.nextElementSibling;
@@ -222,7 +219,6 @@
             }
             dobInput.addEventListener('change', validateDob);
 
-            // 4. Required-field client-side check to reduce full reloads
             const requiredInputs = form.querySelectorAll('[required]');
             function checkRequired() {
                 let ok = true;
@@ -242,14 +238,11 @@
                 return ok;
             }
 
-            // 5. Form Submit Handler
             form.addEventListener('submit', function (e) {
                 let isValid = true;
 
-                // Required fields first
                 if (!checkRequired()) isValid = false;
 
-                // Then run existing validators
                 httpsInputs.forEach(input => {
                     if (!validateHttps(input)) isValid = false;
                 });

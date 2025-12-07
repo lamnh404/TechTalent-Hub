@@ -27,7 +27,6 @@ const getAdminStats = async () => {
 const getRecentActivities = async (limit = 10) => {
     try {
         const pool = GET_SQL_POOL()
-        // Basic recent activities: job posts, new users, system notifications (best-effort)
         const result = await pool.request()
             .input('limit', limit)
             .query(`
@@ -45,7 +44,6 @@ const getRecentActivities = async (limit = 10) => {
                 ORDER BY J.PostedDate DESC
             `)
 
-        // Map to view-friendly shape. If no rows, return empty array.
         return (result.recordset || []).map(r => ({
             id: r.JobID || Math.floor(Math.random() * 100000),
             user: r.ActorName || r.Actor || 'System',

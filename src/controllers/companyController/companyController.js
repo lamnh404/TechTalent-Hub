@@ -33,7 +33,6 @@ const getDashboard = async (req, res, next) => {
             const recentJobs = await companyModel.getRecentJobs(companyId)
             const appStats = await companyModel.getApplicationStatisticsByCompany(companyId, startDate || null, endDate || null)
 
-            // if appStats is null it means no applications in given date range
             const noApplicationsInRange = appStats === null
 
             res.render('company/dashboard.ejs', {

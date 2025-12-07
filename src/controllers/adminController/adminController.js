@@ -2,7 +2,6 @@ import { adminModel } from '~/models/adminModel/adminModel'
 
 const viewDashboard = async (req, res, next) => {
     try {
-        // simple auth: only allow admin userType
         const user = req.session && req.session.user
         if (!user || user.userType !== 'Admin') return res.redirect('/auth/login')
 

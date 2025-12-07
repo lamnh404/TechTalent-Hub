@@ -53,14 +53,14 @@ const createJob = async (jobData) => {
 
                 let skillId
                 const skillCheck = await pool.request()
-                    .input('SkillName', sql.NVarChar, skillName)
+                    .input('SkillName', skillName)
                     .query(`SELECT SkillID FROM [Skill] WHERE SkillName = @SkillName`)
 
                 if (skillCheck.recordset.length > 0) {
                     skillId = skillCheck.recordset[0].SkillID
                 } else {
                     const createSkill = await pool.request()
-                        .input('SkillName', sql.NVarChar, skillName)
+                        .input('SkillName', skillName)
                         .query(`
                             INSERT INTO [Skill] (SkillName) 
                             VALUES (@SkillName);
@@ -177,7 +177,7 @@ const getLatestJobs = async (limit = 6) => {
     try {
         const pool = GET_SQL_POOL()
         const result = await pool.request()
-            .input('limit', sql.Int, limit)
+            .input('limit', limit)
             .query(`
                 SELECT
                     J.JobID,
@@ -208,44 +208,40 @@ const getJobsByCompanyId = async (companyId, page = 1, limit = 10, titleFilter =
         const pool = GET_SQL_POOL()
         const offset = (page - 1) * limit
 
-        // Build filters
         let whereClauses = ['J.CompanyID = @companyId']
         const request = pool.request().input('companyId', companyId)
 
         if (titleFilter && titleFilter.length > 0) {
             whereClauses.push('J.JobTitle LIKE @title')
-            request.input('title', sql.NVarChar, `%${titleFilter}%`)
+            request.input('title', `%${titleFilter}%`)
         }
 
         if (statusFilter && statusFilter !== 'all') {
-            // Map friendly values to DB values if necessary
             let dbStatus = statusFilter
             if (statusFilter.toLowerCase() === 'active') dbStatus = 'Open'
             if (statusFilter.toLowerCase() === 'closed') dbStatus = 'Closed'
             whereClauses.push('J.JobStatus = @status')
-            request.input('status', sql.NVarChar, dbStatus)
+            request.input('status', dbStatus)
         }
 
         const whereSql = whereClauses.length > 0 ? 'WHERE ' + whereClauses.join(' AND ') : ''
 
-        // Count total with filters
         const countQuery = `SELECT COUNT(*) as total FROM [Job] J ${whereSql}`
         const countResult = await request.query(countQuery)
         const totalJobs = countResult.recordset[0].total
         const totalPages = Math.ceil(totalJobs / limit)
 
-        // Fetch paged jobs including details and applicant count
         const dataRequest = pool.request()
             .input('companyId', companyId)
             .input('offset', offset)
             .input('limit', limit)
 
-        if (titleFilter && titleFilter.length > 0) dataRequest.input('title', sql.NVarChar, `%${titleFilter}%`)
+        if (titleFilter && titleFilter.length > 0) dataRequest.input('title', `%${titleFilter}%`)
         if (statusFilter && statusFilter !== 'all') {
             let dbStatus = statusFilter
             if (statusFilter.toLowerCase() === 'active') dbStatus = 'Open'
             if (statusFilter.toLowerCase() === 'closed') dbStatus = 'Closed'
-            dataRequest.input('status', sql.NVarChar, dbStatus)
+            dataRequest.input('status', dbStatus)
         }
 
         const dataWhereSql = whereSql
@@ -366,14 +362,14 @@ const updateJob = async (jobId, companyId, jobData) => {
 
                 let skillId
                 const skillCheck = await pool.request()
-                    .input('SkillName', sql.NVarChar, skillName)
+                    .input('SkillName', skillName)
                     .query(`SELECT SkillID FROM [Skill] WHERE SkillName = @SkillName`)
 
                 if (skillCheck.recordset.length > 0) {
                     skillId = skillCheck.recordset[0].SkillID
                 } else {
                     const createSkill = await pool.request()
-                        .input('SkillName', sql.NVarChar, skillName)
+                        .input('SkillName', skillName)
                         .query(`
                             INSERT INTO [Skill] (SkillName, PopularityScore) 
                             OUTPUT INSERTED.SkillID

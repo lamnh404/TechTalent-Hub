@@ -8,28 +8,28 @@ const searchJobs = async (keyword, page = 1, limit = 10, sort = 'newest', jobTit
 
             const offset = (page - 1) * limit;
 
-            request.input("keyword", sql.NVarChar, `%${keyword}%`);
-            request.input("offset", sql.Int, offset);
-            request.input("limit", sql.Int, limit);
+            request.input("keyword", `%${keyword}%`);
+            request.input("offset", offset);
+            request.input("limit", limit);
 
             let extraWhere = '';
             if (jobTitle) {
-                request.input("jobTitleFilter", sql.NVarChar, `%${jobTitle}%`);
+                request.input("jobTitleFilter", `%${jobTitle}%`);
                 extraWhere += ` AND J.JobTitle LIKE @jobTitleFilter`;
             }
             if (company) {
-                request.input("companyFilter", sql.NVarChar, `%${company}%`);
+                request.input("companyFilter", `%${company}%`);
                 extraWhere += ` AND C.CompanyName LIKE @companyFilter`;
             }
 
             if (employmentType) {
-                request.input("employmentType", sql.NVarChar, employmentType);
+                request.input("employmentType", employmentType);
                 extraWhere += ` AND J.EmploymentType = @employmentType`;
             }
 
             const hasMin = Number.isFinite(minSalary);
             if (hasMin) {
-                request.input("minSalary", sql.Decimal(15,2), minSalary);
+                request.input("minSalary", minSalary);
                 extraWhere += ` AND ( J.SalaryMin IS NOT NULL AND J.SalaryMin >= @minSalary )`;
             }
 
