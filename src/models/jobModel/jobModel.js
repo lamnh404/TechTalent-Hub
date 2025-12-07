@@ -12,7 +12,7 @@ const createJob = async (jobData) => {
     const pool = GET_SQL_POOL()
     try {
         const { jobTitle, jobDescription, salaryMin, salaryMax, location, employmentType, companyId, experienceRequired, applicationDeadline, openingCount, skills } = jobData
-        const time = dayjs().tz('Asia/Ho_Chi_Minh').format('YYYY-MM-DD HH:mm:ss')
+        const time = dayjs().utc().format('YYYY-MM-DD HH:mm:ss')
         const jobResult = await pool.request()
             .input('jobTitle', jobTitle)
             .input('jobDescription', jobDescription)
@@ -106,7 +106,7 @@ const createJob = async (jobData) => {
 const getJobById = async (jobId) => {
     try {
         const pool = GET_SQL_POOL()
-        const time = dayjs().tz('Asia/Ho_Chi_Minh').format('YYYY-MM-DD HH:mm:ss')
+        const time = dayjs().utc().format('YYYY-MM-DD HH:mm:ss')
 
         await pool.request()
             .input('jobId', jobId)

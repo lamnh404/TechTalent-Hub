@@ -56,7 +56,7 @@ const createApplication = async (applicationData) => {
         }
 
         try {
-            const time = dayjs().tz('Asia/Ho_Chi_Minh').format('YYYY-MM-DD HH:mm:ss')
+            const time = dayjs().utc().format('YYYY-MM-DD HH:mm:ss')
             await pool.request()
                 .input('jobId', jobId)
                 .input('time', time)
