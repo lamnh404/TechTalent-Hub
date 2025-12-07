@@ -659,6 +659,7 @@ AS
 BEGIN
     SET NOCOUNT ON;
 
+    -- Set default values
     IF @p_StartDate IS NULL
     BEGIN
         SET @p_StartDate = DATEADD(MONTH, -6, GETDATE());
@@ -669,6 +670,7 @@ BEGIN
         SET @p_EndDate = GETDATE();
     END
 
+    -- Validate date range
     IF @p_EndDate < @p_StartDate
     BEGIN
         RAISERROR(N'EndDate must be greater than or equal to StartDate', 16, 1);
@@ -681,11 +683,10 @@ BEGIN
             c.[CompanyName],
             c.[Industry],
             c.[CompanySize],
-
+            COUNT(DISTINCT j.[JobID]) AS TotalJobPosted,
             COUNT(DISTINCT CASE WHEN a.[ApplicationID] IS NOT NULL THEN j.[JobID] END) AS TotalJobWithApplications,
-
             COUNT(a.[ApplicationID]) AS TotalApplications,
-
+            -- Status counts
             COUNT(CASE WHEN a.[ApplicationStatus] = N'Submitted' THEN 1 END) AS SubmittedCount,
             COUNT(CASE WHEN a.[ApplicationStatus] = N'UnderReview' THEN 1 END) AS UnderReviewCount,
             COUNT(CASE WHEN a.[ApplicationStatus] = N'Shortlisted' THEN 1 END) AS ShortlistedCount,
@@ -693,7 +694,6 @@ BEGIN
             COUNT(CASE WHEN a.[ApplicationStatus] = N'Offered' THEN 1 END) AS OfferedCount,
             COUNT(CASE WHEN a.[ApplicationStatus] = N'Rejected' THEN 1 END) AS RejectedCount,
             COUNT(CASE WHEN a.[ApplicationStatus] = N'Withdrawn' THEN 1 END) AS WithdrawnCount,
-
             CASE 
                 WHEN COUNT(a.[ApplicationID]) > 0 
                 THEN ROUND(CAST(COUNT(CASE WHEN a.[ApplicationStatus] = N'Interview' THEN 1 END) AS FLOAT) / COUNT(a.[ApplicationID]) * 100, 2)
@@ -709,18 +709,16 @@ BEGIN
                 THEN ROUND(CAST(COUNT(CASE WHEN a.[ApplicationStatus] = N'Rejected' THEN 1 END) AS FLOAT) / COUNT(a.[ApplicationID]) * 100, 2)
                 ELSE 0 
             END AS RejectionRate,
-            -- ✅ THÊM: Average time to first response (days)
             AVG(CASE 
                 WHEN a.[LastUpdated] > a.[ApplicationDate] 
                 THEN DATEDIFF(DAY, a.[ApplicationDate], a.[LastUpdated])
                 ELSE NULL 
             END) AS AvgResponseTimeDays,
-
             dbo.fn_GetCompanyAverageRating(c.[CompanyID]) AS CompanyRating
         FROM [Company] c 
         INNER JOIN [Job] j ON c.[CompanyID] = j.[CompanyID]
-
-        INNER JOIN [Application] a ON j.[JobID] = a.[JobID]
+            AND j.[PostedDate] BETWEEN @p_StartDate AND @p_EndDate
+        LEFT JOIN [Application] a ON j.[JobID] = a.[JobID]
             AND a.[ApplicationDate] BETWEEN @p_StartDate AND @p_EndDate
         WHERE c.[VerificationStatus] = N'ACCEPTED'
         GROUP BY c.[CompanyID], c.[CompanyName], c.[Industry], c.[CompanySize]
@@ -730,7 +728,8 @@ BEGIN
         CompanyName,
         Industry,
         CompanySize,
-        TotalJobWithApplications,
+        TotalJobPosted,                    
+        TotalJobWithApplications,          
         TotalApplications,
         SubmittedCount,
         UnderReviewCount,
@@ -745,7 +744,6 @@ BEGIN
         AvgResponseTimeDays,
         CompanyRating
     FROM CompanyStats
-    WHERE TotalApplications > 0  -- ✅ Bây giờ điều kiện này hợp lý
     ORDER BY TotalApplications DESC, OfferRate DESC, CompanyRating DESC;
 END
 GO
