@@ -3,182 +3,200 @@
     <body>
         <%- include('../partials/navbar', {activePage: 'jobs' }) %>
 
-        <div class="animate-fade-in">
-            <% if (typeof error !== 'undefined' && error) { %>
-                <div class="container">
-                    <div class="alert alert-danger auth-alert shadow-sm mt-3" role="alert">
-                        <i class="fas fa-exclamation-circle mr-2"></i>
-                        <%= error %>
-                    </div>
-                </div>
-            <% } %>
-            <% if (typeof success !== 'undefined' && success) { %>
-                <div class="container">
-                    <div class="alert alert-success auth-alert shadow-sm mt-3" role="alert">
-                        <i class="fas fa-check-circle mr-2"></i>
-                        <%= success %>
-                    </div>
-                </div>
-            <% } %>
-
-            <section class="home-hero" style="padding: 140px 0 60px; text-align: left;">
-                <div class="container position-relative" style="z-index: 2;">
-
-                    <div class="mb-4 animate__animated animate__fadeInDown">
-                        <a href="/jobs" class="text-muted text-decoration-none"><i
-                                class="fas fa-arrow-left mr-2"></i>Back to Jobs</a>
-                    </div>
-
-                    <div class="card border-0 shadow-lg glass-effect p-4 animate__animated animate__fadeInUp">
-                        <div class="card-body d-flex flex-column flex-md-row align-items-start">
-                            <img src="<%= job.LogoURL ? job.LogoURL : '/images/default-company.png' %>"
-                                alt="<%= job.CompanyName %>" class="company-logo mr-md-4 mb-3 mb-md-0"
-                                style="width: 90px; height: 90px; padding: 10px; object-fit: contain; background: white; border-radius: 12px;">
-
-                            <div class="flex-grow-1">
-                                <div class="d-flex align-items-center mb-2 flex-wrap">
-                                    <h2 class="font-weight-bold text-dark mb-0 mr-3">
-                                        <%= job.JobTitle %>
-                                    </h2>
-                                    <span
-                                        class="badge badge-soft-success px-3 py-2 rounded-pill mt-2 mt-md-0">Active</span>
-                                </div>
-
-                                <p class="text-muted mb-3">
-                                    <i class="far fa-building mr-1"></i> <span class="font-weight-bold text-dark">
-                                        <%= job.CompanyName %>
-                                    </span>
-                                    &nbsp;&bull;&nbsp;
-                                    <i class="fas fa-map-marker-alt mr-1"></i>
-                                    <%= job.Location %>
-                                        &nbsp;&bull;&nbsp;
-                                        <i class="far fa-clock mr-1"></i> Posted <%= new
-                                            Date(job.PostedDate).toLocaleDateString('vi-VN') %>
-                                </p>
-
-                                <div class="job-tags mb-4">
-                                    <span class="tag tag-fulltime mr-2">
-                                        <%= job.EmploymentType %>
-                                    </span>
-                                </div>
-                            </div>
-
-                            <div class="text-md-right mt-3 mt-md-0">
-                                <h3 class="text-primary font-weight-bold mb-3">
-                                    $<%= job.SalaryMin ? job.SalaryMin.toLocaleString() : 'N/A' %> -
-                                        $<%= job.SalaryMax ? job.SalaryMax.toLocaleString() : 'N/A' %>
-                                </h3>
-
-                                <% if (typeof user !== 'undefined' && user && user.userType === 'JobSeeker') { %>
-                                    <% if (typeof hasApplied !== 'undefined' && hasApplied) { %>
-                                        <button class="btn btn-outline-secondary btn-lg px-5 shadow-md mb-2" disabled>
-                                            Submitted
-                                        </button>
-                                    <% } else { %>
-                                        <form action="/applications" method="POST" class="d-inline">
-                                            <input type="hidden" name="jobId" value="<%= job.JobID %>">
-                                            <button type="submit" class="btn btn-primary-modern btn-lg px-5 shadow-md mb-2">
-                                                Apply Now <i class="fas fa-paper-plane ml-2"></i>
-                                            </button>
-                                        </form>
-                                    <% } %>
-                                <% } else if (!user) { %>
-                                    <a href="/login?redirect=/jobs/<%= job.JobID %>"
-                                        class="btn btn-primary-modern btn-lg px-5 shadow-md mb-2">
-                                        Login to Apply
-                                    </a>
-                                <% } %>
-
-                            </div>
+            <div class="animate-fade-in">
+                <% if (typeof error !=='undefined' && error) { %>
+                    <div class="container">
+                        <div class="alert alert-danger auth-alert shadow-sm mt-3" role="alert">
+                            <i class="fas fa-exclamation-circle mr-2"></i>
+                            <%= error %>
                         </div>
                     </div>
-                </div>
-            </section>
-
-            <section class="section bg-light pt-5 pb-5">
-                <div class="container">
-                    <div class="row">
-
-                        <div class="col-lg-8 mb-4">
-                            <div class="card border-0 shadow-sm rounded-lg p-4 mb-4">
-                                <h5 class="font-weight-bold text-dark mb-4 border-bottom pb-3">Job Description</h5>
-
-                                <div class="text-muted content-text" style="line-height: 1.8; white-space: pre-line;">
-                                    <%- job.JobDescription %>
+                    <% } %>
+                        <% if (typeof success !=='undefined' && success) { %>
+                            <div class="container">
+                                <div class="alert alert-success auth-alert shadow-sm mt-3" role="alert">
+                                    <i class="fas fa-check-circle mr-2"></i>
+                                    <%= success %>
                                 </div>
                             </div>
-                        </div>
+                            <% } %>
 
-                        <div class="col-lg-4">
+                                <section class="home-hero" style="padding: 140px 0 60px; text-align: left;">
+                                    <div class="container position-relative" style="z-index: 2;">
 
-                            <div class="card border-0 shadow-sm rounded-lg p-4 mb-4">
-                                <h6 class="font-weight-bold text-dark mb-3">About the Company</h6>
-                                <div class="d-flex align-items-center mb-3">
-                                    <img src="<%= job.LogoURL ? job.LogoURL : '/images/default-company.png' %>"
-                                        width="50" class="rounded border p-1 mr-3">
-                                    <div>
-                                        <h6 class="font-weight-bold mb-0">
-                                            <%= job.CompanyName %>
-                                        </h6>
-                                        <a href="/companies/<%= job.CompanyID %>"
-                                            class="small text-primary font-weight-bold">View Profile</a>
+                                        <div class="mb-4 animate__animated animate__fadeInDown">
+                                            <a href="/jobs" class="text-muted text-decoration-none"><i
+                                                    class="fas fa-arrow-left mr-2"></i>Back to Jobs</a>
+                                        </div>
+
+                                        <div
+                                            class="card border-0 shadow-lg glass-effect p-4 animate__animated animate__fadeInUp">
+                                            <div class="card-body d-flex flex-column flex-md-row align-items-start">
+                                                <img src="<%= job.LogoURL ? job.LogoURL : '/images/default-company.png' %>"
+                                                    alt="<%= job.CompanyName %>"
+                                                    class="company-logo mr-md-4 mb-3 mb-md-0"
+                                                    style="width: 90px; height: 90px; padding: 10px; object-fit: contain; background: white; border-radius: 12px;">
+
+                                                <div class="flex-grow-1">
+                                                    <div class="d-flex align-items-center mb-2 flex-wrap">
+                                                        <h2 class="font-weight-bold text-dark mb-0 mr-3">
+                                                            <%= job.JobTitle %>
+                                                        </h2>
+                                                        <span
+                                                            class="badge badge-soft-success px-3 py-2 rounded-pill mt-2 mt-md-0">Active</span>
+                                                    </div>
+
+                                                    <p class="text-muted mb-3">
+                                                        <i class="far fa-building mr-1"></i> <span
+                                                            class="font-weight-bold text-dark">
+                                                            <%= job.CompanyName %>
+                                                        </span>
+                                                        &nbsp;&bull;&nbsp;
+                                                        <i class="fas fa-map-marker-alt mr-1"></i>
+                                                        <%= job.Location %>
+                                                            &nbsp;&bull;&nbsp;
+                                                            <i class="far fa-clock mr-1"></i> Posted <%= new
+                                                                Date(job.PostedDate).toLocaleDateString('vi-VN') %>
+                                                    </p>
+
+                                                    <div class="job-tags mb-4">
+                                                        <span class="tag tag-fulltime mr-2">
+                                                            <%= job.EmploymentType %>
+                                                        </span>
+                                                    </div>
+                                                </div>
+
+                                                <div class="text-md-right mt-3 mt-md-0">
+                                                    <h3 class="text-primary font-weight-bold mb-3">
+                                                        $<%= job.SalaryMin ? job.SalaryMin.toLocaleString() : 'N/A' %> -
+                                                            $<%= job.SalaryMax ? job.SalaryMax.toLocaleString() : 'N/A'
+                                                                %>
+                                                    </h3>
+
+                                                    <% if (typeof user !=='undefined' && user &&
+                                                        user.userType==='JobSeeker' ) { %>
+                                                        <% if (typeof hasApplied !=='undefined' && hasApplied) { %>
+                                                            <button
+                                                                class="btn btn-outline-secondary btn-lg px-5 shadow-md mb-2"
+                                                                disabled>
+                                                                Submitted
+                                                            </button>
+                                                            <% } else { %>
+                                                                <form action="/applications" method="POST"
+                                                                    class="d-inline">
+                                                                    <input type="hidden" name="jobId"
+                                                                        value="<%= job.JobID %>">
+                                                                    <button type="submit"
+                                                                        class="btn btn-primary-modern btn-lg px-5 shadow-md mb-2">
+                                                                        Apply Now <i
+                                                                            class="fas fa-paper-plane ml-2"></i>
+                                                                    </button>
+                                                                </form>
+                                                                <% } %>
+                                                                    <% } else if (!user) { %>
+                                                                        <a href="/login?redirect=/jobs/<%= job.JobID %>"
+                                                                            class="btn btn-primary-modern btn-lg px-5 shadow-md mb-2">
+                                                                            Login to Apply
+                                                                        </a>
+                                                                        <% } %>
+
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
-                                </div>
+                                </section>
 
-                                <hr>
-                                <div class="row small text-muted">
-                                    <div class="col-12"><i class="fas fa-link mr-2"></i> <span class="text-muted">Visit
-                                            Website</span></div>
-                                </div>
-                            </div>
+                                <section class="section bg-light pt-5 pb-5">
+                                    <div class="container">
+                                        <div class="row">
 
-                            <div class="card border-0 shadow-sm rounded-lg p-4">
-                                <h6 class="font-weight-bold text-dark mb-3">Job Overview</h6>
-                                <ul class="list-unstyled small text-muted mb-0">
-                                    <li class="mb-3 d-flex justify-content-between align-items-center">
-                                        <span><i class="far fa-calendar-alt mr-2 width-20"></i> Posted date:</span>
-                                        <span class="text-dark font-weight-bold">
-                                            <%= new Date(job.PostedDate).toLocaleDateString('vi-VN') %>
-                                        </span>
-                                    </li>
-                                    <li class="mb-3 d-flex justify-content-between align-items-center">
-                                        <span><i class="fas fa-briefcase mr-2 width-20"></i> Type:</span>
-                                        <span class="text-dark font-weight-bold">
-                                            <%= job.EmploymentType %>
-                                        </span>
-                                    </li>
-                                    <li class="mb-3 d-flex justify-content-between align-items-center">
-                                        <span><i class="fas fa-dollar-sign mr-2 width-20"></i> Salary:</span>
-                                        <span class="text-success font-weight-bold">$<%= job.SalaryMin %> - $<%=
-                                                    job.SalaryMax %></span>
-                                    </li>
-                                </ul>
-                            </div>
+                                            <div class="col-lg-8 mb-4">
+                                                <div class="card border-0 shadow-sm rounded-lg p-4 mb-4">
+                                                    <h5 class="font-weight-bold text-dark mb-4 border-bottom pb-3">Job
+                                                        Description</h5>
 
-                            <div class="card border-0 shadow-sm rounded-lg p-4 mt-4">
-                                <h6 class="font-weight-bold text-dark mb-3">Skills Required</h6>
-                                <% if (job.Skills && job.Skills.length > 0) { %>
-                                    <div class="d-flex flex-wrap">
-                                        <% job.Skills.forEach(skill => { %>
-                                            <span class="tag-item mr-2 mb-2"><%= skill.SkillName %>
-                                                <% if (skill.ProficiencyLevel) { %>
-                                                    <small class="text-muted"> • <%= skill.ProficiencyLevel %></small>
-                                                <% } %>
-                                            </span>
-                                        <% }) %>
+                                                    <div class="text-muted content-text"
+                                                        style="line-height: 1.8; white-space: pre-line;">
+                                                        <%- job.JobDescription %>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-lg-4">
+
+                                                <div class="card border-0 shadow-sm rounded-lg p-4 mb-4">
+                                                    <h6 class="font-weight-bold text-dark mb-3">About the Company</h6>
+                                                    <div class="d-flex align-items-center mb-3">
+                                                        <img src="<%= job.LogoURL ? job.LogoURL : '/images/default-company.png' %>"
+                                                            width="50" class="rounded border p-1 mr-3">
+                                                        <div>
+                                                            <h6 class="font-weight-bold mb-0">
+                                                                <%= job.CompanyName %>
+                                                            </h6>
+                                                            <a href="/companies/<%= job.CompanyID %>"
+                                                                class="small text-primary font-weight-bold">View
+                                                                Profile</a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="card border-0 shadow-sm rounded-lg p-4">
+                                                    <h6 class="font-weight-bold text-dark mb-3">Job Overview</h6>
+                                                    <ul class="list-unstyled small text-muted mb-0">
+                                                        <li
+                                                            class="mb-3 d-flex justify-content-between align-items-center">
+                                                            <span><i class="far fa-calendar-alt mr-2 width-20"></i>
+                                                                Posted date:</span>
+                                                            <span class="text-dark font-weight-bold">
+                                                                <%= new Date(job.PostedDate).toLocaleDateString('vi-VN')
+                                                                    %>
+                                                            </span>
+                                                        </li>
+                                                        <li
+                                                            class="mb-3 d-flex justify-content-between align-items-center">
+                                                            <span><i class="fas fa-briefcase mr-2 width-20"></i>
+                                                                Type:</span>
+                                                            <span class="text-dark font-weight-bold">
+                                                                <%= job.EmploymentType %>
+                                                            </span>
+                                                        </li>
+                                                        <li
+                                                            class="mb-3 d-flex justify-content-between align-items-center">
+                                                            <span><i class="fas fa-dollar-sign mr-2 width-20"></i>
+                                                                Salary:</span>
+                                                            <span class="text-success font-weight-bold">$<%=
+                                                                    job.SalaryMin %> - $<%= job.SalaryMax %></span>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+
+                                                <div class="card border-0 shadow-sm rounded-lg p-4 mt-4">
+                                                    <h6 class="font-weight-bold text-dark mb-3">Skills Required</h6>
+                                                    <% if (job.Skills && job.Skills.length> 0) { %>
+                                                        <div class="d-flex flex-wrap">
+                                                            <% job.Skills.forEach(skill=> { %>
+                                                                <span class="tag-item mr-2 mb-2">
+                                                                    <%= skill.SkillName %>
+                                                                        <% if (skill.ProficiencyLevel) { %>
+                                                                            <small class="text-muted"> • <%=
+                                                                                    skill.ProficiencyLevel %></small>
+                                                                            <% } %>
+                                                                </span>
+                                                                <% }) %>
+                                                        </div>
+                                                        <% } else { %>
+                                                            <p class="small text-muted mb-0">No specific skills listed
+                                                                for this job.</p>
+                                                            <% } %>
+                                                </div>
+
+                                            </div>
+                                        </div>
                                     </div>
-                                <% } else { %>
-                                    <p class="small text-muted mb-0">No specific skills listed for this job.</p>
-                                <% } %>
-                            </div>
+                                </section>
 
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <%- include('../partials/footer') %>
-        </div>
+                                <%- include('../partials/footer') %>
+            </div>
     </body>
 
     <script>
