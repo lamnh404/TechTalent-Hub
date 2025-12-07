@@ -648,7 +648,7 @@ GO
 
 -- Procedure: Get application statistics by company
 
-DROP PROCEDURE IF EXISTS [dbo.sp_GetApplicationStatisticsByCompany];
+DROP PROCEDURE IF EXISTS [dbo].[sp_GetApplicationStatisticsByCompany];
 GO
 
 CREATE PROCEDURE dbo.sp_GetApplicationStatisticsByCompany(
@@ -681,32 +681,72 @@ BEGIN
             c.[CompanyName],
             c.[Industry],
             c.[CompanySize],
-            COUNT(DISTINCT j.[JobID]) AS TotalJobPosted,
+
+            COUNT(DISTINCT CASE WHEN a.[ApplicationID] IS NOT NULL THEN j.[JobID] END) AS TotalJobWithApplications,
+
             COUNT(a.[ApplicationID]) AS TotalApplications,
+
             COUNT(CASE WHEN a.[ApplicationStatus] = N'Submitted' THEN 1 END) AS SubmittedCount,
             COUNT(CASE WHEN a.[ApplicationStatus] = N'UnderReview' THEN 1 END) AS UnderReviewCount,
+            COUNT(CASE WHEN a.[ApplicationStatus] = N'Shortlisted' THEN 1 END) AS ShortlistedCount,
             COUNT(CASE WHEN a.[ApplicationStatus] = N'Interview' THEN 1 END) AS InterviewCount,
             COUNT(CASE WHEN a.[ApplicationStatus] = N'Offered' THEN 1 END) AS OfferedCount,
             COUNT(CASE WHEN a.[ApplicationStatus] = N'Rejected' THEN 1 END) AS RejectedCount,
-            ROUND(AVG(CASE 
-                WHEN a.[ApplicationStatus] = N'Offered' THEN 100.0
-                WHEN a.[ApplicationStatus] = N'Interview' THEN 75.0
-                WHEN a.[ApplicationStatus] = N'UnderReview' THEN 50.0
-                WHEN a.[ApplicationStatus] = N'Submitted' THEN 25.0
-                ELSE 0.0
-            END), 2) AS AvgApplicationProgress,
+            COUNT(CASE WHEN a.[ApplicationStatus] = N'Withdrawn' THEN 1 END) AS WithdrawnCount,
+
+            CASE 
+                WHEN COUNT(a.[ApplicationID]) > 0 
+                THEN ROUND(CAST(COUNT(CASE WHEN a.[ApplicationStatus] = N'Interview' THEN 1 END) AS FLOAT) / COUNT(a.[ApplicationID]) * 100, 2)
+                ELSE 0 
+            END AS InterviewRate,
+            CASE 
+                WHEN COUNT(a.[ApplicationID]) > 0 
+                THEN ROUND(CAST(COUNT(CASE WHEN a.[ApplicationStatus] = N'Offered' THEN 1 END) AS FLOAT) / COUNT(a.[ApplicationID]) * 100, 2)
+                ELSE 0 
+            END AS OfferRate,
+            CASE 
+                WHEN COUNT(a.[ApplicationID]) > 0 
+                THEN ROUND(CAST(COUNT(CASE WHEN a.[ApplicationStatus] = N'Rejected' THEN 1 END) AS FLOAT) / COUNT(a.[ApplicationID]) * 100, 2)
+                ELSE 0 
+            END AS RejectionRate,
+            -- ✅ THÊM: Average time to first response (days)
+            AVG(CASE 
+                WHEN a.[LastUpdated] > a.[ApplicationDate] 
+                THEN DATEDIFF(DAY, a.[ApplicationDate], a.[LastUpdated])
+                ELSE NULL 
+            END) AS AvgResponseTimeDays,
+
             dbo.fn_GetCompanyAverageRating(c.[CompanyID]) AS CompanyRating
         FROM [Company] c 
         INNER JOIN [Job] j ON c.[CompanyID] = j.[CompanyID]
-        LEFT JOIN [Application] a ON j.[JobID] = a.[JobID]
-                 AND a.[ApplicationDate] BETWEEN @p_StartDate AND @p_EndDate
+
+        INNER JOIN [Application] a ON j.[JobID] = a.[JobID]
+            AND a.[ApplicationDate] BETWEEN @p_StartDate AND @p_EndDate
         WHERE c.[VerificationStatus] = N'ACCEPTED'
         GROUP BY c.[CompanyID], c.[CompanyName], c.[Industry], c.[CompanySize]
     )
-    SELECT * 
+    SELECT 
+        CompanyID,
+        CompanyName,
+        Industry,
+        CompanySize,
+        TotalJobWithApplications,
+        TotalApplications,
+        SubmittedCount,
+        UnderReviewCount,
+        ShortlistedCount,
+        InterviewCount,
+        OfferedCount,
+        RejectedCount,
+        WithdrawnCount,
+        InterviewRate,
+        OfferRate,
+        RejectionRate,
+        AvgResponseTimeDays,
+        CompanyRating
     FROM CompanyStats
-    WHERE TotalApplications > 0
-    ORDER BY TotalApplications DESC, CompanyRating DESC;
+    WHERE TotalApplications > 0  -- ✅ Bây giờ điều kiện này hợp lý
+    ORDER BY TotalApplications DESC, OfferRate DESC, CompanyRating DESC;
 END
 GO
 
