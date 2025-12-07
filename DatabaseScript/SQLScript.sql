@@ -714,6 +714,7 @@ GO
 -- TRIGGERS
 -- =============================================
 
+-- Trigger: Generate UserID on User insert
 
 DROP TRIGGER IF EXISTS [trg_User_BeforeInsert];
 GO
@@ -834,6 +835,11 @@ GO
 
 
 -- Trigger: Validate FoundedYear on Company insert
+
+DROP TRIGGER IF EXISTS [trg_Company_BeforeInsert];
+
+GO
+
 CREATE TRIGGER [trg_Company_BeforeInsert]
 ON [Company]
 AFTER INSERT
@@ -1001,6 +1007,7 @@ GO
 
 DROP TRIGGER IF EXISTS [trg_JobSeeker_BeforeInsert];
 GO
+
 CREATE TRIGGER [trg_JobSeeker_BeforeInsert]
 ON [JobSeeker]
 AFTER INSERT
