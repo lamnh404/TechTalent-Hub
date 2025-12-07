@@ -124,7 +124,7 @@ const getCompanyReviews = async (companyId, limit = 20) => {
         const pool = GET_SQL_POOL()
         const result = await pool.request()
             .input('companyId', companyId)
-            .input('limit', sql.Int, limit)
+            .input('limit', limit)
             .query(`
                 SELECT TOP (@limit) R.ReviewID, R.ReviewTitle, R.ReviewText, R.Rating, R.ReviewDate, R.IsAnonymous,
                        JS.FirstName, JS.LastName, JS.CVFileURL, U.Email
@@ -153,11 +153,11 @@ const getCompanies = async (search = '', page = 1, limit = 20) => {
         const pool = GET_SQL_POOL()
         const offset = (page - 1) * limit
         const request = pool.request()
-            .input('limit', sql.Int, limit)
-            .input('offset', sql.Int, offset)
+            .input('limit', limit)
+            .input('offset', offset)
         let where = ''
         if (search && search.trim().length > 0) {
-            request.input('search', sql.NVarChar, `%${search}%`)
+            request.input('search', `%${search}%`)
             where = "WHERE CompanyName LIKE @search OR Industry LIKE @search"
         }
         const result = await request.query(`
@@ -178,16 +178,13 @@ const getApplicationStatisticsByCompany = async (companyId, startDate = null, en
     try {
         const pool = GET_SQL_POOL()
         const request = pool.request()
-        // use proper SQL types; accept null to let proc use defaults
-        request.input('p_StartDate', sql.DateTime, startDate || null)
-        request.input('p_EndDate', sql.DateTime, endDate || null)
+        request.input('p_StartDate', startDate || null)
+        request.input('p_EndDate', endDate || null)
 
         const result = await request.execute('dbo.sp_GetApplicationStatisticsByCompany')
 
         const rows = result.recordset || []
-        // stored proc returns aggregated rows for companies with applications in range
         const match = rows.find(r => String(r.CompanyID) === String(companyId))
-        // if no row found, return null to indicate no applications in the range
         return match || null
     } catch (error) {
         throw new ApiError(StatusCodes.INTERNAL_SERVER_ERROR, error.message)
@@ -198,9 +195,9 @@ export const companyModel = {
     getCompanyProfile,
     updateCompanyProfile,
     getDashboardStats,
-    getRecentJobs
-    ,getApplicationStatisticsByCompany
-    ,getCompanies
-    ,addCompanyReview
-    ,getCompanyReviews
+    getRecentJobs,
+    getApplicationStatisticsByCompany,
+    getCompanies,
+    addCompanyReview,
+    getCompanyReviews
 }

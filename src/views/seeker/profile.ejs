@@ -25,10 +25,12 @@
                                         <div class="col-md-6 mb-3">
                                             <label class="font-weight-bold small text-dark">First Name</label>
                                             <input type="text" class="form-control-modern" name="FirstName" value="<%= seeker.FirstName %>">
+                                            <small class="text-danger required-error d-none mt-1">First name is required</small>
                                         </div>
                                         <div class="col-md-6 mb-3">
                                             <label class="font-weight-bold small text-dark">Last Name</label>
                                             <input type="text" class="form-control-modern" name="LastName" value="<%= seeker.LastName %>">
+                                            <small class="text-danger required-error d-none mt-1">Last name is required</small>
                                         </div>
                                     </div>
                                     <div class="row">
@@ -39,6 +41,8 @@
                                         <div class="col-md-6 mb-3">
                                             <label class="font-weight-bold small text-dark">Phone</label>
                                             <input type="tel" class="form-control-modern" name="PhoneNumber" value="<%= seeker.PhoneNumber %>">
+                                            <small class="text-danger required-error d-none mt-1">Phone number is required</small>
+                                            <small class="text-danger phone-invalid-error d-none mt-1">Invalid phone number (10-11 digits)</small>
                                         </div>
                                     </div>
                                     <div class="row">
@@ -55,6 +59,8 @@
                                         <div class="col-md-6 mb-3">
                                             <label class="font-weight-bold small text-dark">Date of Birth</label>
                                             <input type="date" class="form-control-modern" name="DateOfBirth" value="<% if (seeker.DateOfBirth) { const d = new Date(seeker.DateOfBirth); const yyyy = d.getFullYear(); const mm = String(d.getMonth()+1).padStart(2,'0'); const dd = String(d.getDate()).padStart(2,'0'); %><%= `${yyyy}-${mm}-${dd}` %><% } %>">
+                                            <small class="text-danger required-error d-none mt-1">Date of birth is required</small>
+                                            <small class="text-danger dob-invalid-error d-none mt-1">Invalid date (must be at least 15 years old)</small>
                                         </div>
                                     </div>
                                     <div class="form-group mb-3">
@@ -162,6 +168,78 @@
     <%- include('../partials/footer') %>
 
     <script>
+        // Client-side validation for seeker profile form
+        (function() {
+            const profileForm = document.getElementById('profileForm');
+            if (!profileForm) return;
+
+            const firstName = profileForm.querySelector('input[name="FirstName"]');
+            const lastName = profileForm.querySelector('input[name="LastName"]');
+            const phone = profileForm.querySelector('input[name="PhoneNumber"]');
+            const dob = profileForm.querySelector('input[name="DateOfBirth"]');
+
+            const phoneRegex = /^(0|\+84)\d{9,10}$/;
+
+            function show(el) { if (el) el.classList.remove('d-none'); }
+            function hide(el) { if (el) el.classList.add('d-none'); }
+
+            function validateProfile() {
+                let ok = true;
+
+                // First name
+                const fnMsg = firstName ? firstName.parentElement.querySelector('.required-error') : null;
+                if (!firstName || !firstName.value.trim()) { show(fnMsg); firstName && firstName.classList.add('is-invalid'); ok = false; } else { hide(fnMsg); firstName && firstName.classList.remove('is-invalid'); }
+
+                // Last name
+                const lnMsg = lastName ? lastName.parentElement.querySelector('.required-error') : null;
+                if (!lastName || !lastName.value.trim()) { show(lnMsg); lastName && lastName.classList.add('is-invalid'); ok = false; } else { hide(lnMsg); lastName && lastName.classList.remove('is-invalid'); }
+
+                // Phone
+                const phoneReq = phone ? phone.parentElement.querySelector('.required-error') : null;
+                const phoneInvalid = phone ? phone.parentElement.querySelector('.phone-invalid-error') : null;
+                if (!phone || !phone.value.trim()) { show(phoneReq); hide(phoneInvalid); phone && phone.classList.add('is-invalid'); ok = false; }
+                else {
+                    hide(phoneReq);
+                    if (!phoneRegex.test(phone.value.trim())) { show(phoneInvalid); phone.classList.add('is-invalid'); ok = false; } else { hide(phoneInvalid); phone.classList.remove('is-invalid'); }
+                }
+
+                // DOB
+                const dobReq = dob ? dob.parentElement.querySelector('.required-error') : null;
+                const dobInvalid = dob ? dob.parentElement.querySelector('.dob-invalid-error') : null;
+                if (!dob || !dob.value) { show(dobReq); hide(dobInvalid); dob && dob.classList.add('is-invalid'); ok = false; }
+                else {
+                    hide(dobReq);
+                    const d = new Date(dob.value);
+                    const today = new Date();
+                    let age = today.getFullYear() - d.getFullYear();
+                    const m = today.getMonth() - d.getMonth();
+                    if (m < 0 || (m === 0 && today.getDate() < d.getDate())) age--;
+                    if (isNaN(d.getTime()) || age < 15) { show(dobInvalid); dob.classList.add('is-invalid'); ok = false; } else { hide(dobInvalid); dob.classList.remove('is-invalid'); }
+                }
+
+                return ok;
+            }
+
+            // Clear field-level errors on input/change
+            [firstName, lastName, phone, dob].forEach(inp => {
+                if (!inp) return;
+                inp.addEventListener('input', () => {
+                    const req = inp.parentElement.querySelector('.required-error'); if (req) hide(req);
+                    if (inp.name === 'PhoneNumber') { const inv = inp.parentElement.querySelector('.phone-invalid-error'); if (inv) hide(inv); }
+                    if (inp.name === 'DateOfBirth') { const inv = inp.parentElement.querySelector('.dob-invalid-error'); if (inv) hide(inv); }
+                    inp.classList.remove('is-invalid');
+                });
+            });
+
+            profileForm.addEventListener('submit', function(e) {
+                if (!validateProfile()) {
+                    e.preventDefault();
+                    const firstErr = profileForm.querySelector('.is-invalid') || profileForm.querySelector('.required-error:not(.d-none)');
+                    if (firstErr) firstErr.focus();
+                }
+            });
+        })();
+
         // 1. Lấy dữ liệu từ Mock Data hoặc từ Server (thông qua value của input ẩn)
         let mySkills = [];
         try {

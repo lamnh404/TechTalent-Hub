@@ -50,10 +50,10 @@ const register = async (email, password, role) => {
 }
 
 const setupCompany = async (userData, profileData) => {
+    const {email, passwordHash, role} = userData
     try {
         const pool = GET_SQL_POOL()
 
-        const { email, passwordHash, role } = userData
         const { CompanyName, Industry, CompanySize, CompanyWebsite, FoundedYear, LogoURL, CompanyDescription, CompanyAddress } = profileData
 
         const userResult = await pool.request()
@@ -71,7 +71,6 @@ const setupCompany = async (userData, profileData) => {
 
         const userId = regUser.recordset[0].userId
 
-        // Insert into Company table
         await pool.request()
             .input('userId', userId)
             .input('companyName', CompanyName)
@@ -86,7 +85,6 @@ const setupCompany = async (userData, profileData) => {
                 VALUES (@userId, @companyName, @industry, @size, @website, @foundedYear, @logoUrl, @description, 'PENDING')
             `)
 
-        // Upsert into CompanyLocation table (avoid duplicate key errors)
         if (CompanyAddress) {
             await pool.request()
                 .input('companyId', userId)
@@ -106,7 +104,9 @@ const setupCompany = async (userData, profileData) => {
     } catch (error) {
         const pool = GET_SQL_POOL()
         try {
-            await pool.request().query('DELETE FROM [User] WHERE email = @email')
+            await pool.request()
+                .input('email', email)
+                .query('DELETE FROM [User] WHERE email = @email')
         }
         catch (error) {
             console.log(error)
@@ -116,10 +116,10 @@ const setupCompany = async (userData, profileData) => {
 }
 
 const setupSeeker = async (userData, profileData) => {
+    const {email, passwordHash, role} = userData
     try {
         const pool = GET_SQL_POOL()
 
-        const { email, passwordHash, role } = userData
         const { FirstName, LastName, PhoneNumber, Gender, DateOfBirth, title, ExperienceLevel, CurrentLocation, skills, CVFileURL, summary } = profileData
 
         const userResult = await pool.request()
@@ -163,7 +163,9 @@ const setupSeeker = async (userData, profileData) => {
     } catch (error) {
         const pool = GET_SQL_POOL()
         try {
-            await pool.request().query('DELETE FROM [User] WHERE email = @email')
+            await pool.request()
+                .input('email', email)
+                .query('DELETE FROM [User] WHERE email = @email')
         } catch (error) {
             console.log(error)
         }

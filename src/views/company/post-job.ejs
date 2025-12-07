@@ -87,7 +87,7 @@
                                                                 <i class="fas fa-dollar-sign input-icon"></i>
                                                                 <input type="number" class="form-control-modern"
                                                                     name="SalaryMin" placeholder="1000"
-                                                                    value="<%= job.SalaryMin %>">
+                                                                    value="<%= job.SalaryMin || '1000' %>">
                                                             </div>
                                                         </div>
                                                         <div class="col-md-3 mb-3">
@@ -97,7 +97,7 @@
                                                                 <i class="fas fa-dollar-sign input-icon"></i>
                                                                 <input type="number" class="form-control-modern"
                                                                     name="SalaryMax" placeholder="3000"
-                                                                    value="<%= job.SalaryMax %>">
+                                                                    value="<%= job.SalaryMax || '3000' %>">
                                                             </div>
                                                         </div>
                                                         <div class="col-md-3 mb-3">
@@ -107,7 +107,7 @@
                                                                 <i class="fas fa-medal input-icon"></i>
                                                                 <input type="number" class="form-control-modern"
                                                                     name="ExperienceRequired" placeholder="2" min="0"
-                                                                    value="<%= job.ExperienceRequired %>">
+                                                                    value="<%= job.ExperienceRequired || '2' %>">
                                                             </div>
                                                         </div>
                                                         <div class="col-md-3 mb-3">

@@ -58,7 +58,7 @@ const createApplication = async (applicationData) => {
         try {
             const time = dayjs().tz('Asia/Ho_Chi_Minh').format('YYYY-MM-DD HH:mm:ss')
             await pool.request()
-                .input('jobId', sql.Int, jobId)
+                .input('jobId', jobId)
                 .input('time', sql.DateTime, time)
                 .query(`
                     IF EXISTS (SELECT 1 FROM [JobMetrics] WHERE JobMetricID = @jobId)

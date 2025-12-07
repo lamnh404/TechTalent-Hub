@@ -1,6 +1,5 @@
 import { companyModel } from '~/models/companyModel/companyModel'
 import { jobModel } from '~/models/jobModel/jobModel'
-import { jobController } from '../jobController/jobController'
 
 const viewCompany = async (req, res, next) => {
     try {
@@ -64,7 +63,7 @@ const postReview = async (req, res, next) => {
     }
 }
 
-export const companyController = { 
+export const comviewController = { 
     viewCompany, 
     viewCompanies,
     postReview

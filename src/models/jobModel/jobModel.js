@@ -82,7 +82,24 @@ const createJob = async (jobData) => {
 
         return jobId
     } catch (error) {
-        throw new ApiError(StatusCodes.INTERNAL_SERVER_ERROR, error.message)
+        const raw = error && error.message ? error.message : String(error)
+        let friendly = 'Internal server error'
+
+        if (/CK_Job_Deadline|CHECK constraint.*Deadline|Deadline/.test(raw)) {
+            friendly = 'Invalid deadline: Deadline must be a date later than today.'
+        } else if (/CK_|CHECK constraint/.test(raw)) {
+            friendly = 'Invalid data: one of the fields failed validation.'
+        } else if (/UNIQUE KEY|UNIQUE constraint|Violation of UNIQUE KEY/.test(raw)) {
+            friendly = 'Duplicate value: a record with the same unique field already exists.'
+        } else if (/FOREIGN KEY constraint|REFERENCE constraint/.test(raw)) {
+            friendly = 'Invalid reference: related record not found.'
+        } else if (/Cannot insert the value NULL/i.test(raw)) {
+            friendly = 'Missing required field: please ensure all required fields are provided.'
+        } else {
+            friendly = raw
+        }
+
+        throw new ApiError(StatusCodes.INTERNAL_SERVER_ERROR, friendly)
     }
 }
 
@@ -118,6 +135,10 @@ const getJobById = async (jobId) => {
                     J.Location,
                     J.EmploymentType,
                     J.PostedDate,
+                    J.ExperienceRequired,
+                    J.ApplicationDeadline,
+                    J.OpeningCount,
+                    J.JobStatus,
                     C.CompanyName,
                     C.LogoURL AS LogoURL,
                     JM.ViewCount,
