@@ -1,5 +1,6 @@
 import sql from 'mssql';
 import { GET_SQL_POOL } from '~/config/SQLDatabase';
+import { toVietnamDate } from '~/utils/formatters.js';
 
 const searchJobs = async (keyword, page = 1, limit = 10, sort = 'newest', jobTitle, company, minSalary, employmentType) => {
         try {
@@ -84,7 +85,12 @@ const searchJobs = async (keyword, page = 1, limit = 10, sort = 'newest', jobTit
             `;
 
             const result = await request.query(query);
-            return result.recordset;
+            
+            // Convert dates to Vietnam timezone
+            return result.recordset.map(job => ({
+                ...job,
+                PostedDate: job.PostedDate ? toVietnamDate(job.PostedDate) : null
+            }));
         } catch (err) {
             throw err;
         }

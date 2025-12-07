@@ -4,6 +4,7 @@ import { StatusCodes } from 'http-status-codes'
 import dayjs from 'dayjs'
 import utc from 'dayjs/plugin/utc.js'
 import timezone from 'dayjs/plugin/timezone.js'
+import { toVietnamDate } from '~/utils/formatters.js'
 dayjs.extend(utc)
 dayjs.extend(timezone)
 import sql from 'mssql'
@@ -167,6 +168,14 @@ const getJobById = async (jobId) => {
             IsRequired: r.IsRequired
         }))
 
+        // Convert dates to Vietnam timezone
+        if (job.PostedDate) {
+            job.PostedDate = toVietnamDate(job.PostedDate)
+        }
+        if (job.ApplicationDeadline) {
+            job.ApplicationDeadline = toVietnamDate(job.ApplicationDeadline)
+        }
+
         return job
     } catch (error) {
         throw new ApiError(StatusCodes.INTERNAL_SERVER_ERROR, error.message)
@@ -197,7 +206,12 @@ const getLatestJobs = async (limit = 6) => {
                 FETCH NEXT @limit ROWS ONLY
             `)
 
-        return result.recordset
+        // Convert dates to Vietnam timezone
+        return result.recordset.map(job => ({
+            ...job,
+            PostedDate: job.PostedDate ? toVietnamDate(job.PostedDate) : null,
+            ApplicationDeadline: job.ApplicationDeadline ? toVietnamDate(job.ApplicationDeadline) : null
+        }))
     } catch (error) {
         throw new ApiError(StatusCodes.INTERNAL_SERVER_ERROR, error.message)
     }
@@ -261,8 +275,15 @@ const getJobsByCompanyId = async (companyId, page = 1, limit = 10, titleFilter =
             FETCH NEXT @limit ROWS ONLY
         `)
 
+        // Convert dates to Vietnam timezone
+        const jobs = result.recordset.map(job => ({
+            ...job,
+            PostedDate: job.PostedDate ? toVietnamDate(job.PostedDate) : null,
+            Deadline: job.Deadline ? toVietnamDate(job.Deadline) : null
+        }))
+
         return {
-            jobs: result.recordset,
+            jobs,
             currentPage: parseInt(page),
             totalPages,
             totalJobs

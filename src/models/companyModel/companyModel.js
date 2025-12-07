@@ -1,6 +1,7 @@
 import { GET_SQL_POOL } from '~/config/SQLDatabase.js'
 import { ApiError } from '~/utils/ApiError'
 import { StatusCodes } from 'http-status-codes'
+import { toVietnamDate } from '~/utils/formatters.js'
 import sql from 'mssql'
 
 const getCompanyProfile = async (companyId) => {
@@ -92,7 +93,12 @@ const getRecentJobs = async (companyId) => {
                 WHERE J.CompanyID = @companyId
                 ORDER BY J.PostedDate DESC
             `)
-        return result.recordset
+        
+        // Convert dates to Vietnam timezone
+        return result.recordset.map(job => ({
+            ...job,
+            PostedDate: job.PostedDate ? toVietnamDate(job.PostedDate) : null
+        }))
     } catch (error) {
         throw new ApiError(StatusCodes.INTERNAL_SERVER_ERROR, error.message)
     }
