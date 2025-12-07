@@ -1097,7 +1097,7 @@ PRINT 'Database TechTalentHub created successfully!';
 PRINT '========================================';
 PRINT '';
 PRINT 'Summary:';
-PRINT '  - 18 Tables created';
+PRINT '  - 19 Tables created';
 PRINT '  - 2 Functions created';
 PRINT '  - 3 Stored Procedures created';
 PRINT '  - 13 Triggers created';
