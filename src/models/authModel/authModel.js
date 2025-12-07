@@ -50,11 +50,11 @@ const register = async (email, password, role) => {
 }
 
 const setupCompany = async (userData, profileData) => {
+    const {email, passwordHash, role} = userData
     try {
         const pool = GET_SQL_POOL()
 
-        const { email, passwordHash, role } = userData
-        const { CompanyName, Industry, CompanySize, CompanyWebsite, FounderYear, LogoURL, CompanyDescription, CompanyAddress } = profileData
+        const { CompanyName, Industry, CompanySize, CompanyWebsite, FoundedYear, LogoURL, CompanyDescription, CompanyAddress } = profileData
 
         const userResult = await pool.request()
             .input('email', email)
@@ -71,29 +71,32 @@ const setupCompany = async (userData, profileData) => {
 
         const userId = regUser.recordset[0].userId
 
-        // Insert into Company table
         await pool.request()
             .input('userId', userId)
             .input('companyName', CompanyName)
             .input('industry', Industry)
             .input('size', CompanySize)
             .input('website', CompanyWebsite)
-            .input('foundedYear', FounderYear)
+            .input('foundedYear', FoundedYear)
             .input('logoUrl', LogoURL)
             .input('description', CompanyDescription || '')
             .query(`
-                INSERT INTO [Company] (CompanyID, CompanyName, Industry, CompanySize, CompanyWebsite, FounderYear, LogoURL, CompanyDescription, VerificationStatus)
+                INSERT INTO [Company] (CompanyID, CompanyName, Industry, CompanySize, CompanyWebsite, FoundedYear, LogoURL, CompanyDescription, VerificationStatus)
                 VALUES (@userId, @companyName, @industry, @size, @website, @foundedYear, @logoUrl, @description, 'PENDING')
             `)
 
-        // Insert into CompanyLocation table
         if (CompanyAddress) {
             await pool.request()
                 .input('companyId', userId)
                 .input('address', CompanyAddress)
                 .query(`
-                    INSERT INTO [CompanyLocation] (CompanyID, Address)
-                    VALUES (@companyId, @address)
+                    MERGE INTO [CompanyLocation] AS Target
+                    USING (VALUES (@companyId, @address)) AS Source (CompanyID, Address)
+                    ON Target.CompanyID = Source.CompanyID
+                    WHEN MATCHED THEN
+                        UPDATE SET Address = Source.Address
+                    WHEN NOT MATCHED THEN
+                        INSERT (CompanyID, Address) VALUES (Source.CompanyID, Source.Address);
                 `)
         }
 
@@ -101,7 +104,9 @@ const setupCompany = async (userData, profileData) => {
     } catch (error) {
         const pool = GET_SQL_POOL()
         try {
-            await pool.request().query('DELETE FROM [User] WHERE email = @email')
+            await pool.request()
+                .input('email', email)
+                .query('DELETE FROM [User] WHERE email = @email')
         }
         catch (error) {
             console.log(error)
@@ -111,12 +116,10 @@ const setupCompany = async (userData, profileData) => {
 }
 
 const setupSeeker = async (userData, profileData) => {
+    const {email, passwordHash, role} = userData
     try {
         const pool = GET_SQL_POOL()
 
-        const { email, passwordHash, role } = userData
-        // Map form fields to DB columns
-        // Note: 'title' in form -> ProfessionalTitle, 'skills' -> Skills
         const { FirstName, LastName, PhoneNumber, Gender, DateOfBirth, title, ExperienceLevel, CurrentLocation, skills, CVFileURL, summary } = profileData
 
         const userResult = await pool.request()
@@ -160,7 +163,9 @@ const setupSeeker = async (userData, profileData) => {
     } catch (error) {
         const pool = GET_SQL_POOL()
         try {
-            await pool.request().query('DELETE FROM [User] WHERE email = @email')
+            await pool.request()
+                .input('email', email)
+                .query('DELETE FROM [User] WHERE email = @email')
         } catch (error) {
             console.log(error)
         }
@@ -175,7 +180,6 @@ export const authModel = {
     setupSeeker
 }
 
-// Change password helper
 authModel.changePassword = async (userId, currentPassword, newPassword) => {
     try {
         const pool = GET_SQL_POOL()

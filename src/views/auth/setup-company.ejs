@@ -78,7 +78,7 @@
                                                 <label class="font-weight-bold small text-dark">Founded Year</label>
                                                 <div class="input-wrapper">
                                                     <i class="far fa-calendar-alt input-icon"></i>
-                                                    <input type="number" class="form-control-modern" name="FounderYear"
+                                                    <input type="number" class="form-control-modern" name="FoundedYear"
                                                         placeholder="2015">
                                                 </div>
                                             </div>
@@ -122,9 +122,9 @@
                 </div>
             </div>
 
-            <%- include('../partials/footer') %>
+            
         </section>
-
+<%- include('../partials/footer') %>
         <script>
             const form = document.getElementById('companyForm');
             const submitBtn = form.querySelector('button[type="submit"]');
@@ -189,4 +189,3 @@
             // Chạy lần đầu để khóa nút
             checkFormValidity();
         </script>
-    </body>

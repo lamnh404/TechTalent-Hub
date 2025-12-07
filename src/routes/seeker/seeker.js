@@ -10,7 +10,8 @@ router.post('/profile/update', seekerController.handleUpdateProfile)
 router.post('/profile/addskill', seekerController.addSkill)
 router.post('/profile/delete-skill', seekerController.deleteSkill)
 router.get('/profile/myskills', seekerController.getSkills)
-// Settings routes moved to shared settings router
+
+router.get('/suggestions', seekerController.getSuggestions)
 
 
 export const seekerRouter = router

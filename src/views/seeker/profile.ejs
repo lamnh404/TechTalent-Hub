@@ -1,55 +1,12 @@
-<% 
-    // 1. Mock Data: Thông tin Seeker (Chỉ dùng khi chưa có Backend gửi xuống)
-    if (typeof seeker === 'undefined') {
-        var seeker = {
-            FirstName: "Nguyen",
-            LastName: "Van A",
-            Email: "nguyenvana@gmail.com",
-            PhoneNumber: "0901234567",
-            ProfessionalTitle: "Senior Frontend Developer",
-            CurrentLocation: "Ho Chi Minh City",
-            ProfileSummary: "Experienced developer with 5+ years in React...",
-            // Quan trọng: Skill phải là Array để JS xử lý
-            Skills: [
-                { SkillID: 1, SkillName: "React", ProficiencyLevel: "Expert", YearOfExperience: 5 },
-                { SkillID: 2, SkillName: "Node.js", ProficiencyLevel: "Advanced", YearOfExperience: 3 }
-            ]
-        };
-    }
-
-    // 2. Mock Data: Danh sách Skill gợi ý
-    if (typeof availableSkills === 'undefined') {
-        var availableSkills = [
-            { SkillID: 1, SkillName: 'Java' }, { SkillID: 2, SkillName: 'Python' },
-            { SkillID: 3, SkillName: 'JavaScript' }, { SkillID: 4, SkillName: 'React' },
-            { SkillID: 5, SkillName: 'Node.js' }, { SkillID: 6, SkillName: 'SQL' },
-            { SkillID: 7, SkillName: 'AWS' }, { SkillID: 8, SkillName: 'Docker' }
-        ];
-    }
-%>
-
 <%- include('../partials/header', { title: 'My Profile' }) %>
 
 <body class="dashboard-page">
     <div class="dashboard-wrapper">
-        <%- include('../partials/dashboard-sidebar', { activePage: 'profile' }) %>
+        <%- include('../partials/navbar', { activePage: 'profile' }) %>
 
         <main class="main-content">
             <header class="dashboard-header">
                 <h5 class="mb-0 font-weight-bold text-dark">My Profile</h5>
-                <div class="d-flex align-items-center">
-                    <div class="dropdown">
-                        <a href="#" class="d-flex align-items-center text-decoration-none text-dark dropdown-toggle" data-toggle="dropdown">
-                            <img src="<%= (typeof user !== 'undefined' && user.avatarUrl) ? user.avatarUrl : '/images/default-avatar.png' %>" class="rounded-circle mr-2" width="35" height="35" style="object-fit: cover; border: 1px solid #dee2e6;">
-                            <span class="font-weight-bold small mr-1"><%= (typeof user !== 'undefined' && user.email) ? user.email.split('@')[0] : 'Seeker' %></span>
-                        </a>
-                        <div class="dropdown-menu dropdown-menu-right border-0 shadow-lg">
-                            <a class="dropdown-item" href="/">Back Home</a>
-                            <div class="dropdown-divider"></div>
-                            <a class="dropdown-item text-danger" href="/auth/logout">Logout</a>
-                        </div>
-                    </div>
-                </div>
             </header>
 
             <div class="p-4">
@@ -102,6 +59,28 @@
                                         <label class="font-weight-bold small text-dark">Summary</label>
                                         <textarea class="form-control-modern h-auto py-3" name="ProfileSummary" rows="3"><%= seeker.ProfileSummary %></textarea>
                                     </div>
+
+                                    <hr class="my-4">
+
+                                    <div class="d-flex justify-content-between align-items-center mb-4">
+                                        <h5 class="font-weight-bold text-primary mb-0">Professional Skills</h5>
+                                        <div class="d-flex align-items-center">
+                                            <div class="mr-3 text-right d-none d-sm-block">
+                                                <small class="text-muted">Total Skill Score</small>
+                                                <div><strong id="totalSkillScore"><%= typeof totalSkillScore !== 'undefined' ? totalSkillScore : 0 %></strong></div>
+                                            </div>
+                                            <button type="button" class="btn btn-sm btn-outline-primary rounded-pill font-weight-bold" data-toggle="modal" data-target="#addSkillModal">
+                                                <i class="fas fa-plus mr-1"></i> Add Skill
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <div id="skillsContainer" class="d-flex flex-wrap gap-2 mb-3">
+                                    </div>
+                                
+                                    <div id="noSkillsMsg" class="text-center text-muted py-3" style="display: none;">
+                                        <small>No skills added yet.</small>
+                                    </div>
                                     
                                     <input type="hidden" name="Skills" id="skillsInput" value='<%= JSON.stringify(seeker.Skills) %>'>
                                     
@@ -111,31 +90,6 @@
                                         </button>
                                     </div>
                                 </form>
-                            </div>
-                        </div>
-
-                        <div class="card border-0 shadow-sm rounded-lg mb-4">
-                            <div class="card-body p-5">
-                                <div class="d-flex justify-content-between align-items-center mb-4">
-                                    <h5 class="font-weight-bold text-primary mb-0">Professional Skills</h5>
-                                    <div class="d-flex align-items-center">
-                                        <div class="mr-3 text-right d-none d-sm-block">
-                                            <small class="text-muted">Total Skill Score</small>
-                                            <div><strong id="totalSkillScore"><%= typeof totalSkillScore !== 'undefined' ? totalSkillScore : 0 %></strong></div>
-                                        </div>
-                                        <button class="btn btn-sm btn-outline-primary rounded-pill font-weight-bold" data-toggle="modal" data-target="#addSkillModal">
-                                            <i class="fas fa-plus mr-1"></i> Add Skill
-                                        </button>
-                                    </div>
-                                </div>
-                                <hr class="mb-4">
-
-                                <div id="skillsContainer" class="d-flex flex-wrap gap-2">
-                                    </div>
-                                
-                                <div id="noSkillsMsg" class="text-center text-muted py-3" style="display: none;">
-                                    <small>No skills added yet.</small>
-                                </div>
                             </div>
                         </div>
 
@@ -290,14 +244,13 @@
                 YearOfExperience: parseFloat(exp) || 0
             });
 
-            renderSkills(); // Vẽ lại giao diện
+            renderSkills(); 
             
-            // Đóng modal và reset form
+
             document.getElementById('skillForm').reset();
             $('#addSkillModal').modal('hide');
         });
 
-        // 4. Hàm xóa skill (gắn vào window để gọi từ HTML)
         window.removeSkill = function(index) {
             if (confirm('Remove this skill?')) {
                 mySkills.splice(index, 1);
@@ -305,7 +258,6 @@
             }
         };
 
-        // Chạy lần đầu
         renderSkills();
     </script>
 </body>

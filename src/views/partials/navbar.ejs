@@ -19,14 +19,15 @@
 
                     <% if (!currentUser) { %>
                         <li class="nav-item">
-                            <a class="nav-link <%= (activePage === 'home') ? 'active' : '' %>" href="/">Home</a>
+                            <a class="nav-link <%= (typeof activePage !== 'undefined' && activePage === 'home') ? 'active' : '' %>"
+                                href="/">Home</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link <%= (activePage === 'jobs') ? 'active' : '' %>" href="/jobs">Find
-                                Jobs</a>
+                            <a class="nav-link <%= (typeof activePage !== 'undefined' && activePage === 'jobs') ? 'active' : '' %>"
+                                href="/jobs">Find Jobs</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link <%= (activePage === 'companies') ? 'active' : '' %>"
+                            <a class="nav-link <%= (typeof activePage !== 'undefined' && activePage === 'companies') ? 'active' : '' %>"
                                 href="/companies">Companies</a>
                         </li>
                         <li class="nav-item ml-3">
@@ -35,35 +36,37 @@
                         <li class="nav-item ml-2">
                             <a class="btn btn-primary btn-sm px-4 rounded-pill shadow-sm" href="/register">Sign Up</a>
                         </li>
-                        <% } %>
+                        <% } else { %>
 
-                            <% if (currentUser && currentRole==='JobSeeker' ) { %>
+                            <% if (currentRole==='JobSeeker' ) { %>
                                 <li class="nav-item">
-                                    <a class="nav-link <%= (activePage === 'jobs') ? 'active' : '' %>" href="/jobs"><i
-                                            class="fas fa-search mr-1"></i> Find Jobs</a>
+                                    <a class="nav-link <%= (typeof activePage !== 'undefined' && activePage === 'jobs') ? 'active' : '' %>"
+                                        href="/jobs"><i class="fas fa-search mr-1"></i> Find Jobs</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link <%= (activePage === 'applications') ? 'active' : '' %>"
+                                    <a class="nav-link <%= (typeof activePage !== 'undefined' && activePage === 'applications') ? 'active' : '' %>"
                                         href="/seeker/applications"><i class="fas fa-file-alt mr-1"></i>
                                         Applications</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link <%= (activePage === 'settings') ? 'active' : '' %>" href="/settings"><i class="fas fa-cog mr-1"></i> Settings</a>
+                                    <a class="nav-link <%= (typeof activePage !== 'undefined' && activePage === 'suggestions') ? 'active' : '' %>"
+                                        href="/seeker/suggestions"><i class="fas fa-file-alt mr-1"></i>
+                                        Job Suggestions</a>
                                 </li>
                                 <% } %>
 
-                                    <% if (currentUser && currentRole==='Company' ) { %>
+                                    <% if (currentRole==='Company' ) { %>
                                         <li class="nav-item">
-                                            <a class="nav-link <%= (activePage === 'dashboard') ? 'active' : '' %>"
+                                            <a class="nav-link <%= (typeof activePage !== 'undefined' && activePage === 'dashboard') ? 'active' : '' %>"
                                                 href="/company/dashboard">Dashboard</a>
                                         </li>
                                         <li class="nav-item">
-                                            <a class="nav-link <%= (activePage === 'manage-jobs') ? 'active' : '' %>"
+                                            <a class="nav-link <%= (typeof activePage !== 'undefined' && activePage === 'manage-jobs') ? 'active' : '' %>"
                                                 href="/company/jobs">Manage Jobs</a>
                                         </li>
                                         <li class="nav-item">
-                                            <a class="nav-link <%= (activePage === 'find-candidates') ? 'active' : '' %>"
-                                                href="/company/candidates">Find Candidates</a>
+                                            <a class="nav-link <%= (typeof activePage !== 'undefined' && activePage === 'candidates') ? 'active' : '' %>"
+                                                href="/company/candidates">Candidates</a>
                                         </li>
                                         <li class="nav-item ml-2">
                                             <a class="btn btn-primary btn-sm px-3 shadow-sm"
@@ -73,78 +76,163 @@
                                         </li>
                                         <% } %>
 
-                                            <% if (currentUser && (currentRole==='Admin' || currentRole==='admin' )) {
-                                                %>
+                                            <% if (currentRole==='Admin' || currentRole==='admin' ) { %>
                                                 <li class="nav-item">
-                                                    <a class="nav-link" href="/admin/dashboard">Dashboard</a>
+                                                    <a class="nav-link <%= (typeof activePage !== 'undefined' && activePage === 'dashboard') ? 'active' : '' %>"
+                                                        href="/admin/dashboard">Dashboard</a>
                                                 </li>
                                                 <li class="nav-item">
-                                                    <a class="nav-link" href="/admin/users">User Management</a>
-                                                </li>
-                                                <li>
-                                                    <a href="/admin/jobs"
-                                                        class="menu-link <%= (activePage === 'admin-jobs') ? 'active' : '' %>">
-                                                        <i class="fas fa-briefcase"></i> Job Management
-                                                    </a>
+                                                    <a class="nav-link <%= (typeof activePage !== 'undefined' && activePage === 'users') ? 'active' : '' %>"
+                                                        href="/admin/users">Users</a>
                                                 </li>
                                                 <li class="nav-item">
-                                                    <a class="nav-link" href="/admin/settings">System</a>
+                                                    <a class="nav-link <%= (typeof activePage !== 'undefined' && activePage === 'admin-jobs') ? 'active' : '' %>"
+                                                        href="/admin/jobs">Jobs</a>
+                                                </li>
+                                                <li class="nav-item">
+                                                    <a class="nav-link <%= (typeof activePage !== 'undefined' && activePage === 'settings') ? 'active' : '' %>"
+                                                        href="/admin/settings">System</a>
                                                 </li>
                                                 <% } %>
 
-                                                    <% if (currentUser) { %>
-                                                        <li class="nav-item dropdown ml-3">
-                                                            <a class="nav-link dropdown-toggle d-flex align-items-center"
-                                                                href="#" id="userDropdown" role="button"
-                                                                data-toggle="dropdown">
-                                                                <img src="<%= userAvatar %>" alt="Avatar"
-                                                                    class="rounded-circle mr-2 shadow-sm" width="32"
-                                                                    height="32"
-                                                                    style="object-fit: cover; border: 2px solid #fff;">
-                                                                <span
-                                                                    class="font-weight-bold text-dark d-none d-lg-inline">
-                                                                    <%= displayName %>
-                                                                </span>
-                                                            </a>
+                                                    <li class="nav-item dropdown mx-3">
+                                                        <a class="nav-link position-relative text-dark" href="#"
+                                                            id="notiDropdown" role="button" data-toggle="dropdown"
+                                                            aria-haspopup="true" aria-expanded="false">
+                                                            <i class="far fa-bell" style="font-size: 1.2rem;"></i>
+                                                        </a>
+                                                        <div class="dropdown-menu dropdown-menu-right shadow-lg mt-2 animate__animated animate__fadeIn notification-menu"
+                                                            style="width: 360px; max-height: 460px; overflow-y: auto;"
+                                                            aria-labelledby="notiDropdown">
+
                                                             <div
-                                                                class="dropdown-menu dropdown-menu-right border-0 shadow-lg mt-2 animate__animated animate__fadeIn">
-                                                                <div
-                                                                    class="px-3 py-3 bg-light border-bottom mb-2 rounded-top">
-                                                                    <p
-                                                                        class="mb-0 text-muted small text-uppercase font-weight-bold">
-                                                                        <%= currentRole %>
-                                                                    </p>
-                                                                    <p class="mb-0 font-weight-bold text-truncate"
-                                                                        style="max-width: 200px;">
-                                                                        <%= currentUser.email %>
-                                                                    </p>
-                                                                </div>
-
-                                                                <% if (currentRole==='JobSeeker' ) { %>
-                                                                    <a class="dropdown-item" href="/seeker/profile"><i
-                                                                            class="far fa-id-card mr-2 text-muted"></i>
-                                                                        My Profile</a>
-                                                                    <% } else if (currentRole==='Company' ) { %>
-                                                                        <a class="dropdown-item"
-                                                                            href="/company/profile"><i
-                                                                                class="far fa-building mr-2 text-muted"></i>
-                                                                            Company Profile</a>
-                                                                        <% } %>
-
-                                                                            <a class="dropdown-item" href="/settings"><i
-                                                                                    class="fas fa-cog mr-2 text-muted"></i>
-                                                                                Settings</a>
-                                                                            <div class="dropdown-divider"></div>
-                                                                            <a class="dropdown-item text-danger font-weight-bold"
-                                                                                href="/auth/logout">
-                                                                                <i class="fas fa-sign-out-alt mr-2"></i>
-                                                                                Logout
-                                                                            </a>
+                                                                class="px-3 py-2 border-bottom d-flex align-items-center bg-light sticky-top">
+                                                                <h6
+                                                                    class="font-weight-bold mb-0 small text-uppercase text-muted">
+                                                                    Notifications</h6>
                                                             </div>
-                                                        </li>
-                                                        <% } %>
+
+                                                            <div id="notiList">
+                                                                <div class="text-center py-4 text-muted small">
+                                                                    <i
+                                                                        class="fas fa-spinner fa-spin mb-2"></i><br>Loading...
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </li>
+
+                                                    <li class="nav-item dropdown">
+                                                        <a class="nav-link dropdown-toggle d-flex align-items-center"
+                                                            href="#" id="userDropdown" role="button"
+                                                            data-toggle="dropdown">
+                                                            <img src="<%= userAvatar %>" alt="Avatar"
+                                                                class="rounded-circle mr-2 shadow-sm" width="32"
+                                                                height="32"
+                                                                style="object-fit: cover; border: 2px solid #fff;">
+                                                            <span class="font-weight-bold text-dark d-none d-lg-inline">
+                                                                <%= displayName %>
+                                                            </span>
+                                                        </a>
+                                                        <div
+                                                            class="dropdown-menu dropdown-menu-right border-0 shadow-lg mt-2 animate__animated animate__fadeIn">
+                                                            <div
+                                                                class="px-3 py-3 bg-light border-bottom mb-2 rounded-top">
+                                                                <p
+                                                                    class="mb-0 text-muted small text-uppercase font-weight-bold">
+                                                                    <%= currentRole %>
+                                                                </p>
+                                                                <p class="mb-0 font-weight-bold text-truncate"
+                                                                    style="max-width: 200px;">
+                                                                    <%= currentUser.email %>
+                                                                </p>
+                                                            </div>
+
+                                                            <% if (currentRole==='JobSeeker' ) { %>
+                                                                <a class="dropdown-item" href="/seeker/profile"><i
+                                                                        class="far fa-id-card mr-2 text-muted"></i> My
+                                                                    Profile</a>
+                                                                <% } else if (currentRole==='Company' ) { %>
+                                                                    <a class="dropdown-item" href="/company/profile"><i
+                                                                            class="far fa-building mr-2 text-muted"></i>
+                                                                        Company Profile</a>
+                                                                    <% } %>
+
+                                                                        <a class="dropdown-item" href="/settings"><i
+                                                                                class="fas fa-cog mr-2 text-muted"></i>
+                                                                            Settings</a>
+                                                                        <div class="dropdown-divider"></div>
+                                                                        <a class="dropdown-item text-danger font-weight-bold"
+                                                                            href="/auth/logout"><i
+                                                                                class="fas fa-sign-out-alt mr-2"></i>
+                                                                            Logout</a>
+                                                        </div>
+                                                    </li>
+                                                    <% } %>
 
                 </ul>
             </div>
         </div>
     </nav>
+
+    <% if (currentUser) { %>
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                const notiList = document.getElementById('notiList');
+
+                async function fetchNotifications() {
+                    try {
+                        const response = await fetch('/api/notifications');
+                        if (!response.ok) {
+                            notiList.innerHTML = '<div class="text-center py-4 text-muted small">You have no notifications.</div>';
+                            return;
+                        }
+                        const data = await response.json();
+                        const notifications = data.notifications || [];
+                        renderNotifications(notifications);
+                    } catch (error) {
+                        notiList.innerHTML = '<div class="text-center py-4 text-muted small">You have no notifications.</div>';
+                    }
+                }
+
+                function renderNotifications(notifications) {
+                    if (!notifications || notifications.length === 0) {
+                        notiList.innerHTML = '<div class="text-center py-4 text-muted small">You have no new notifications.</div>';
+                        notiBadge.style.display = 'none';
+                        notiCountText.innerText = '0 new';
+                        return;
+                    }
+
+                    let html = '';
+                    notifications.forEach(n => {
+                        const date = new Date(n.SendDate).toLocaleDateString('vi-VN');
+                        let icon = 'fa-info-circle text-info';
+                        if (n.NotificationType === 'Application') icon = 'fa-briefcase text-primary';
+                        else if (n.NotificationType === 'System') icon = 'fa-cog text-secondary';
+                        else if (n.NotificationType === 'Rejection') icon = 'fa-times-circle text-danger';
+                        else if (n.NotificationType === 'Interview') icon = 'fa-calendar-check text-success';
+                        const bgClass = n.ReadStatus ? '' : 'notification-unread';
+                        html += `<div class="notification-item ${bgClass}" id="noti-${n.NotificationID}"><div class="notification-icon-wrapper"><i class="fas ${icon}"></i></div><div class="notification-content"><p class="mb-1 small" style="line-height: 1.4;">${n.NotificationContent}</p><div class="notification-time">${date}</div></div><button class="btn p-0 notification-delete-btn" onclick="deleteNotification(event, ${n.NotificationID})"><i class="fas fa-times"></i></button></div>`;
+                    });
+                    notiList.innerHTML = html;
+                }
+
+                window.deleteNotification = function (event, id) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    if (!confirm('Delete this notification?')) return;
+                    const el = document.getElementById(`noti-${id}`);
+                    if (el) {
+                        el.style.opacity = '0';
+                        setTimeout(() => {
+                            el.remove();
+                            if (notiList.children.length === 0) {
+                                notiList.innerHTML = '<div class="text-center py-4 text-muted small">You have no notifications.</div>';
+                            }
+                        }, 300);
+                    }
+                }
+
+                fetchNotifications();
+            });
+        </script>
+        <% } %>

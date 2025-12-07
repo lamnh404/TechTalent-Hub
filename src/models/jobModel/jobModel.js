@@ -12,7 +12,7 @@ const createJob = async (jobData) => {
     const pool = GET_SQL_POOL()
     try {
         const { jobTitle, jobDescription, salaryMin, salaryMax, location, employmentType, companyId, experienceRequired, applicationDeadline, openingCount, skills } = jobData
-        const time = dayjs().tz('Asia/Ho_Chi_Minh').format('YYYY-MM-DD HH:mm:ss')
+        const time = dayjs().utc().format('YYYY-MM-DD HH:mm:ss')
         const jobResult = await pool.request()
             .input('jobTitle', jobTitle)
             .input('jobDescription', jobDescription)
@@ -30,7 +30,6 @@ const createJob = async (jobData) => {
                 INSERT INTO [Job] ([CompanyID], [JobTitle], [JobDescription], [EmploymentType], [ExperienceRequired], [SalaryMin], [SalaryMax], [Location], [OpeningCount], [ApplicationDeadline], [JobStatus], [PostedDate])
                 VALUES (@companyId, @jobTitle, @jobDescription, @employmentType, @experienceRequired, @salaryMin, @salaryMax, @location, @openingCount, @applicationDeadline, @jobStatus, @postedDate);
             `)
-        console.log(jobResult)
 
         const jobId = jobResult.recordset[0].JobID
         try {
@@ -54,14 +53,14 @@ const createJob = async (jobData) => {
 
                 let skillId
                 const skillCheck = await pool.request()
-                    .input('SkillName', sql.NVarChar, skillName)
+                    .input('SkillName', skillName)
                     .query(`SELECT SkillID FROM [Skill] WHERE SkillName = @SkillName`)
 
                 if (skillCheck.recordset.length > 0) {
                     skillId = skillCheck.recordset[0].SkillID
                 } else {
                     const createSkill = await pool.request()
-                        .input('SkillName', sql.NVarChar, skillName)
+                        .input('SkillName', skillName)
                         .query(`
                             INSERT INTO [Skill] (SkillName) 
                             VALUES (@SkillName);
@@ -83,14 +82,46 @@ const createJob = async (jobData) => {
 
         return jobId
     } catch (error) {
-        console.log('Error creating job:', error)
-        throw new ApiError(StatusCodes.INTERNAL_SERVER_ERROR, error.message)
+        const raw = error && error.message ? error.message : String(error)
+        let friendly = 'Internal server error'
+
+        if (/CK_Job_Deadline|CHECK constraint.*Deadline|Deadline/.test(raw)) {
+            friendly = 'Invalid deadline: Deadline must be a date later than today.'
+        } else if (/CK_|CHECK constraint/.test(raw)) {
+            friendly = 'Invalid data: one of the fields failed validation.'
+        } else if (/UNIQUE KEY|UNIQUE constraint|Violation of UNIQUE KEY/.test(raw)) {
+            friendly = 'Duplicate value: a record with the same unique field already exists.'
+        } else if (/FOREIGN KEY constraint|REFERENCE constraint/.test(raw)) {
+            friendly = 'Invalid reference: related record not found.'
+        } else if (/Cannot insert the value NULL/i.test(raw)) {
+            friendly = 'Missing required field: please ensure all required fields are provided.'
+        } else {
+            friendly = raw
+        }
+
+        throw new ApiError(StatusCodes.INTERNAL_SERVER_ERROR, friendly)
     }
 }
 
 const getJobById = async (jobId) => {
     try {
         const pool = GET_SQL_POOL()
+        const time = dayjs().utc().format('YYYY-MM-DD HH:mm:ss')
+
+        await pool.request()
+            .input('jobId', jobId)
+            .input('time', time)
+            .query(`
+                IF EXISTS (SELECT 1 FROM [JobMetrics] WHERE JobMetricID = @jobId)
+                    UPDATE [JobMetrics]
+                    SET ViewCount = ISNULL(ViewCount, 0) + 1,
+                        LastUpdated = @time
+                    WHERE JobMetricID = @jobId
+                ELSE
+                    INSERT INTO [JobMetrics] (JobMetricID, AppliedCount, LikeCount, ViewCount, LastUpdated)
+                    VALUES (@jobId, 0, 0, 1, @time)
+            `)
+
         const result = await pool.request()
             .input('jobId', jobId)
             .query(`
@@ -104,6 +135,10 @@ const getJobById = async (jobId) => {
                     J.Location,
                     J.EmploymentType,
                     J.PostedDate,
+                    J.ExperienceRequired,
+                    J.ApplicationDeadline,
+                    J.OpeningCount,
+                    J.JobStatus,
                     C.CompanyName,
                     C.LogoURL AS LogoURL,
                     JM.ViewCount,
@@ -138,49 +173,75 @@ const getJobById = async (jobId) => {
     }
 }
 
+const getLatestJobs = async (limit = 6) => {
+    try {
+        const pool = GET_SQL_POOL()
+        const result = await pool.request()
+            .input('limit', limit)
+            .query(`
+                SELECT
+                    J.JobID,
+                    J.JobTitle,
+                    J.PostedDate,
+                    J.ApplicationDeadline AS ApplicationDeadline,
+                    J.EmploymentType,
+                    J.Location,
+                    C.CompanyName,
+                    C.LogoURL AS LogoURL,
+                    ISNULL((SELECT COUNT(1) FROM [Application] A WHERE A.JobID = J.JobID), 0) AS Applicants
+                FROM [Job] J
+                JOIN [Company] C ON J.CompanyID = C.CompanyID
+                WHERE J.JobStatus = 'Open'
+                ORDER BY J.PostedDate DESC
+                OFFSET 0 ROWS
+                FETCH NEXT @limit ROWS ONLY
+            `)
+
+        return result.recordset
+    } catch (error) {
+        throw new ApiError(StatusCodes.INTERNAL_SERVER_ERROR, error.message)
+    }
+}
+
 const getJobsByCompanyId = async (companyId, page = 1, limit = 10, titleFilter = '', statusFilter = 'all') => {
     try {
         const pool = GET_SQL_POOL()
         const offset = (page - 1) * limit
 
-        // Build filters
         let whereClauses = ['J.CompanyID = @companyId']
         const request = pool.request().input('companyId', companyId)
 
         if (titleFilter && titleFilter.length > 0) {
             whereClauses.push('J.JobTitle LIKE @title')
-            request.input('title', sql.NVarChar, `%${titleFilter}%`)
+            request.input('title', `%${titleFilter}%`)
         }
 
         if (statusFilter && statusFilter !== 'all') {
-            // Map friendly values to DB values if necessary
             let dbStatus = statusFilter
             if (statusFilter.toLowerCase() === 'active') dbStatus = 'Open'
             if (statusFilter.toLowerCase() === 'closed') dbStatus = 'Closed'
             whereClauses.push('J.JobStatus = @status')
-            request.input('status', sql.NVarChar, dbStatus)
+            request.input('status', dbStatus)
         }
 
         const whereSql = whereClauses.length > 0 ? 'WHERE ' + whereClauses.join(' AND ') : ''
 
-        // Count total with filters
         const countQuery = `SELECT COUNT(*) as total FROM [Job] J ${whereSql}`
         const countResult = await request.query(countQuery)
         const totalJobs = countResult.recordset[0].total
         const totalPages = Math.ceil(totalJobs / limit)
 
-        // Fetch paged jobs including details and applicant count
         const dataRequest = pool.request()
             .input('companyId', companyId)
             .input('offset', offset)
             .input('limit', limit)
 
-        if (titleFilter && titleFilter.length > 0) dataRequest.input('title', sql.NVarChar, `%${titleFilter}%`)
+        if (titleFilter && titleFilter.length > 0) dataRequest.input('title', `%${titleFilter}%`)
         if (statusFilter && statusFilter !== 'all') {
             let dbStatus = statusFilter
             if (statusFilter.toLowerCase() === 'active') dbStatus = 'Open'
             if (statusFilter.toLowerCase() === 'closed') dbStatus = 'Closed'
-            dataRequest.input('status', sql.NVarChar, dbStatus)
+            dataRequest.input('status', dbStatus)
         }
 
         const dataWhereSql = whereSql
@@ -301,14 +362,14 @@ const updateJob = async (jobId, companyId, jobData) => {
 
                 let skillId
                 const skillCheck = await pool.request()
-                    .input('SkillName', sql.NVarChar, skillName)
+                    .input('SkillName', skillName)
                     .query(`SELECT SkillID FROM [Skill] WHERE SkillName = @SkillName`)
 
                 if (skillCheck.recordset.length > 0) {
                     skillId = skillCheck.recordset[0].SkillID
                 } else {
                     const createSkill = await pool.request()
-                        .input('SkillName', sql.NVarChar, skillName)
+                        .input('SkillName', skillName)
                         .query(`
                             INSERT INTO [Skill] (SkillName, PopularityScore) 
                             OUTPUT INSERTED.SkillID
@@ -354,6 +415,7 @@ const findJobID = async (jobTitle, companyId, postedDate) => {
 export const jobModel = {
     createJob,
     getJobById,
+    getLatestJobs,
     getJobsByCompanyId,
     deleteJob,
     updateJobStatus,

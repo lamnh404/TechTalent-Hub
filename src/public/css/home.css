@@ -2,22 +2,9 @@
    Homepage Styles - TechTalent Hub
    ======================================== */
 
-/* [QUAN TRỌNG] Đã xóa :root vì đã có trong global.css */
-
-/* --- Navbar Override (Cho khớp style Homepage) --- */
-.navbar-glass {
-    height: var(--header-height);
-    background: rgba(255, 255, 255, 0.98) !important;
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
-}
-.navbar-brand .brand-name-main { font-size: 1.5rem; font-weight: 700; color: #111827; letter-spacing: -0.5px; }
-.navbar-brand .brand-name-accent { font-size: 1.5rem; font-weight: 700; color: var(--primary-color); }
-
 /* --- Hero Section --- */
 .home-hero {
+    /* ... (Phần dưới giữ nguyên) */
     position: relative;
     background: linear-gradient(135deg, var(--bg-gradient-start) 0%, #ffffff 100%);
     padding: 100px 0;
@@ -262,4 +249,86 @@
     .filter-card {
         margin-bottom: 20px;
     }
+}
+
+/* ========================================
+   COMPANY DETAIL - TABS & REVIEWS
+   ======================================== */
+
+/* --- Modern Tabs (Soft UI) --- */
+.nav-tabs-modern {
+    border-bottom: 2px solid #f3f4f6;
+    margin-bottom: 1.5rem;
+}
+
+.nav-tabs-modern .nav-item {
+    margin-bottom: -2px;
+    margin-right: 1rem;
+}
+
+.nav-tabs-modern .nav-link {
+    border: none;
+    color: #6b7280;
+    font-weight: 600;
+    padding: 1rem 0.5rem;
+    background: transparent;
+    border-bottom: 2px solid transparent;
+    transition: all 0.3s;
+}
+
+.nav-tabs-modern .nav-link:hover {
+    color: var(--primary-color);
+}
+
+.nav-tabs-modern .nav-link.active {
+    color: var(--primary-color);
+    background: transparent;
+    border-bottom: 2px solid var(--primary-color);
+}
+
+/* --- Star Rating (Input Form) --- */
+.star-rating-input {
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: flex-start;
+    gap: 5px;
+}
+
+.star-rating-input input {
+    display: none;
+}
+
+.star-rating-input label {
+    font-size: 2rem;
+    color: #e5e7eb; /* Màu xám khi chưa chọn */
+    cursor: pointer;
+    transition: color 0.2s;
+    margin: 0;
+}
+
+/* Hiệu ứng: Hover hoặc Checked sẽ sáng các sao phía trước */
+.star-rating-input input:checked ~ label,
+.star-rating-input label:hover,
+.star-rating-input label:hover ~ label {
+    color: #fbbf24; /* Màu vàng */
+}
+
+/* --- Review Item --- */
+.review-item {
+    border-bottom: 1px solid #f3f4f6;
+    padding-bottom: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+.review-item:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+}
+
+/* Rating Read-only (Hiển thị kết quả) */
+.star-display {
+    color: #e5e7eb;
+    font-size: 0.9rem;
+}
+.star-display .filled {
+    color: #fbbf24;
 }

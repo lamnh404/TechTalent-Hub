@@ -1,23 +1,10 @@
-<%
-    // Mock Data: Danh sách ứng viên
-    if (typeof seekers === 'undefined') {
-        var seekers = [
-            { UserID: 1, Name: "Nguyen Van A", Title: "Senior Frontend Dev", Skills: ["React", "VueJS", "Figma"], Avatar: "https://i.pravatar.cc/150?u=1", Location: "Ho Chi Minh" },
-            { UserID: 2, Name: "Tran Thi B", Title: "Product Designer", Skills: ["UI/UX", "Sketch", "Prototyping"], Avatar: "https://i.pravatar.cc/150?u=2", Location: "Ha Noi" },
-            { UserID: 3, Name: "Le Van C", Title: "DevOps Engineer", Skills: ["AWS", "Docker", "Kubernetes"], Avatar: "https://i.pravatar.cc/150?u=3", Location: "Da Nang" },
-            { UserID: 4, Name: "Sarah Connor", Title: "Fullstack Developer", Skills: ["Node.js", "React", "MongoDB"], Avatar: "https://i.pravatar.cc/150?u=4", Location: "Remote" },
-            { UserID: 5, Name: "John Doe", Title: "Data Scientist", Skills: ["Python", "Machine Learning", "SQL"], Avatar: "https://i.pravatar.cc/150?u=5", Location: "Ho Chi Minh" },
-            { UserID: 6, Name: "Emily Clark", Title: "Marketing Lead", Skills: ["SEO", "Content", "Growth"], Avatar: "https://i.pravatar.cc/150?u=6", Location: "Ha Noi" }
-        ];
-    }
-%>
-
 <%- include('../partials/header', { title: 'Find Candidates' }) %>
 
-<body class="animate-fade-in">
+<body>
     <%- include('../partials/navbar', {activePage: 'seekers'}) %>
 
-    <section class="home-hero" style="padding: 120px 0 60px; background: #f8fafc;">
+    <div class="animate-fade-in">
+        <section class="home-hero" style="padding: 120px 0 60px; background: #f8fafc;">
         <div class="container text-center">
             <h1 class="hero-title mb-3">Discover Top <span class="text-primary">Talents</span></h1>
             <p class="text-muted mb-4" style="max-width: 600px; margin: 0 auto;">
@@ -85,4 +72,5 @@
     </section>
 
     <%- include('../partials/footer') %>
+    </div>
 </body>

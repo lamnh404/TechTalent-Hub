@@ -1,4 +1,4 @@
-<%- include('../partials/header', { title: 'Tìm việc làm IT' }) %>
+<%- include('../partials/header', { title: 'Find Jobs' }) %>
 
 <style>
     /* --- CSS CHO FILTER (Giữ nguyên fix lỗi cũ) --- */
@@ -130,7 +130,7 @@
     }
 </style>
 
-<body class="animate-fade-in bg-light">
+<body class="bg-light">
     
     <script>
         document.addEventListener('DOMContentLoaded', function () {
@@ -155,7 +155,6 @@
                         jobContainer.style.pointerEvents = 'auto';
                         window.history.pushState({}, '', url);
                         
-                        // Scroll nhẹ
                         const y = jobContainer.getBoundingClientRect().top + window.scrollY - 100;
                         window.scrollTo({top: y, behavior: 'smooth'});
                     })
@@ -195,7 +194,8 @@
 
     <%- include('../partials/navbar', {activePage: 'jobs' }) %>
 
-    <section class="home-hero" style="padding: 120px 0 60px; background: linear-gradient(180deg, #ffffff 0%, #f3f4f6 100%);">
+    <div class="animate-fade-in">
+        <section class="home-hero" style="padding: 120px 0 60px; background: linear-gradient(180deg, #ffffff 0%, #f3f4f6 100%);">
         <div class="container position-relative" style="z-index: 2;">
             <div class="text-center">
                 <span class="badge badge-soft-primary px-3 py-2 mb-3 rounded-pill animate__animated animate__fadeInDown">
@@ -417,4 +417,5 @@
     </section>
 
     <%- include('../partials/footer') %>
+    </div>
 </body>

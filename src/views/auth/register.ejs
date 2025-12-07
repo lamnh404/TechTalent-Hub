@@ -142,12 +142,10 @@
             const submitBtn = document.getElementById('submitBtn');
             const criteriaBox = document.getElementById('passwordCriteria');
 
-            // Các tiêu chí mật khẩu
             const lenCheck = document.getElementById('lenCheck');
             const numCheck = document.getElementById('numCheck');
             const caseCheck = document.getElementById('caseCheck');
 
-            // Regex cho email
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
             function validateForm() {
@@ -155,7 +153,6 @@
                 const isPasswordValid = checkPasswordStrength(password.value);
                 const isMatch = password.value === confirmPassword.value && password.value !== '';
 
-                // Validation UI cho Confirm Password
                 if (confirmPassword.value.length > 0) {
                     if (isMatch) {
                         confirmPassword.classList.remove('is-invalid');
@@ -166,7 +163,6 @@
                     }
                 }
 
-                // Enable nút submit chỉ khi tất cả đều đúng
                 if (isEmailValid && isPasswordValid && isMatch) {
                     submitBtn.removeAttribute('disabled');
                     submitBtn.style.opacity = '1';
@@ -177,13 +173,11 @@
             }
 
             function checkPasswordStrength(pwd) {
-                // Hiện box tiêu chí khi gõ
                 if (pwd.length > 0) criteriaBox.classList.remove('d-none');
                 else criteriaBox.classList.add('d-none');
 
                 let isValid = true;
 
-                // Check độ dài
                 if (pwd.length >= 8) {
                     updateCriteria(lenCheck, true);
                 } else {
@@ -191,7 +185,6 @@
                     isValid = false;
                 }
 
-                // Check số
                 if (/\d/.test(pwd)) {
                     updateCriteria(numCheck, true);
                 } else {
@@ -199,7 +192,6 @@
                     isValid = false;
                 }
 
-                // Check chữ cái
                 if (/[a-zA-Z]/.test(pwd)) {
                     updateCriteria(caseCheck, true);
                 } else {
@@ -225,12 +217,10 @@
                 }
             }
 
-            // Event Listeners
             email.addEventListener('input', validateForm);
             password.addEventListener('input', validateForm);
             confirmPassword.addEventListener('input', validateForm);
 
-            // Xử lý khi submit form
             form.addEventListener('submit', function (e) {
                 if (submitBtn.hasAttribute('disabled')) {
                     e.preventDefault();
@@ -241,7 +231,7 @@
 
             if (errorMessage) {
                 Swal.fire({
-                    icon: 'warning', // Dùng icon warning cho lỗi nhập liệu/trùng
+                    icon: 'warning',
                     title: 'Registration Failed',
                     text: errorMessage,
                     confirmButtonColor: '#0063FF'

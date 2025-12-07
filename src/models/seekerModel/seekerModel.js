@@ -36,7 +36,7 @@ const getProfile = async (userId) => {
         const seeker = seekerResult.recordset[0]
 
         const skillsResult = await pool.request()
-            .input('JobSeekerID', sql.NVarChar, userId)
+            .input('JobSeekerID', userId)
             .query(`
                 SELECT 
                     s.SkillID,
@@ -89,7 +89,6 @@ const updateProfile = async (userId, profileData) => {
     }
 }
 
-// updateDateOfBirth removed — DateOfBirth is updated via updateProfile
 
 const updateSkills = async (userId, skills) => {
     const pool = GET_SQL_POOL()
@@ -107,14 +106,14 @@ const updateSkills = async (userId, skills) => {
 
                 if (!skillId) {
                     const skillCheck = await transaction.request()
-                        .input('SkillName', sql.NVarChar, skill.SkillName)
+                        .input('SkillName', skill.SkillName)
                         .query(`SELECT SkillID FROM [Skill] WHERE SkillName = @SkillName`)
 
                     if (skillCheck.recordset.length > 0) {
                         skillId = skillCheck.recordset[0].SkillID
                     } else {
                         const createSkill = await transaction.request()
-                            .input('SkillName', sql.NVarChar, skill.SkillName)
+                            .input('SkillName', skill.SkillName)
                             .query(`
                                 INSERT INTO [Skill] (SkillName, PopularityScore) 
                                 OUTPUT INSERTED.SkillID
@@ -148,7 +147,7 @@ const getSkills = async (userId) => {
     try {
         const pool = GET_SQL_POOL()
         const result = await pool.request()
-            .input('JobSeekerID', sql.NVarChar, userId)
+            .input('JobSeekerID', userId)
             .query(`
                 SELECT 
                     s.SkillID,
@@ -166,7 +165,6 @@ const getSkills = async (userId) => {
     }
 }
 
-// recalcSkillPopularity removed — not needed anymore
 
 const addSkill = async (userId, skillData) => {
     const pool = GET_SQL_POOL()
@@ -179,14 +177,14 @@ const addSkill = async (userId, skillData) => {
 
         if (!skillId) {
             const skillCheck = await transaction.request()
-                .input('SkillName', sql.NVarChar, skillData.SkillName)
+                .input('SkillName', skillData.SkillName)
                 .query(`SELECT SkillID FROM [Skill] WHERE SkillName = @SkillName`)
 
             if (skillCheck.recordset.length > 0) {
                 skillId = skillCheck.recordset[0].SkillID
             } else {
                 const createSkill = await transaction.request()
-                    .input('SkillName', sql.NVarChar, skillData.SkillName)
+                    .input('SkillName', skillData.SkillName)
                     .query(`
                         INSERT INTO [Skill] (SkillName, PopularityScore) 
                         OUTPUT INSERTED.SkillID
@@ -196,14 +194,12 @@ const addSkill = async (userId, skillData) => {
             }
         }
 
-        // Check if user already has this skill
         const existingSkill = await transaction.request()
             .input('JobSeekerID', userId)
             .input('SkillID', skillId)
             .query(`SELECT * FROM [JobSeekerSkill] WHERE JobSeekerID = @JobSeekerID AND SkillID = @SkillID`)
 
         if (existingSkill.recordset.length > 0) {
-            // Update existing skill
             await transaction.request()
                 .input('JobSeekerID', userId)
                 .input('SkillID', skillId)
@@ -215,7 +211,6 @@ const addSkill = async (userId, skillData) => {
                     WHERE JobSeekerID = @JobSeekerID AND SkillID = @SkillID
                 `)
         } else {
-            // Insert new skill
             await transaction.request()
                 .input('JobSeekerID', userId)
                 .input('SkillID', skillId)
@@ -258,6 +253,22 @@ const getAvailableSkills = async () => {
     }
 }
 
+const getTopMatchingJobs = async (jobSeekerId, minMatchScore = 0, limit = 10) => {
+    try {
+        const pool = GET_SQL_POOL()
+        const request = pool.request()
+            .input('p_JobSeekerID', jobSeekerId)
+            .input('p_MinMatchScore', minMatchScore)
+            .input('p_Limit', limit)
+
+        const result = await request.execute('dbo.sp_GetTopMatchingJobs')
+
+        return result.recordset || []
+    } catch (err) {
+        throw new ApiError(StatusCodes.INTERNAL_SERVER_ERROR, err.message)
+    }
+}
+
 export const seekerModel = {
     getProfile,
     updateProfile,
@@ -266,4 +277,5 @@ export const seekerModel = {
     addSkill,
     deleteSkill,
     getAvailableSkills
+    ,getTopMatchingJobs
 }

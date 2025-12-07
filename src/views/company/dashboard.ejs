@@ -1,33 +1,17 @@
-<% if (!stats) { stats = { activeJobs: 0, totalApplications: 0, totalViews: 0, newCandidates: 0 } } %>
-
 <%- include('../partials/header', { title: 'Dashboard' }) %>
 
 <body class="dashboard-page">
     <div class="dashboard-wrapper">
-        <%- include('../partials/dashboard-sidebar', { activePage: 'dashboard' }) %>
+        <%- include('../partials/navbar', { activePage: 'dashboard' }) %>
 
         <main class="main-content">
             <header class="dashboard-header">
                 <h5 class="mb-0 font-weight-bold text-dark">Overview</h5>
-                <div class="d-flex align-items-center">
-                    <div class="dropdown">
-                        <a href="#" class="d-flex align-items-center text-decoration-none text-dark dropdown-toggle" data-toggle="dropdown">
-                            <img src="<%= (typeof user !== 'undefined' && user.avatarUrl) ? user.avatarUrl : '/images/default-avatar.png' %>" 
-                                 class="rounded-circle mr-2 shadow-sm" width="35" height="35" style="object-fit: cover; border: 2px solid #fff;">
-                            <span class="font-weight-bold small mr-1"><%= (typeof user !== 'undefined' && user.email) ? user.email.split('@')[0] : 'Company' %></span>
-                        </a>
-                        <div class="dropdown-menu dropdown-menu-right border-0 shadow-lg">
-                            <a class="dropdown-item" href="/">Back Home</a>
-                            <div class="dropdown-divider"></div>
-                            <a class="dropdown-item text-danger" href="/auth/logout">Logout</a>
-                        </div>
-                    </div>
-                </div>
             </header>
 
             <div class="p-4">
                 <div class="mb-4">
-                    <h4 class="font-weight-bold text-dark">Welcome back, <%= (typeof user !== 'undefined' && user.email) ? user.email.split('@')[0] : 'Recruiter' %>! 👋</h4>
+                    <h4 class="font-weight-bold text-dark">Welcome back, <%= (typeof company !== 'undefined' && company.CompanyName) ? company.CompanyName : 'Company' %>! 👋</h4>
                     <p class="text-muted">Here is what's happening with your job postings today.</p>
                 </div>
 
@@ -89,7 +73,7 @@
                                 </div>
                                 <div class="stat-icon blue shadow-sm"><i class="fas fa-briefcase"></i></div>
                             </div>
-                            <span class="text-success small font-weight-bold"><i class="fas fa-arrow-up"></i> +2 new</span> <span class="text-muted small">this month</span>
+                            <span class="text-muted small"><%= typeof stats.newJobsThisMonth !== 'undefined' ? stats.newJobsThisMonth + ' new this month' : '' %></span>
                         </div>
                     </div>
                     <div class="col-md-3 mb-3 mb-md-0">
@@ -101,7 +85,7 @@
                                 </div>
                                 <div class="stat-icon purple shadow-sm"><i class="fas fa-file-alt"></i></div>
                             </div>
-                            <span class="text-success small font-weight-bold"><i class="fas fa-arrow-up"></i> +12%</span> <span class="text-muted small">vs last week</span>
+                            
                         </div>
                     </div>
                     <div class="col-md-3 mb-3 mb-md-0">
@@ -167,7 +151,7 @@
                                                     <% } %>
                                                 </td>
                                                 <td class="align-middle text-right pr-4">
-                                                    <button class="btn btn-sm btn-icon btn-light text-primary"><i class="fas fa-edit"></i></button>
+                                                    <a href="/company/jobs/<%= job.JobID %>/edit" class="btn btn-sm btn-icon btn-light text-primary"><i class="fas fa-edit"></i></a>
                                                 </td>
                                             </tr>
                                         <% }) %>

@@ -9,6 +9,7 @@ import { adminRouter } from "~/routes/admin/admin";
 import { jobRouter } from "~/routes/job/jobRouter";
 import isAuthorized from '~/middlewares/authorizedMiddleware'
 import { applicationRouter } from "~/routes/job/applicationRouter";
+import { userController } from '~/controllers/authController/userController'
 
 const router = express.Router()
 
@@ -29,4 +30,5 @@ router.use('/admin', isAuthorized, adminRouter)
 router.use('/', jobRouter)
 
 router.use('/', applicationRouter)
+router.get('/api/notifications', isAuthorized, userController.getNotifications)
 export const API = router

@@ -1,21 +1,10 @@
-<%
-    // Mock Data cho User Management
-    if (typeof userList === 'undefined') {
-        var userList = [
-            { id: 101, name: "Nguyen Van A", email: "nguyenvana@gmail.com", role: "JobSeeker", status: "Active", joinDate: "2023-01-15", avatar: "https://i.pravatar.cc/150?u=1" },
-            { id: 102, name: "Google Inc.", email: "hr@google.com", role: "Company", status: "Active", joinDate: "2023-02-20", avatar: "https://logo.clearbit.com/google.com" },
-            { id: 103, name: "Tran Thi C", email: "tranc@outlook.com", role: "JobSeeker", status: "Inactive", joinDate: "2023-03-10", avatar: "https://i.pravatar.cc/150?u=3" },
-            { id: 104, name: "TechStart LLC", email: "contact@techstart.io", role: "Company", status: "Pending", joinDate: "2023-11-05", avatar: "" },
-            { id: 105, name: "Le Van D", email: "levand@gmail.com", role: "JobSeeker", status: "Banned", joinDate: "2022-12-01", avatar: "https://i.pravatar.cc/150?u=5" }
-        ];
-    }
-%>
+<%# Admin controller phải truyền userList từ database %>
 
-<%- include('../partials/header', { title: 'Quản lý Người dùng' }) %>
+<%- include('../partials/header', { title: 'User Management' }) %>
 
 <body class="dashboard-page">
     <div class="dashboard-wrapper">
-        <%- include('../partials/dashboard-sidebar', { activePage: 'users' }) %>
+        <%- include('../partials/navbar', { activePage: 'users' }) %>
 
         <main class="main-content">
             <header class="dashboard-header">

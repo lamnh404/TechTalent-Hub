@@ -27,20 +27,29 @@
                                         <p class="text-muted small">Tell us about your professional background.</p>
                                     </div>
 
+                                    <% if (typeof error !=='undefined' && error) { %>
+                                        <div class="alert alert-danger auth-alert shadow-sm">
+                                            <i class="fas fa-exclamation-circle mr-2"></i>
+                                            <%= error %>
+                                        </div>
+                                    <% } %>
+
                                     <form action="/auth/setup-seeker" method="POST" id="seekerForm" novalidate>
 
                                         <div class="row">
-                                            <div class="col-md-6 mb-3">
+                                                <div class="col-md-6 mb-3">
                                                 <label class="font-weight-bold small text-dark">First Name <span
                                                         class="text-danger">*</span></label>
                                                 <input type="text" class="form-control-modern" name="FirstName"
                                                     placeholder="John" required>
+                                                <small class="text-danger required-error d-none mt-1">First name is required</small>
                                             </div>
                                             <div class="col-md-6 mb-3">
                                                 <label class="font-weight-bold small text-dark">Last Name <span
                                                         class="text-danger">*</span></label>
                                                 <input type="text" class="form-control-modern" name="LastName"
                                                     placeholder="Doe" required>
+                                                <small class="text-danger required-error d-none mt-1">Last name is required</small>
                                             </div>
                                         </div>
 
@@ -55,6 +64,7 @@
                                                 </div>
                                                 <small class="text-danger error-msg d-none mt-1">Invalid phone number
                                                     (10-11 digits)</small>
+                                                <small class="text-danger required-error d-none mt-1">Phone number is required</small>
                                             </div>
                                             <div class="col-md-6 mb-3">
                                                 <label class="font-weight-bold small text-dark">Gender</label>
@@ -72,13 +82,14 @@
                                         <div class="form-group mb-3">
                                             <label class="font-weight-bold small text-dark">Date of Birth <span
                                                     class="text-danger">*</span></label>
-                                            <div class="input-wrapper">
-                                                <i class="far fa-calendar-alt input-icon"></i>
-                                                <input type="date" class="form-control-modern" id="dob"
-                                                    name="DateOfBirth" required>
+                                                <div class="input-wrapper">
+                                                    <i class="far fa-calendar-alt input-icon"></i>
+                                                    <input type="date" class="form-control-modern" id="dob"
+                                                        name="DateOfBirth" required>
                                             </div>
                                             <small class="text-danger error-msg d-none mt-1">Must be at least 15 years
                                                 old</small>
+                                            <small class="text-danger required-error d-none mt-1">Date of birth is required</small>
                                         </div>
 
                                         <div class="row">
@@ -88,9 +99,9 @@
                                                     <i class="fas fa-layer-group input-icon"></i>
                                                     <select class="form-control-modern" name="ExperienceLevel">
                                                         <option value="Intern">Intern / Fresher</option>
-                                                        <option value="Junior">Junior (1-2 years)</option>
-                                                        <option value="Mid">Mid-level (3-5 years)</option>
-                                                        <option value="Senior">Senior (5+ years)</option>
+                                                        <option value="Entry-Level">Entry-Level (0-1 years)</option>
+                                                        <option value="Mid-Level">Mid-Level (3-5 years)</option>
+                                                        <option value="Senior-Level">Senior-Level (5+ years)</option>
                                                         <option value="Lead">Manager / Lead</option>
                                                     </select>
                                                 </div>
@@ -105,31 +116,22 @@
                                             </div>
                                         </div>
 
-                                        <div class="form-group mb-3">
-                                            <label class="font-weight-bold small text-dark">Top Skills (Comma
-                                                separated)</label>
-                                            <div class="input-wrapper">
-                                                <i class="fas fa-code input-icon"></i>
-                                                <input type="text" class="form-control-modern" name="skills"
-                                                    placeholder="ReactJS, Node.js, MySQL...">
-                                            </div>
-                                        </div>
-
                                         <div class="form-group mb-4">
                                             <label class="font-weight-bold small text-dark">CV / Portfolio Link <span
                                                     class="text-danger">*</span></label>
-                                            <div class="input-wrapper">
-                                                <i class="fas fa-link input-icon"></i>
-                                                <input type="url" class="form-control-modern https-input"
+                                                <div class="input-wrapper">
+                                                    <i class="fas fa-link input-icon"></i>
+                                                    <input type="url" class="form-control-modern https-input"
                                                     name="CVFileURL" placeholder="https://drive.google.com/..."
                                                     required>
-                                            </div>
+                                                </div>
                                             <small class="text-muted">Link to your CV PDF or Portfolio (Must start with
                                                 https://)</small>
                                             <small class="text-danger error-msg d-none d-block mt-1">
                                                 <i class="fas fa-exclamation-triangle"></i> Link must start with
                                                 https://
                                             </small>
+                                            <small class="text-danger required-error d-none mt-1">CV link is required</small>
                                         </div>
 
                                         <button type="submit" class="btn btn-cta-dark btn-block shadow-lg py-3">
@@ -143,13 +145,12 @@
                 </div>
             </div>
 
-            <%- include('../partials/footer') %>
+            
         </section>
-
+<%- include('../partials/footer') %>
         <script>
             const form = document.getElementById('seekerForm');
 
-            // 1. HTTPS Validation
             const httpsInputs = document.querySelectorAll('.https-input');
             function validateHttps(input) {
                 const value = input.value.trim();
@@ -167,7 +168,6 @@
             }
             httpsInputs.forEach(input => input.addEventListener('input', () => validateHttps(input)));
 
-            // 2. Phone Validation
             const phoneInput = document.getElementById('phoneNumber');
             const phoneRegex = /^(0|\+84)\d{9,10}$/;
 
@@ -185,7 +185,6 @@
             }
             phoneInput.addEventListener('input', validatePhone);
 
-            // 3. Date of Birth Validation
             const dobInput = document.getElementById('dob');
             function validateDob() {
                 const errorDisplay = dobInput.parentElement.nextElementSibling;
@@ -210,9 +209,29 @@
             }
             dobInput.addEventListener('change', validateDob);
 
-            // 4. Form Submit Handler
+            const requiredInputs = form.querySelectorAll('[required]');
+            function checkRequired() {
+                let ok = true;
+                requiredInputs.forEach(input => {
+                    const val = (input.value || '').toString().trim();
+                    const parent = input.closest('.col-md-6') || input.closest('.form-group') || input.parentElement;
+                    const reqMsg = parent ? parent.querySelector('.required-error') : null;
+                    if (!val) {
+                        if (reqMsg) reqMsg.classList.remove('d-none');
+                        input.classList.add('is-invalid');
+                        ok = false;
+                    } else {
+                        if (reqMsg) reqMsg.classList.add('d-none');
+                        input.classList.remove('is-invalid');
+                    }
+                });
+                return ok;
+            }
+
             form.addEventListener('submit', function (e) {
                 let isValid = true;
+
+                if (!checkRequired()) isValid = false;
 
                 httpsInputs.forEach(input => {
                     if (!validateHttps(input)) isValid = false;
@@ -223,9 +242,8 @@
 
                 if (!isValid) {
                     e.preventDefault();
-                    const firstError = document.querySelector('.is-invalid');
+                    const firstError = document.querySelector('.is-invalid') || document.querySelector('.required-error:not(.d-none)');
                     if (firstError) firstError.focus();
                 }
             });
         </script>
-    </body>

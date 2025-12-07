@@ -1,36 +1,13 @@
-<%
-    // Mock Data
-    if (typeof config === 'undefined') {
-        var config = {
-            siteName: "TechTalent Hub",
-            supportEmail: "support@techtalent.com",
-            maintenanceMode: false,
-            allowRegistration: true,
-            itemsPerPage: 10
-        };
-    }
-%>
-
+S
 <%- include('../partials/header', { title: 'System Settings' }) %>
 
 <body class="dashboard-page">
     <div class="dashboard-wrapper">
-        <%- include('../partials/dashboard-sidebar', { activePage: 'settings' }) %>
+        <%- include('../partials/navbar', { activePage: 'settings' }) %>
 
         <main class="main-content">
             <header class="dashboard-header">
                 <h5 class="mb-0 font-weight-bold text-dark">Settings</h5>
-                <div class="d-flex align-items-center">
-                    <div class="dropdown">
-                        <a href="#" class="d-flex align-items-center text-decoration-none text-dark dropdown-toggle" data-toggle="dropdown">
-                            <img src="/images/admin-avatar.png" onerror="this.src='/images/default-avatar.png'" class="rounded-circle mr-2 shadow-sm" width="35" height="35" style="border: 2px solid #fff;">
-                            <span class="font-weight-bold small mr-1">Administrator</span>
-                        </a>
-                        <div class="dropdown-menu dropdown-menu-right border-0 shadow-lg">
-                            <a class="dropdown-item text-danger" href="/auth/logout">Logout</a>
-                        </div>
-                    </div>
-                </div>
             </header>
 
             <div class="p-4">

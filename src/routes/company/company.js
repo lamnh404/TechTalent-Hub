@@ -16,11 +16,11 @@ router.get('/jobs/:id/edit', companyController.getEditJobPage)
 router.post('/jobs/:id/edit', companyController.updateJob)
 
 router.get('/candidates', companyController.getCandidates)
+router.get('/applications/:applicationId', companyController.getApplicationDetail)
 
 router.get('/profile', companyController.getProfile)
 router.post('/profile', companyController.updateProfile)
 
-// Route for updating application status
 router.post('/applications/:applicationId/status', companyController.updateApplicationStatus)
 
 export const companyRouter = router
