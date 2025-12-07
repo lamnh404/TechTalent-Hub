@@ -1,5 +1,3 @@
-<%# Server phải truyền seeker và availableSkills từ database %>
-
 <%- include('../partials/header', { title: 'My Profile' }) %>
 
 <body class="dashboard-page">
@@ -25,12 +23,10 @@
                                         <div class="col-md-6 mb-3">
                                             <label class="font-weight-bold small text-dark">First Name</label>
                                             <input type="text" class="form-control-modern" name="FirstName" value="<%= seeker.FirstName %>">
-                                            <small class="text-danger required-error d-none mt-1">First name is required</small>
                                         </div>
                                         <div class="col-md-6 mb-3">
                                             <label class="font-weight-bold small text-dark">Last Name</label>
                                             <input type="text" class="form-control-modern" name="LastName" value="<%= seeker.LastName %>">
-                                            <small class="text-danger required-error d-none mt-1">Last name is required</small>
                                         </div>
                                     </div>
                                     <div class="row">
@@ -41,8 +37,6 @@
                                         <div class="col-md-6 mb-3">
                                             <label class="font-weight-bold small text-dark">Phone</label>
                                             <input type="tel" class="form-control-modern" name="PhoneNumber" value="<%= seeker.PhoneNumber %>">
-                                            <small class="text-danger required-error d-none mt-1">Phone number is required</small>
-                                            <small class="text-danger phone-invalid-error d-none mt-1">Invalid phone number (10-11 digits)</small>
                                         </div>
                                     </div>
                                     <div class="row">
@@ -59,40 +53,36 @@
                                         <div class="col-md-6 mb-3">
                                             <label class="font-weight-bold small text-dark">Date of Birth</label>
                                             <input type="date" class="form-control-modern" name="DateOfBirth" value="<% if (seeker.DateOfBirth) { const d = new Date(seeker.DateOfBirth); const yyyy = d.getFullYear(); const mm = String(d.getMonth()+1).padStart(2,'0'); const dd = String(d.getDate()).padStart(2,'0'); %><%= `${yyyy}-${mm}-${dd}` %><% } %>">
-                                            <small class="text-danger required-error d-none mt-1">Date of birth is required</small>
-                                            <small class="text-danger dob-invalid-error d-none mt-1">Invalid date (must be at least 15 years old)</small>
                                         </div>
                                     </div>
                                     <div class="form-group mb-3">
                                         <label class="font-weight-bold small text-dark">Summary</label>
                                         <textarea class="form-control-modern h-auto py-3" name="ProfileSummary" rows="3"><%= seeker.ProfileSummary %></textarea>
                                     </div>
-                                    
-                                    <input type="hidden" name="Skills" id="skillsInput" value='<%= JSON.stringify(seeker.Skills) %>'>
-                                    <div class="card border-0 shadow-sm rounded-lg mb-4">
-                                        <div class="card-body p-5">
-                                            <div class="d-flex justify-content-between align-items-center mb-4">
-                                                <h5 class="font-weight-bold text-primary mb-0">Professional Skills</h5>
-                                                <div class="d-flex align-items-center">
-                                                    <div class="mr-3 text-right d-none d-sm-block">
-                                                        <small class="text-muted">Total Skill Score</small>
-                                                        <div><strong id="totalSkillScore"><%= typeof totalSkillScore !== 'undefined' ? totalSkillScore : 0 %></strong></div>
-                                                    </div>
-                                                    <button class="btn btn-sm btn-outline-primary rounded-pill font-weight-bold" data-toggle="modal" data-target="#addSkillModal">
-                                                        <i class="fas fa-plus mr-1"></i> Add Skill
-                                                    </button>
-                                                </div>
-                                            </div>
-                                            <hr class="mb-4">
 
-                                            <div id="skillsContainer" class="d-flex flex-wrap gap-2">
-                                                </div>
-                                            
-                                            <div id="noSkillsMsg" class="text-center text-muted py-3" style="display: none;">
-                                                <small>No skills added yet.</small>
+                                    <hr class="my-4">
+
+                                    <div class="d-flex justify-content-between align-items-center mb-4">
+                                        <h5 class="font-weight-bold text-primary mb-0">Professional Skills</h5>
+                                        <div class="d-flex align-items-center">
+                                            <div class="mr-3 text-right d-none d-sm-block">
+                                                <small class="text-muted">Total Skill Score</small>
+                                                <div><strong id="totalSkillScore"><%= typeof totalSkillScore !== 'undefined' ? totalSkillScore : 0 %></strong></div>
                                             </div>
+                                            <button type="button" class="btn btn-sm btn-outline-primary rounded-pill font-weight-bold" data-toggle="modal" data-target="#addSkillModal">
+                                                <i class="fas fa-plus mr-1"></i> Add Skill
+                                            </button>
                                         </div>
                                     </div>
+
+                                    <div id="skillsContainer" class="d-flex flex-wrap gap-2 mb-3">
+                                    </div>
+                                
+                                    <div id="noSkillsMsg" class="text-center text-muted py-3" style="display: none;">
+                                        <small>No skills added yet.</small>
+                                    </div>
+                                    
+                                    <input type="hidden" name="Skills" id="skillsInput" value='<%= JSON.stringify(seeker.Skills) %>'>
                                     
                                     <div class="text-right mt-4">
                                         <button type="submit" class="btn btn-primary-modern px-4 shadow-sm font-weight-bold">
@@ -167,72 +157,7 @@
     <%- include('../partials/footer') %>
 
     <script>
-        (function() {
-            const profileForm = document.getElementById('profileForm');
-            if (!profileForm) return;
-
-            const firstName = profileForm.querySelector('input[name="FirstName"]');
-            const lastName = profileForm.querySelector('input[name="LastName"]');
-            const phone = profileForm.querySelector('input[name="PhoneNumber"]');
-            const dob = profileForm.querySelector('input[name="DateOfBirth"]');
-
-            const phoneRegex = /^(0|\+84)\d{9,10}$/;
-
-            function show(el) { if (el) el.classList.remove('d-none'); }
-            function hide(el) { if (el) el.classList.add('d-none'); }
-
-            function validateProfile() {
-                let ok = true;
-
-                const fnMsg = firstName ? firstName.parentElement.querySelector('.required-error') : null;
-                if (!firstName || !firstName.value.trim()) { show(fnMsg); firstName && firstName.classList.add('is-invalid'); ok = false; } else { hide(fnMsg); firstName && firstName.classList.remove('is-invalid'); }
-
-                const lnMsg = lastName ? lastName.parentElement.querySelector('.required-error') : null;
-                if (!lastName || !lastName.value.trim()) { show(lnMsg); lastName && lastName.classList.add('is-invalid'); ok = false; } else { hide(lnMsg); lastName && lastName.classList.remove('is-invalid'); }
-
-                const phoneReq = phone ? phone.parentElement.querySelector('.required-error') : null;
-                const phoneInvalid = phone ? phone.parentElement.querySelector('.phone-invalid-error') : null;
-                if (!phone || !phone.value.trim()) { show(phoneReq); hide(phoneInvalid); phone && phone.classList.add('is-invalid'); ok = false; }
-                else {
-                    hide(phoneReq);
-                    if (!phoneRegex.test(phone.value.trim())) { show(phoneInvalid); phone.classList.add('is-invalid'); ok = false; } else { hide(phoneInvalid); phone.classList.remove('is-invalid'); }
-                }
-
-                const dobReq = dob ? dob.parentElement.querySelector('.required-error') : null;
-                const dobInvalid = dob ? dob.parentElement.querySelector('.dob-invalid-error') : null;
-                if (!dob || !dob.value) { show(dobReq); hide(dobInvalid); dob && dob.classList.add('is-invalid'); ok = false; }
-                else {
-                    hide(dobReq);
-                    const d = new Date(dob.value);
-                    const today = new Date();
-                    let age = today.getFullYear() - d.getFullYear();
-                    const m = today.getMonth() - d.getMonth();
-                    if (m < 0 || (m === 0 && today.getDate() < d.getDate())) age--;
-                    if (isNaN(d.getTime()) || age < 15) { show(dobInvalid); dob.classList.add('is-invalid'); ok = false; } else { hide(dobInvalid); dob.classList.remove('is-invalid'); }
-                }
-
-                return ok;
-            }
-
-            [firstName, lastName, phone, dob].forEach(inp => {
-                if (!inp) return;
-                inp.addEventListener('input', () => {
-                    const req = inp.parentElement.querySelector('.required-error'); if (req) hide(req);
-                    if (inp.name === 'PhoneNumber') { const inv = inp.parentElement.querySelector('.phone-invalid-error'); if (inv) hide(inv); }
-                    if (inp.name === 'DateOfBirth') { const inv = inp.parentElement.querySelector('.dob-invalid-error'); if (inv) hide(inv); }
-                    inp.classList.remove('is-invalid');
-                });
-            });
-
-            profileForm.addEventListener('submit', function(e) {
-                if (!validateProfile()) {
-                    e.preventDefault();
-                    const firstErr = profileForm.querySelector('.is-invalid') || profileForm.querySelector('.required-error:not(.d-none)');
-                    if (firstErr) firstErr.focus();
-                }
-            });
-        })();
-
+        // 1. Lấy dữ liệu từ Mock Data hoặc từ Server (thông qua value của input ẩn)
         let mySkills = [];
         try {
             const rawData = document.getElementById('skillsInput').value;
@@ -247,6 +172,7 @@
         const skillsInput = document.getElementById('skillsInput');
         const totalSkillScoreEl = document.getElementById('totalSkillScore');
 
+        // 2. Hàm vẽ lại danh sách Skill ra màn hình
         function renderSkills() {
             skillsContainer.innerHTML = '';
             
@@ -257,6 +183,7 @@
                 noSkillsMsg.style.display = 'none';
                 let total = 0;
                 mySkills.forEach((skill, index) => {
+                    // Chọn màu badge
                     let badgeColor = 'badge-soft-primary';
                     if (skill.ProficiencyLevel === 'Expert') badgeColor = 'badge-soft-success';
                     if (skill.ProficiencyLevel === 'Beginner') badgeColor = 'badge-soft-secondary';
@@ -287,9 +214,13 @@
                 totalSkillScoreEl.textContent = Math.round(total);
             }
             
+            // Cập nhật lại input ẩn để chuẩn bị gửi form
             skillsInput.value = JSON.stringify(mySkills);
         }
 
+        // Recalculate functionality removed — server-side recalculation not needed
+
+        // 3. Xử lý nút Add Skill (Trong Modal)
         document.getElementById('saveSkillBtn').addEventListener('click', function() {
             const name = document.getElementById('skillNameInput').value;
             const level = document.getElementById('skillLevelInput').value;
@@ -300,18 +231,21 @@
                 return;
             }
 
+            // Check trùng
             if (mySkills.some(s => s.SkillName.toLowerCase() === name.toLowerCase())) {
                 alert("This skill is already added!");
                 return;
             }
 
+            // Thêm vào mảng
             mySkills.push({
                 SkillName: name,
                 ProficiencyLevel: level,
                 YearOfExperience: parseFloat(exp) || 0
             });
 
-            renderSkills();
+            renderSkills(); 
+            
 
             document.getElementById('skillForm').reset();
             $('#addSkillModal').modal('hide');
