@@ -16,12 +16,20 @@ const viewCompany = async (req, res, next) => {
                 reviews = []
             }
 
+            let avgRating = 0
+            try {
+                avgRating = await companyModel.getCompanyAverageRating(companyId)
+            } catch (e) {
+                avgRating = 0
+            }
+
             res.render('homepage/company-detail.ejs', {
                 title: company && company.CompanyName ? company.CompanyName : 'Company',
                 user: req.session && req.session.user,
                 company,
                 openJobs,
-                reviews
+                reviews,
+                avgRating
             })
     } catch (error) {
         next(error)

@@ -191,6 +191,20 @@ const getApplicationStatisticsByCompany = async (companyId, startDate = null, en
     }
 }
 
+const getCompanyAverageRating = async (companyId) => {
+    try {
+        const pool = GET_SQL_POOL()
+        const result = await pool.request()
+            .input('companyId', companyId)
+            .query(`SELECT dbo.fn_GetCompanyAverageRating(@companyId) AS AvgRating`)
+
+        const row = result.recordset && result.recordset[0]
+        return row ? parseFloat(row.AvgRating) || 0 : 0
+    } catch (error) {
+        throw new ApiError(StatusCodes.INTERNAL_SERVER_ERROR, error.message)
+    }
+}
+
 export const companyModel = {
     getCompanyProfile,
     updateCompanyProfile,
@@ -200,4 +214,5 @@ export const companyModel = {
     getCompanies,
     addCompanyReview,
     getCompanyReviews
+    , getCompanyAverageRating
 }

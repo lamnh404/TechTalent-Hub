@@ -157,6 +157,13 @@
                         <div>
                             <h1 class="profile-title"><%= company.CompanyName %> <i class="fas fa-check-circle text-primary small" style="font-size: 1rem;" title="Verified"></i></h1>
                             
+                            <div class="d-flex align-items-center mb-2">
+                                <div class="mr-3">
+                                    <div style="font-size: 1.1rem; font-weight:700; color: #1c1e21;"><%= (avgRating || 0).toFixed(1) %>&nbsp;★</div>
+                                    <div class="small text-muted">Average rating</div>
+                                </div>
+                            </div>
+
                             <div class="profile-meta">
                                 <% if (company.Industry) { %><span><i class="fas fa-industry"></i> <%= company.Industry %></span><% } %>
                                 <% if (company.CompanySize) { %><span><i class="fas fa-users"></i> <%= company.CompanySize %></span><% } %>
