@@ -7,15 +7,9 @@ router.get('/', adminController.viewDashboard)
 
 router.get('/dashboard', adminController.viewDashboard)
 
-router.get('/users', (req, res) => {
-    if (!req.session || !req.session.user || req.session.user.userType !== 'Admin') return res.redirect('/auth/login')
-    res.render('admin/users.ejs', { title: 'User Management', user: req.session.user })
-})
+router.get('/users', adminController.viewUsers)
 
-router.get('/jobs', (req, res) => {
-    if (!req.session || !req.session.user || req.session.user.userType !== 'Admin') return res.redirect('/auth/login')
-    res.render('admin/jobs.ejs', { title: 'Jobs Management', user: req.session.user })
-})
+router.get('/jobs', adminController.viewJobs)
 
 router.get('/settings', (req, res) => {
     if (!req.session || !req.session.user || req.session.user.userType !== 'Admin') return res.redirect('/auth/login')
